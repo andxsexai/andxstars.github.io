@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ANDX — Личная консультация. Сложи пазл своих увлечений. Экосистема развития в эпоху нейросетей.">
+  <title>ANDXSTARS | Сложи свой пазл</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="preloader">
+    <div class="preloader-inner">
+      <span class="preloader-text">ANDXSTARS</span>
+      <div class="preloader-bar"><div class="preloader-fill"></div></div>
+    </div>
+  </div>
+  <canvas id="lightningCanvas"></canvas>
+
+  <!-- Blade Runner holograms + noise -->
+  <div class="holograms" aria-hidden="true">
+    <div class="hologram hologram-1"></div>
+    <div class="hologram hologram-2"></div>
+    <div class="hologram hologram-3"></div>
+  </div>
+  <div class="noise-layer" aria-hidden="true"></div>
+
+  <main>
+    <!-- Block 1: Hero + Trigger + CTA -->
+    <section class="hero" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">ANDXSTARS</h1>
+        <p class="hero-subtitle">AIMONAX | SFERA | ANDXSOUND</p>
+        <div class="hero-product glass-panel">
+          <p class="hero-trigger">
+            <span class="hero-trigger-highlight">Без осознанного мышления человек выбирает путь ради денег и может ошибиться на 40 лет вперед. Мой продукт — личная консультация. Главное: после нее в вашей голове сложится пазл.</span>
+            Вы поймете, как упаковать все свои увлечения в единый механизм и начать получать с этого реальные плоды. Подходит для предпринимателей, фрилансеров, танцоров и сотрудников 5/2.
+          </p>
+          <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-hero">
+            СЛОЖИТЬ СВОЙ ПАЗЛ (ОПЛАТИТЬ)
+          </a>
+        </div>
+      </div>
+      <div class="hero-scanline"></div>
+    </section>
+
+    <!-- Block 2: Partners -->
+    <section class="section partners" id="partners">
+      <h2 class="section-title">Технологии в моем арсенале</h2>
+      <div class="partners-track">
+        <div class="partners-strip">
+          <span>OpenAI</span><span>Midjourney</span><span>Runway Gen-2</span><span>ElevenLabs</span><span>Claude</span><span>Stable Diffusion</span>
+          <span>OpenAI</span><span>Midjourney</span><span>Runway Gen-2</span><span>ElevenLabs</span><span>Claude</span><span>Stable Diffusion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Block 3: Arsenal (slide-in panels) -->
+    <section class="section arsenal" id="arsenal">
+      <h2 class="section-title">Мой арсенал</h2>
+      <div class="skills-grid">
+        <div class="skill-card" data-skill="sites">
+          <span class="skill-icon">◈</span>
+          <h3>Создание сайтов</h3>
+        </div>
+        <div class="skill-card" data-skill="music">
+          <span class="skill-icon">♪</span>
+          <h3>Написание музыки (andxsound)</h3>
+        </div>
+        <div class="skill-card" data-skill="ai">
+          <span class="skill-icon">◇</span>
+          <h3>Нейросети (генерация контента)</h3>
+        </div>
+        <div class="skill-card" data-skill="automation">
+          <span class="skill-icon">⚡</span>
+          <h3>Автоматизация</h3>
+        </div>
+        <div class="skill-card" data-skill="qigong">
+          <span class="skill-icon">◎</span>
+          <h3>Цигун и Гунфу</h3>
+        </div>
+        <div class="skill-card" data-skill="photo">
+          <span class="skill-icon">◉</span>
+          <h3>Фотосессии (цифровой аватар)</h3>
+        </div>
+        <div class="skill-card" data-skill="security">
+          <span class="skill-icon">🛡</span>
+          <h3>Кибербезопасность</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Arsenal Slide-in Panel -->
+    <div class="arsenal-overlay" id="arsenalOverlay">
+      <div class="arsenal-panel glass-panel" id="arsenalPanel">
+        <button class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
+        <h3 class="arsenal-panel-title" id="arsenalPanelTitle"></h3>
+        <p class="arsenal-panel-text" id="arsenalPanelText"></p>
+      </div>
+    </div>
+
+    <!-- Block 4: Portfolio (built by JS) -->
+    <section class="section portfolio" id="portfolio">
+      <h2 class="section-title">Портфолио</h2>
+      <div class="portfolio-filters">
+        <button class="filter-btn active" data-filter="all">Все</button>
+        <button class="filter-btn" data-filter="author">Автор Я Сам</button>
+        <button class="filter-btn" data-filter="landings">Лендинги</button>
+        <button class="filter-btn" data-filter="infographics">Инфографика</button>
+        <button class="filter-btn" data-filter="cards">Карточки ВБ</button>
+        <button class="filter-btn" data-filter="covers">Обложки</button>
+        <button class="filter-btn" data-filter="clothing">Одежда</button>
+        <button class="filter-btn" data-filter="posters">Постеры</button>
+        <button class="filter-btn" data-filter="carousel">Посты карусели</button>
+        <button class="filter-btn" data-filter="photos">Фотосессии</button>
+      </div>
+      <div class="portfolio-gallery" id="gallery"></div>
+    </section>
+
+    <!-- Block 5: Reviews -->
+    <section class="section reviews" id="reviews">
+      <h2 class="section-title">Отзывы</h2>
+      <div class="reviews-grid">
+        <div class="review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar">АК</div>
+            <div class="review-meta">
+              <span class="review-name">Алексей К.</span>
+              <span class="review-source">Telegram</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">«Думал, что нейросети — это сложно. После консультации с ANDXSTARS пазл реально сложился! Теперь я делаю контент в 10 раз быстрее.»</p>
+        </div>
+        <div class="review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar">МС</div>
+            <div class="review-meta">
+              <span class="review-name">Мария С.</span>
+              <span class="review-source">VK</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">«Дизайн и музыка просто разрыв. Атмосфера киберпанка и полный профессионализм. Сайт получился именно таким, каким я его представляла.»</p>
+        </div>
+        <div class="review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar">ДВ</div>
+            <div class="review-meta">
+              <span class="review-name">Дмитрий В.</span>
+              <span class="review-source">Instagram</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">«Цигун в сочетании с технологиями — это взрыв мозга. Появилась дисциплина и четкое понимание, куда двигаться.»</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Block 6: CTA -->
+    <section class="section cta" id="cta">
+      <div class="cta-content">
+        <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn">
+          СЛОЖИТЬ СВОЙ ПАЗЛ (ОПЛАТИТЬ)
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer" id="footer">
+      <h2 class="footer-title">Моя экосистема</h2>
+      <div class="footer-grid">
+        <div class="footer-group">
+          <h3>YouTube</h3>
+          <a href="https://www.youtube.com/@andxstars" target="_blank" rel="noopener noreferrer">ANDXSTARS</a>
+          <a href="https://www.youtube.com/@sferastars" target="_blank" rel="noopener noreferrer">SFERA STARS</a>
+          <a href="https://www.youtube.com/@aimonax" target="_blank" rel="noopener noreferrer">AIMONAX</a>
+          <a href="https://www.youtube.com/@andxsound" target="_blank" rel="noopener noreferrer">ANDXSOUND</a>
+        </div>
+        <div class="footer-group">
+          <h3>Instagram</h3>
+          <a href="https://www.instagram.com/andxstars/" target="_blank" rel="noopener noreferrer">@andxstars</a>
+          <a href="https://www.instagram.com/andxsound" target="_blank" rel="noopener noreferrer">@andxsound</a>
+          <a href="https://www.instagram.com/sferastars" target="_blank" rel="noopener noreferrer">@sferastars</a>
+          <a href="https://www.instagram.com/aimonax" target="_blank" rel="noopener noreferrer">@aimonax</a>
+        </div>
+        <div class="footer-group">
+          <h3>ВКонтакте</h3>
+          <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer">Личка (andxstars)</a>
+          <a href="https://vk.com/andxstar" target="_blank" rel="noopener noreferrer">Группа (andxstar)</a>
+        </div>
+        <div class="footer-group">
+          <h3>Telegram</h3>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">t.me/andxxstars</a>
+        </div>
+      </div>
+      <p class="footer-copy">© ANDXSTARS · Экосистема твоего развития</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
