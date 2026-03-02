@@ -10,7 +10,7 @@
   const PORTFOLIO_DATA = [
     { folder: 'author', category: 'author', label: 'Автор Я Сам', files: ['1767549655237-2026-01-04 20.48.46.jpg', '1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png', '1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png', '1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png', '1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png'] },
     { folder: 'landings', category: 'landings', label: 'Лендинги', files: ['2026-03-02 15.30.42.jpg', '2026-03-02 15.31.16.jpg', '2026-03-02 15.31.25.jpg'] },
-    { folder: 'infographics', category: 'infographics', label: 'Инфографика', files: ['2026-03-02 15.24.56.mp4', '2026-03-02 15.25.24.mp4', '2026-03-02 15.25.38.mp4'] },
+    { folder: 'ВИДЕО', category: 'video', label: 'Видео', files: ['2026-03-02 15.24.56.mp4', '2026-03-02 15.25.24.mp4', '2026-03-02 15.25.38.mp4'] },
     { folder: 'cards', category: 'cards', label: 'Карточки ВБ', files: ['2026-03-02 15.50.57.jpg', '2026-03-02 15.51.06.jpg', '2026-03-02 15.51.12.jpg'] },
     { folder: 'covers', category: 'covers', label: 'Обложки', files: ['1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg', '1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg'] },
     { folder: 'clothing', category: 'clothing', label: 'Одежда', files: ['1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png', '1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png', '1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png'] },
@@ -20,7 +20,8 @@
   ];
 
   function encodePath(folder, file) {
-    return './' + folder + '/' + encodeURIComponent(file);
+    const encFolder = /^[a-zA-Z0-9_-]+$/.test(folder) ? folder : encodeURIComponent(folder);
+    return './' + encFolder + '/' + encodeURIComponent(file);
   }
 
   function isVideo(file) {
@@ -71,13 +72,19 @@
     const filterBtns = document.querySelectorAll('.filter-btn');
     const galleryItems = document.querySelectorAll('.gallery-item');
 
+    galleryItems.forEach((item) => {
+      const show = item.dataset.category === 'author';
+      item.classList.toggle('hidden', !show);
+      if (show) item.classList.add('visible');
+    });
+
     filterBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         filterBtns.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         const filter = btn.dataset.filter;
         galleryItems.forEach((item, i) => {
-          const show = filter === 'all' || item.dataset.category === filter;
+          const show = item.dataset.category === filter;
           item.classList.toggle('hidden', !show);
           item.style.transitionDelay = `${(i % 12) * 0.03}s`;
           if (show) item.classList.add('visible');
@@ -166,8 +173,7 @@
       ai: { title: 'Нейросети (генерация контента)', text: 'Для чего: Освободи 80% времени. Автоматизация контента, генерация идей и визуалов со скоростью мысли. Боль: «Я не успеваю создавать контент». Решение: нейросети работают на тебя 24/7.' },
       automation: { title: 'Автоматизация', text: 'Твоя выгода: Настрой системы один раз и позволь алгоритмам работать на тебя 24/7. Боль: «Рутина съедает время». Решение: автоматические пайплайны для контента и продаж.' },
       qigong: { title: 'Цигун и Гунфу', text: 'Основа всего: Дисциплина тела и энергии. Без правильного состояния технологии не работают. Настроим твой внутренний фокус. Боль: «Выгораю и не могу сосредоточиться». Решение: энергия и ясность для продуктивной работы.' },
-      photo: { title: 'Фотосессии (цифровой аватар)', text: 'Твой образ: Создадим твой идеальный цифровой и реальный аватар для личного бренда. Упакуем тебя дорого. Боль: «Не знаю, как подать себя». Решение: профессиональный визуал для соцсетей и сайта.' },
-      security: { title: 'Кибербезопасность', text: 'Защита: Аудит твоих цифровых активов, защита данных и персонального бренда. Боль: «Боюсь утечек и взлома». Решение: понимание угроз и практические шаги защиты.' }
+      photo: { title: 'Фотосессии (цифровой аватар)', text: 'Твой образ: Создадим твой идеальный цифровой и реальный аватар для личного бренда. Упакуем тебя дорого. Боль: «Не знаю, как подать себя». Решение: профессиональный визуал для соцсетей и сайта.' }
     };
 
     document.querySelectorAll('.skill-card').forEach((card) => {
