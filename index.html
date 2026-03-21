@@ -23,18 +23,18 @@
   <!-- HUD corners -->
   <div class="hud-corners" aria-hidden="true">
     <div class="hud-corner hud-tl">
-      <span class="hud-label">SYS:ACTIVE</span>
+      <div class="hud-type" id="hudTypeTL"></div>
       <div class="hud-ticker" id="hudTicker">0000</div>
     </div>
     <div class="hud-corner hud-tr">
-      <span class="hud-label">SYNCING...</span>
+      <div class="hud-type" id="hudTypeTR"></div>
       <div class="hud-coords" id="hudCoords">X:0000 Y:0000</div>
     </div>
     <div class="hud-corner hud-bl">
-      <span class="hud-label">ANDX·v3.0</span>
+      <div class="hud-type" id="hudTypeBL"></div>
     </div>
     <div class="hud-corner hud-br">
-      <span class="hud-label">ECOSYSTEM</span>
+      <div class="hud-type" id="hudTypeBR"></div>
     </div>
   </div>
 
@@ -75,14 +75,20 @@
       <div class="hero-content">
         <div class="hero-eyebrow">AIMONAX · SFERA · ANDXSOUND</div>
         <h1 class="hero-title">ANDXSTARS:<br>АРХИТЕКТОР<br>ЦИФРОВОЙ<br>РЕАЛЬНОСТИ</h1>
+        <p class="hero-subtitle-main">Сжимаю 40 лет поиска в 1 час архитектуры.<br>Синхронизация мышления и AI-технологий для квантового скачка.</p>
         <div class="hero-product glass-panel">
           <p class="hero-trigger">
             <span class="hero-trigger-highlight">Инвестиция в консультацию — это сохранение 40 лет вашей жизни. Мы строим систему, а не просто картинки.</span>
             Без осознанного мышления человек выбирает путь ради денег и может ошибиться на 40 лет вперед. Подходит для предпринимателей, фрилансеров, танцоров и сотрудников 5/2.
           </p>
-          <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-hero" id="ctaBtnHero">
-            СЛОЖИТЬ СВОЙ ПАЗЛ (ОПЛАТИТЬ)
-          </a>
+          <div class="hero-cta-group">
+            <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-lead" id="ctaBtnAudit">
+              ПОЛУЧИТЬ AI-АУДИТ БРЕНДА (БЕСПЛАТНО)
+            </a>
+            <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn-secondary">
+              или оплатить консультацию →
+            </a>
+          </div>
         </div>
       </div>
       <div class="hero-scanline"></div>
@@ -109,16 +115,16 @@
           <div class="service-icon">◈</div>
           <h3 class="service-title">NEURO-ANIMATION</h3>
           <p class="service-sub">Нейромультики</p>
-          <p class="service-trigger">Экономия 90% бюджета на анимации</p>
+          <p class="service-trigger">Создание виральных мультфильмов и контента за 24 часа</p>
           <button class="service-open-btn">ПОДРОБНЕЕ →</button>
         </div>
 
         <div class="service-card glass-panel" data-service="avatar">
           <div class="service-tag">02</div>
           <div class="service-icon">◉</div>
-          <h3 class="service-title">DIGITAL AVATAR & CONTENT</h3>
+          <h3 class="service-title">DIGITAL AVATAR</h3>
           <p class="service-sub">AI-Контент</p>
-          <p class="service-trigger">Ваше присутствие в сети 24/7 без вашего участия</p>
+          <p class="service-trigger">Ваше присутствие в сети без вашего участия (AI-копии)</p>
           <button class="service-open-btn">ПОДРОБНЕЕ →</button>
         </div>
 
@@ -127,17 +133,17 @@
           <div class="service-icon">⚡</div>
           <h3 class="service-title">AI-LOGIC & CODE</h3>
           <p class="service-sub">Smart-Автоматизация</p>
-          <p class="service-trigger">Ваш бизнес на автопилоте через программный код</p>
+          <p class="service-trigger">Автоматизация бизнеса через n8n и нейросети. Свобода от рутины</p>
           <button class="service-open-btn">ПОДРОБНЕЕ →</button>
         </div>
 
       </div>
     </section>
 
-    <!-- Fullscreen service overlays -->
+    <!-- Service slide-out panel -->
     <div class="service-overlay" id="serviceOverlay">
-      <div class="service-overlay-inner">
-        <button class="service-overlay-close" id="serviceOverlayClose">×</button>
+      <div class="service-slide-panel" id="serviceSlidePanel">
+        <button class="service-overlay-close" id="serviceOverlayClose" aria-label="Закрыть">×</button>
         <div class="service-overlay-content" id="serviceOverlayContent"></div>
       </div>
     </div>
