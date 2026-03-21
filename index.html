@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ANDXSTARS — Архитектор цифровой реальности. Нейромультики, AI-контент, автоматизация бизнеса.">
+  <title>ANDXSTARS | АРХИТЕКТОР ЦИФРОВОЙ РЕАЛЬНОСТИ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="preloader-inner">
+      <span class="preloader-text">ANDXSTARS</span>
+      <div class="preloader-bar"><div class="preloader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- HUD corners -->
+  <div class="hud-corners" aria-hidden="true">
+    <div class="hud-corner hud-tl">
+      <span class="hud-label">SYS:ACTIVE</span>
+      <div class="hud-ticker" id="hudTicker">0000</div>
+    </div>
+    <div class="hud-corner hud-tr">
+      <span class="hud-label">SYNCING...</span>
+      <div class="hud-coords" id="hudCoords">X:0000 Y:0000</div>
+    </div>
+    <div class="hud-corner hud-bl">
+      <span class="hud-label">ANDX·v3.0</span>
+    </div>
+    <div class="hud-corner hud-br">
+      <span class="hud-label">ECOSYSTEM</span>
+    </div>
+  </div>
+
+  <!-- Vignette -->
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- Parallax particle canvas -->
+  <canvas id="particleCanvas" aria-hidden="true"></canvas>
+
+  <!-- Lightning cursor canvas -->
+  <canvas id="lightningCanvas" aria-hidden="true"></canvas>
+
+  <!-- Floating shapes -->
+  <div class="floating-shapes" aria-hidden="true">
+    <div class="floating-shape shape-circle"></div>
+    <div class="floating-shape shape-circle"></div>
+    <div class="floating-shape shape-circle"></div>
+    <div class="floating-shape shape-circle"></div>
+    <div class="floating-shape shape-diamond"></div>
+    <div class="floating-shape shape-diamond"></div>
+    <div class="floating-shape shape-diamond"></div>
+    <div class="floating-shape shape-diamond"></div>
+  </div>
+
+  <!-- Holograms + noise -->
+  <div class="holograms" aria-hidden="true">
+    <div class="hologram hologram-1"></div>
+    <div class="hologram hologram-2"></div>
+    <div class="hologram hologram-3"></div>
+  </div>
+  <div class="noise-layer" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- Block 1: Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">AIMONAX · SFERA · ANDXSOUND</div>
+        <h1 class="hero-title">ANDXSTARS:<br>АРХИТЕКТОР<br>ЦИФРОВОЙ<br>РЕАЛЬНОСТИ</h1>
+        <div class="hero-product glass-panel">
+          <p class="hero-trigger">
+            <span class="hero-trigger-highlight">Инвестиция в консультацию — это сохранение 40 лет вашей жизни. Мы строим систему, а не просто картинки.</span>
+            Без осознанного мышления человек выбирает путь ради денег и может ошибиться на 40 лет вперед. Подходит для предпринимателей, фрилансеров, танцоров и сотрудников 5/2.
+          </p>
+          <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-hero" id="ctaBtnHero">
+            СЛОЖИТЬ СВОЙ ПАЗЛ (ОПЛАТИТЬ)
+          </a>
+        </div>
+      </div>
+      <div class="hero-scanline"></div>
+    </section>
+
+    <!-- Block 2: Partners -->
+    <section class="section partners" id="partners">
+      <h2 class="section-title">Технологии в моем арсенале</h2>
+      <div class="partners-track">
+        <div class="partners-strip">
+          <span>OpenAI</span><span>Midjourney</span><span>Runway Gen-2</span><span>ElevenLabs</span><span>Claude</span><span>Stable Diffusion</span><span>n8n</span>
+          <span>OpenAI</span><span>Midjourney</span><span>Runway Gen-2</span><span>ElevenLabs</span><span>Claude</span><span>Stable Diffusion</span><span>n8n</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Block 3: Big Three Services -->
+    <section class="section big-three" id="big-three">
+      <h2 class="section-title">Три кита экосистемы</h2>
+      <div class="big-three-grid">
+
+        <div class="service-card glass-panel" data-service="neuro">
+          <div class="service-tag">01</div>
+          <div class="service-icon">◈</div>
+          <h3 class="service-title">NEURO-ANIMATION</h3>
+          <p class="service-sub">Нейромультики</p>
+          <p class="service-trigger">Экономия 90% бюджета на анимации</p>
+          <button class="service-open-btn">ПОДРОБНЕЕ →</button>
+        </div>
+
+        <div class="service-card glass-panel" data-service="avatar">
+          <div class="service-tag">02</div>
+          <div class="service-icon">◉</div>
+          <h3 class="service-title">DIGITAL AVATAR & CONTENT</h3>
+          <p class="service-sub">AI-Контент</p>
+          <p class="service-trigger">Ваше присутствие в сети 24/7 без вашего участия</p>
+          <button class="service-open-btn">ПОДРОБНЕЕ →</button>
+        </div>
+
+        <div class="service-card glass-panel" data-service="logic">
+          <div class="service-tag">03</div>
+          <div class="service-icon">⚡</div>
+          <h3 class="service-title">AI-LOGIC & CODE</h3>
+          <p class="service-sub">Smart-Автоматизация</p>
+          <p class="service-trigger">Ваш бизнес на автопилоте через программный код</p>
+          <button class="service-open-btn">ПОДРОБНЕЕ →</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Fullscreen service overlays -->
+    <div class="service-overlay" id="serviceOverlay">
+      <div class="service-overlay-inner">
+        <button class="service-overlay-close" id="serviceOverlayClose">×</button>
+        <div class="service-overlay-content" id="serviceOverlayContent"></div>
+      </div>
+    </div>
+
+    <!-- Block 4: Portfolio -->
+    <section class="section portfolio" id="portfolio">
+      <h2 class="section-title">Портфолио</h2>
+      <div class="portfolio-filters">
+        <button class="filter-btn active" data-filter="all">Все</button>
+        <button class="filter-btn" data-filter="neuro">Нейромультики</button>
+        <button class="filter-btn" data-filter="design">Дизайн</button>
+        <button class="filter-btn" data-filter="cases">Кейсы</button>
+      </div>
+      <div class="portfolio-gallery masonry" id="gallery"></div>
+    </section>
+
+    <!-- Block 5: Reviews -->
+    <section class="section reviews" id="reviews">
+      <h2 class="section-title">Отзывы</h2>
+      <div class="reviews-grid">
+        <div class="review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar">АК</div>
+            <div class="review-meta">
+              <span class="review-name">Алексей К.</span>
+              <span class="review-source">Telegram</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">«Думал, что нейросети — это сложно. После консультации с ANDXSTARS пазл реально сложился! Теперь я делаю контент в 10 раз быстрее.»</p>
+        </div>
+        <div class="review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar">МС</div>
+            <div class="review-meta">
+              <span class="review-name">Мария С.</span>
+              <span class="review-source">VK</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">«Дизайн и музыка просто разрыв. Атмосфера киберпанка и полный профессионализм. Сайт получился именно таким, каким я его представляла.»</p>
+        </div>
+        <div class="review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar">ДВ</div>
+            <div class="review-meta">
+              <span class="review-name">Дмитрий В.</span>
+              <span class="review-source">Instagram</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">«Цигун в сочетании с технологиями — это взрыв мозга. Появилась дисциплина и четкое понимание, куда двигаться.»</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Block 6: CTA -->
+    <section class="section cta" id="cta">
+      <div class="cta-content">
+        <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-shine" id="ctaBtnMain">
+          СЛОЖИТЬ СВОЙ ПАЗЛ (ОПЛАТИТЬ)
+        </a>
+      </div>
+    </section>
+
+    <!-- Arsenal -->
+    <section class="section arsenal arsenal-bottom" id="arsenal">
+      <h2 class="section-title">Мой арсенал</h2>
+      <div class="skills-scroll">
+        <div class="skills-grid">
+          <div class="skill-card" data-skill="sites">
+            <span class="skill-icon">◈</span>
+            <h3>Создание сайтов</h3>
+          </div>
+          <div class="skill-card" data-skill="music">
+            <span class="skill-icon">♪</span>
+            <h3>Написание музыки</h3>
+          </div>
+          <div class="skill-card" data-skill="ai">
+            <span class="skill-icon">◇</span>
+            <h3>Нейросети</h3>
+          </div>
+          <div class="skill-card" data-skill="automation">
+            <span class="skill-icon">⚡</span>
+            <h3>Автоматизация</h3>
+          </div>
+          <div class="skill-card" data-skill="qigong">
+            <span class="skill-icon">◎</span>
+            <h3>Цигун и Гунфу</h3>
+          </div>
+          <div class="skill-card" data-skill="photo">
+            <span class="skill-icon">◉</span>
+            <h3>Фотосессии</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Arsenal slide-in panel (for skill cards) -->
+    <div class="arsenal-overlay" id="arsenalOverlay">
+      <div class="arsenal-panel glass-panel" id="arsenalPanel">
+        <button class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
+        <h3 class="arsenal-panel-title" id="arsenalPanelTitle"></h3>
+        <p class="arsenal-panel-text" id="arsenalPanelText"></p>
+      </div>
+    </div>
+
+    <footer class="footer" id="footer">
+      <h2 class="footer-title">Моя экосистема</h2>
+      <div class="footer-grid">
+        <div class="footer-group">
+          <h3>YouTube</h3>
+          <a href="https://www.youtube.com/@andxstars" target="_blank" rel="noopener noreferrer">ANDXSTARS</a>
+          <a href="https://www.youtube.com/@sferastars" target="_blank" rel="noopener noreferrer">SFERA STARS</a>
+          <a href="https://www.youtube.com/@aimonax" target="_blank" rel="noopener noreferrer">AIMONAX</a>
+          <a href="https://www.youtube.com/@andxsound" target="_blank" rel="noopener noreferrer">ANDXSOUND</a>
+        </div>
+        <div class="footer-group">
+          <h3>Instagram</h3>
+          <a href="https://www.instagram.com/andxstars/" target="_blank" rel="noopener noreferrer">@andxstars</a>
+          <a href="https://www.instagram.com/andxsound" target="_blank" rel="noopener noreferrer">@andxsound</a>
+          <a href="https://www.instagram.com/sferastars" target="_blank" rel="noopener noreferrer">@sferastars</a>
+          <a href="https://www.instagram.com/aimonax" target="_blank" rel="noopener noreferrer">@aimonax</a>
+        </div>
+        <div class="footer-group">
+          <h3>ВКонтакте</h3>
+          <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer">Личка (andxstars)</a>
+          <a href="https://vk.com/andxstar" target="_blank" rel="noopener noreferrer">Группа (andxstar)</a>
+        </div>
+        <div class="footer-group">
+          <h3>Telegram</h3>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">t.me/andxxstars</a>
+        </div>
+      </div>
+      <p class="footer-copy">© ANDXSTARS · Архитектор цифровой реальности</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
