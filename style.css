@@ -508,15 +508,20 @@ main { position: relative; z-index: 1; }
 
 /* ========== CTA Button ========== */
 .cta-btn {
-  display: inline-block;
-  padding: 18px 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 48px;
+  height: 58px;
   font-family: var(--font-title);
-  font-size: clamp(0.75rem, 2vw, 1rem);
+  font-size: clamp(0.72rem, 1.8vw, 0.95rem);
   font-weight: 700;
   letter-spacing: 0.14em;
+  line-height: 1;
   color: #fff;
   text-decoration: none;
   text-align: center;
+  white-space: nowrap;
   background: linear-gradient(135deg, #7b00ff 0%, #b026ff 50%, #ff00cc 100%);
   border: none;
   border-radius: 8px;
@@ -534,6 +539,7 @@ main { position: relative; z-index: 1; }
   background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
   opacity: 0;
   transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .cta-btn:hover::before { opacity: 1; }
@@ -542,15 +548,17 @@ main { position: relative; z-index: 1; }
 
 .cta-btn-hero {
   margin-top: 0.75rem;
-  padding: 1.4rem 3rem;
-  font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+  height: 68px;
+  padding: 0 3rem;
+  font-size: clamp(0.85rem, 2vw, 1.2rem);
 }
 
 /* Lead (free) CTA — brighter, larger */
 .cta-btn-lead {
   background: linear-gradient(135deg, #00c6ff 0%, #7b00ff 50%, #b026ff 100%);
-  font-size: clamp(0.8rem, 2vw, 1.05rem);
-  padding: 1.2rem 2.5rem;
+  font-size: clamp(0.72rem, 1.8vw, 0.98rem);
+  height: 62px;
+  padding: 0 2.5rem;
   animation: ctaPulseLead 2.5s ease-in-out infinite;
 }
 
@@ -1007,8 +1015,11 @@ main { position: relative; z-index: 1; }
   transition: transform 0.4s ease, opacity 0.45s ease;
 }
 
-/* Video: half-opacity by default, full on hover-play */
-.gallery-item video { opacity: 0.45; }
+/* Video: show at low opacity (first frame or black), go full on hover */
+.gallery-item video {
+  opacity: 0.5;
+  background: #0b0b18; /* fallback colour so no pure black flash */
+}
 .gallery-item:hover video,
 .gallery-item video.playing { opacity: 1; }
 
@@ -1023,6 +1034,8 @@ main { position: relative; z-index: 1; }
   cursor: pointer;
   overflow: hidden;
   border-radius: 12px;
+  /* Purple-gradient placeholder shown before first frame arrives */
+  background: linear-gradient(135deg, #0d001a 0%, #1a0030 50%, #0d001a 100%);
 }
 
 /* Play icon overlay */
@@ -1030,23 +1043,25 @@ main { position: relative; z-index: 1; }
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 44px; height: 44px;
+  width: 48px; height: 48px;
   border-radius: 50%;
-  background: rgba(176,38,255,0.75);
+  background: rgba(176,38,255,0.8);
+  border: 1px solid rgba(176,38,255,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #fff;
   pointer-events: none;
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 5;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 20px rgba(176,38,255,0.5);
 }
 
 .gallery-play-icon.hidden {
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.7);
+  transform: translate(-50%, -50%) scale(0.65);
 }
 
 .gallery-item:hover {

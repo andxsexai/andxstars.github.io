@@ -20,7 +20,7 @@
       ]
     },
     {
-      folder: 'ВИДЕО', category: 'neuro', label: 'Нейромультики',
+      folder: 'video', category: 'neuro', label: 'Нейромультики',
       files: [
         '2026-03-02 15.24.56.mp4',
         '2026-03-02 15.25.24.mp4',
@@ -96,11 +96,10 @@
         item.dataset.category = group.category;
 
         if (vid) {
-          // data-src → set real src only when in viewport (lazy)
-          item.dataset.vidSrc = href;
+          // preload="metadata" → browser fetches first frame without downloading full file
           item.innerHTML = `
             <div class="gallery-video-wrap">
-              <video muted loop playsinline preload="none" class="lazy-video">
+              <video muted loop playsinline preload="metadata" class="lazy-video">
                 <source data-src="${href}" type="video/mp4">
               </video>
               <div class="gallery-play-icon" aria-hidden="true">▶</div>
@@ -130,25 +129,28 @@
     initScrollObserver();
   }
 
-  // ========== Lazy Video: load src only when visible ==========
+  // ========== Lazy Video: swap data-src → src when near viewport ==========
   function initLazyVideo() {
-    const videoItems = document.querySelectorAll('.gallery-item .lazy-video');
-    if (!videoItems.length) return;
+    const lazyVideos = document.querySelectorAll('.lazy-video');
+    if (!lazyVideos.length) return;
 
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         const video = entry.target;
         const source = video.querySelector('source[data-src]');
-        if (source && !source.src) {
-          source.src = source.dataset.src;
-          video.load(); // triggers browser to fetch metadata
+        if (source) {
+          // Only assign if not already set (avoids reload)
+          if (!source.getAttribute('src')) {
+            source.setAttribute('src', source.dataset.src);
+            video.load(); // kick the browser to read metadata & first frame
+          }
         }
         obs.unobserve(video);
       });
-    }, { rootMargin: '200px' }); // pre-load 200px before visible
+    }, { rootMargin: '300px' }); // start loading 300px before entering view
 
-    videoItems.forEach((v) => obs.observe(v));
+    lazyVideos.forEach((v) => obs.observe(v));
   }
 
   // ========== Video: fade-in play on hover ==========
@@ -159,13 +161,14 @@
       if (!video) return;
 
       wrap.addEventListener('mouseenter', () => {
-        // Ensure src is loaded before playing
-        const source = video.querySelector('source[data-src]');
-        if (source && !source.src) {
-          source.src = source.dataset.src;
+        // Ensure src is set before playing (fallback if lazy observer missed it)
+        const source = video.querySelector('source');
+        if (source && !source.getAttribute('src') && source.dataset.src) {
+          source.setAttribute('src', source.dataset.src);
           video.load();
         }
-        video.play().catch(() => {});
+        // Small delay to let load() start before play()
+        setTimeout(() => video.play().catch(() => {}), 50);
         video.classList.add('playing');
         if (playIcon) playIcon.classList.add('hidden');
       });
@@ -177,10 +180,10 @@
         if (playIcon) playIcon.classList.remove('hidden');
       });
 
-      // Click: open fullscreen or new tab
-      wrap.addEventListener('click', (e) => {
-        e.preventDefault();
-        const src = video.querySelector('source')?.src || video.querySelector('source')?.dataset.src;
+      // Click: open in new tab
+      wrap.addEventListener('click', () => {
+        const source = video.querySelector('source');
+        const src = source?.getAttribute('src') || source?.dataset.src;
         if (src) window.open(src, '_blank');
       });
     });
