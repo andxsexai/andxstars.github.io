@@ -1056,9 +1056,16 @@ body.is-low-tier .section {
 
 .partners-strip {
   display: flex;
-  gap: 3.5rem;
+  width: max-content;
   animation: partnersScroll 28s linear infinite;
   white-space: nowrap;
+}
+
+.partners-strip-inner {
+  display: flex;
+  gap: 3.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .partners-strip span {
@@ -2783,7 +2790,8 @@ body.is-low-tier .discount-banner {
   /* Модалки открыты — убираем верхнюю полоску ANDX/TG/VK, чтобы крестик не перекрывался */
   body:has(#serviceOverlay.active) .mobile-quick-nav,
   body:has(#arsenalOverlay.active) .mobile-quick-nav,
-  body:has(#portfolioModal.is-open) .mobile-quick-nav {
+  body:has(#portfolioModal.is-open) .mobile-quick-nav,
+  body.overlay-open .mobile-quick-nav {
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;

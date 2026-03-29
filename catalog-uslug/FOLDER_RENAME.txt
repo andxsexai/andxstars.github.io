@@ -1,0 +1,9 @@
+Переименуйте папки на диске (GitHub Pages без пробелов в URL):
+
+  catalog uslug          → catalog-uslug
+  Photo and video        → photo-video
+  MULTIKI                → multikif
+  PODCUSTLE              → podcustle
+  IT                     → it
+
+Файлы .mp4 переносите без переименования. В репозитории пути уже обновлены в index.html и script.js.
