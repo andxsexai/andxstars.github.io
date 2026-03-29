@@ -92,9 +92,16 @@
     '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg'
   ]);
 
+  /** Каждый сегмент пути кодируется отдельно (пробелы в «catalog uslug/…», кириллица и т.д.) */
   function encodePath(folder, file) {
-    const encFolder = /^[a-zA-Z0-9_-]+$/.test(folder) ? folder : encodeURIComponent(folder);
-    return './' + encFolder + '/' + encodeURIComponent(file);
+    const segments = String(folder)
+      .split('/')
+      .map((seg) => {
+        if (!seg) return '';
+        return /^[a-zA-Z0-9_-]+$/.test(seg) ? seg : encodeURIComponent(seg);
+      })
+      .filter(Boolean);
+    return './' + segments.join('/') + '/' + encodeURIComponent(file);
   }
 
   function isVideo(file) {
@@ -450,8 +457,8 @@
           for (let c = 0; c < cols; c++) {
             const wx = b.x + 5 + (c * (b.w - 10)) / Math.max(cols - 1, 1);
             const wy = y0 + 12 + r * 22;
-            const flick = 0.5 + 0.5 * Math.sin(t * 1.8 + b.seed + r * 0.7 + c * 0.4);
-            ctx.fillStyle = `rgba(191, 0, 255, ${0.12 + flick * 0.42})`;
+            const flick = 0.5 + 0.5 * Math.sin(t * 2.2 + b.seed + r * 0.7 + c * 0.4);
+            ctx.fillStyle = `rgba(191, 0, 255, ${0.18 + flick * 0.52})`;
             ctx.fillRect(wx, wy, Math.max(5, b.w / (cols + 2)), 7);
           }
         }
@@ -487,7 +494,7 @@
     requestAnimationFrame(loop);
   }
 
-  /** Каталог услуг: при наведении — ролик из папки video (тот же показывается в панели по клику) */
+  /** Каталог услуг: при наведении — ролик из catalog uslug/<slug> (тот же в панели по клику) */
   function initServiceCardHoverVideos() {
     if (isNarrowViewport() || isSlowConnection()) return;
     document.querySelectorAll('.service-card').forEach((card) => {
@@ -521,7 +528,7 @@
     });
   }
 
-  /** Дополнительно: при наведении на карточку — своё видео из папки video */
+  /** Дополнительно: при наведении — ролик из dopoln/<карточка> */
   function initSkillHoverVideos() {
     if (isNarrowViewport() || isSlowConnection()) return;
     document.querySelectorAll('.skill-card').forEach((card) => {
@@ -555,32 +562,6 @@
     });
   }
 
-  function initHeroBgVideo() {
-    const hero = document.getElementById('hero');
-    const video = document.querySelector('.hero-bg-video');
-    if (!hero || !video) return;
-    if (isNarrowViewport() || isSlowConnection() || document.body.classList.contains('is-mobile-lite')) {
-      video.remove();
-      return;
-    }
-    const source = video.querySelector('source[data-src]');
-    if (!source) return;
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (!source.getAttribute('src')) {
-            source.setAttribute('src', source.dataset.src);
-            video.load();
-          }
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      });
-    }, { threshold: 0.15 });
-    obs.observe(hero);
-  }
-
   /** Пауза видео вне экрана (экономия CPU/GPU) */
   function attachVideoPauseWhenHidden(root) {
     if (!root) return;
@@ -591,7 +572,6 @@
       });
     }, { threshold: 0.08 });
     root.querySelectorAll('video.lazy-video').forEach((v) => {
-      if (v.classList.contains('hero-bg-video')) return;
       obs.observe(v);
     });
   }
@@ -845,33 +825,33 @@
     document.querySelectorAll('.case-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.06}s`; });
   }
 
-  /** Те же файлы, что на карточках каталога (папка video, по порядку) */
+  /** Ролики из папки catalog uslug (подпапки Photo and video, MULTIKI, PODCUSTLE, IT) */
   const SERVICE_PANEL_MEDIA = {
     content: {
       kind: 'video',
-      folder: 'video',
-      file: '2026-03-02 15.24.56.mp4',
+      folder: 'catalog uslug/Photo and video',
+      file: 'Developer_at_desk_202603291823.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'photos', file: '2026-03-02 15.23.13.jpg' }
     },
     neuro: {
       kind: 'video',
-      folder: 'video',
-      file: '2026-03-02 15.25.24.mp4',
+      folder: 'catalog uslug/MULTIKI',
+      file: 'Flow_delpmaspu_ (1).mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
     },
     podcast: {
       kind: 'video',
-      folder: 'video',
-      file: '2026-03-02 15.25.38.mp4',
+      folder: 'catalog uslug/PODCUSTLE',
+      file: 'Holograms_purple_sounds_202603291733.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
     },
     dev: {
       kind: 'video',
-      folder: 'video',
-      file: '2026-03-02 15.24.56.mp4',
+      folder: 'catalog uslug/IT',
+      file: 'Frame_approximation_moves_202603291824.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'cards', file: '2026-03-02 15.50.57.jpg' }
     }
@@ -900,7 +880,7 @@
       sub: 'Съёмка и постпродакшн',
       highlight: 'Визуал, который продаёт ваш бренд в Reels, Shorts и рекламе.',
       purpose: 'Зачем: единый узнаваемый визуал снижает стоимость лида и ускоряет решение о покупке. Для экспертов, брендов и маркетплейсов, где кадр = первый аргумент.',
-      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях. Примеры — папка <strong>photos</strong> в портфолио.',
+      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях. Ролик карточки — <strong>catalog uslug/Photo and video</strong>; примеры съёмок — папка <strong>photos</strong> в портфолио.',
       list: [
         'Предметная и портретная съёмка',
         'Рекламные ролики и тизеры',
@@ -915,7 +895,7 @@
       title: 'НЕЙРОМУЛЬТИКИ (AI-ANIMATION)',
       sub: 'ИИ + продакшн',
       highlight: 'Виральные мультфильмы и анимация в сжатые сроки.',
-      purpose: 'Зачем: быстро получить движение и историю в кадре без полного аниме-студио — для рекламы, тизеров и виральных форматов. Ролики из папки <strong>video</strong>.',
+      purpose: 'Зачем: быстро получить движение и историю в кадре без полного аниме-студио — для рекламы, тизеров и виральных форматов. Превью услуги — <strong>catalog uslug/MULTIKI</strong>; полная подборка — <strong>video</strong> в портфолио.',
       body: 'Комбинируем нейросети (Runway, Midjourney и др.) с классическим монтажом и саундом. Подходит для рекламы, обучающего контента и соцсетей.',
       list: [
         'AI-анимация и motion-графика',
@@ -931,7 +911,7 @@
       title: 'ВЫЕЗДНЫЕ ПОДКАСТЫ',
       sub: 'Звук · свет · картинка',
       highlight: 'Запись у вас в студии или на площадке — «под ключ».',
-      purpose: 'Зачем: выезд экономит ваше время и даёт студийное качество без аренды площадки. Визуальный контекст — папка <strong>author</strong>, динамика продакшна — примеры из <strong>video</strong>.',
+      purpose: 'Зачем: выезд экономит ваше время и даёт студийное качество без аренды площадки. Превью услуги — <strong>catalog uslug/PODCUSTLE</strong>; кадры бренда — <strong>author</strong>, больше роликов — <strong>video</strong> в портфолио.',
       body: 'Приезжаем с оборудованием: микрофоны, рекордер, базовый свет, при необходимости — камеры. Настраиваем акустику, даём гостям комфорт, отдаём чистые дорожки и монтаж.',
       list: [
         'Мультитрек-запись голоса',
@@ -947,7 +927,7 @@
       title: 'IT-РАЗРАБОТКА',
       sub: 'Код · n8n · интеграции',
       highlight: 'Автоматизация бизнеса через код и n8n.',
-      purpose: 'Зачем: убрать ручные перекладывания данных между чатами, CRM и таблицами — меньше ошибок и быстрее отклик клиенту. Визуал цифровых продуктов — папка <strong>cards</strong>.',
+      purpose: 'Зачем: убрать ручные перекладывания данных между чатами, CRM и таблицами — меньше ошибок и быстрее отклик клиенту. Превью услуги — <strong>catalog uslug/IT</strong>; визуал продуктов — <strong>cards</strong> в портфолио.',
       body: 'Лендинги, боты, внутренние инструменты, связка CRM–мессенджеры–таблицы. Проектируем так, чтобы система жила без лишней ручной работы.',
       list: [
         'Сайты и лендинги',
@@ -1030,83 +1010,108 @@
   const SKILL_DETAIL = {
     sites: {
       title: 'Сайты',
-      folderLabel: 'video / covers',
+      folderLabel: 'dopoln/сайты · портфолио: covers',
       purpose: 'Сайт — основа диджитал-присутствия: на нём принимают решение о доверии, заявке и покупке.',
-      body: 'Структура под вашу воронку: оффер, блоки доверия, явные CTA, скорость загрузки и адаптив. Превью — ролик из папки <strong>video</strong>; кейсы визуала — <strong>covers</strong> в портфолио.',
+      body: 'Проектируем структуру под вашу воронку: чёткий оффер, блоки доверия, заметные CTA, быстрая загрузка и корректный мобильный вид. Ролик на карточке и в этом окне — из папки <strong>dopoln/сайты</strong>. Живые макеты и обложки — в портфолио, раздел <strong>covers</strong>.',
       list: [
-        'Лендинги под запуск и рекламу',
-        'Многостраничные сайты под услуги',
-        'Интеграции с формами, мессенджерами и оплатой'
+        'Лендинги под запуск, рекламу и вебинары',
+        'Многостраничные сайты под услуги и личный бренд',
+        'Формы, мессенджеры, оплата и аналитика',
+        'Передача проекта с понятной структурой файлов'
       ],
       media: {
         type: 'video',
-        folder: 'video',
-        file: '2026-03-02 15.24.56.mp4',
+        folder: 'dopoln/сайты',
+        file: 'Sensors_moving,_camera_202603291842.mp4',
         fallback: { folder: 'covers', file: '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg' }
       }
     },
     music: {
       title: 'Музыка (ANDXSOUND)',
-      folderLabel: 'video / posters',
+      folderLabel: 'dopoln/музыка · портфолио: posters',
       purpose: 'Аудио задаёт эмоцию ролика, подкаста и бренда — от узнаваемости до удержания внимания.',
-      body: 'Авторский саунд и шлифовка под площадки. На карточке — ролик из <strong>video</strong>; обложки — папка <strong>posters</strong>.',
-      list: ['Треки под видео и подкасты', 'Сведение и мастеринг', 'Синхронизация с монтажом'],
+      body: 'Авторский саунд, шлифовка под YouTube, подкасты и рекламу: динамика, частотный баланс, громкость под площадку. Превью на карточке и здесь — <strong>dopoln/музыка</strong>. Визуальные референсы обложек — папка <strong>posters</strong> в портфолио.',
+      list: [
+        'Треки и джинглы под видео и подкасты',
+        'Сведение и мастеринг «под эфир»',
+        'Синхронизация с монтажом и таймкодами',
+        'Брендовый звуковой характер (ANDXSOUND)'
+      ],
       media: {
         type: 'video',
-        folder: 'video',
-        file: '2026-03-02 15.25.24.mp4',
+        folder: 'dopoln/музыка',
+        file: 'Guy_plays_bass_202603291841.mp4',
         fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
       }
     },
     ai: {
       title: 'Нейросети',
-      folderLabel: 'video',
+      folderLabel: 'dopoln/нейросети · портфолио: video (нейро)',
       purpose: 'Нейросети ускоряют идеацию, визуал и черновики — при грамотном пайплайне экономят недели production.',
-      body: 'Инструменты под задачу: кадры, озвучка, апскейл, ассистенты. Все примеры роликов — папка <strong>video</strong> в портфолио.',
-      list: ['Генерация визуала и motion', 'Ускорение препродакшна', 'Встраивание AI в процессы'],
+      body: 'Подбираем инструменты под задачу: кадры, озвучка, апскейл, ассистенты для текстов и структуры. На карточке и в окне — ролик из <strong>dopoln/нейросети</strong>. Полная подборка AI-видео — в портфолио, категория <strong>Нейромультики</strong> (папка <strong>video</strong>).',
+      list: [
+        'Генерация и доработка визуала, storyboard',
+        'Ускорение препродакшна и итераций',
+        'Встраивание AI в ваш рабочий процесс',
+        'Контроль качества и единый стиль бренда'
+      ],
       media: {
         type: 'video',
-        folder: 'video',
-        file: '2026-03-02 15.25.38.mp4',
+        folder: 'dopoln/нейросети',
+        file: 'grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4',
         fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
       }
     },
     automation: {
       title: 'Автоматизация',
-      folderLabel: 'video / cards',
+      folderLabel: 'dopoln/автоматизации · портфолио: cards',
       purpose: 'Автоматизация убирает ручной ввод и задержки между CRM, чатами и таблицами.',
-      body: 'Сценарии n8n, webhooks, боты. Превью — ролик из <strong>video</strong>; визуал продуктов — <strong>cards</strong>.',
-      list: ['Цепочки уведомлений', 'Telegram / почта / таблицы', 'Мониторинг ошибок'],
+      body: 'Сценарии на n8n, webhooks, боты в Telegram: заявки, напоминания, отчёты без «копипаста». Превью — <strong>dopoln/автоматизации</strong>. Примеры визуала цифровых продуктов — <strong>cards</strong> в портфолио.',
+      list: [
+        'Цепочки уведомлений и статусов',
+        'Связка Telegram, почта, Google Sheets, CRM',
+        'Мониторинг сбоев и логирование',
+        'Документация сценариев для команды'
+      ],
       media: {
         type: 'video',
-        folder: 'video',
-        file: '2026-03-02 15.24.56.mp4',
+        folder: 'dopoln/автоматизации',
+        file: 'Superhero_possesses_digital_202603291845.mp4',
         fallback: { folder: 'cards', file: '2026-03-02 15.51.06.jpg' }
       }
     },
     qigong: {
       title: 'Цигун',
-      folderLabel: 'video / author',
+      folderLabel: 'dopoln/цигун · портфолио: author',
       purpose: 'Ресурс и ясность влияют на качество решений и устойчивость в долгих проектах.',
-      body: 'Короткие практики для концентрации. Превью — ролик из <strong>video</strong>; кадры бренда — <strong>author</strong>.',
-      list: ['Настрой перед съёмкой или эфиром', 'Комплексы на рабочий день'],
+      body: 'Короткие практики для концентрации, дыхания и опоры перед эфиром, съёмкой или переговорами. Ролик на карточке — <strong>dopoln/цигун</strong>; атмосфера личного бренда в кадре — папка <strong>author</strong> в портфолио.',
+      list: [
+        'Микро-практики 5–15 минут в день',
+        'Настрой перед съёмкой, эфиром, выступлением',
+        'Мягкая работа с телом без перегруза'
+      ],
       media: {
         type: 'video',
-        folder: 'video',
-        file: '2026-03-02 15.25.24.mp4',
+        folder: 'dopoln/цигун',
+        file: 'Moves_technology_engaging_202603291845.mp4',
         fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
       }
     },
     photo: {
       title: 'Фотосессии',
-      folderLabel: 'video / photos',
+      folderLabel: 'catalog uslug/Photo and video · портфолио: photos',
       purpose: 'Сильные кадры усиливают экспертность и конверсию в соцсетях и на маркетплейсах.',
-      body: 'Портрет и предметка под единый код. Превью — ролик из <strong>video</strong>; съёмки — папка <strong>photos</strong>.',
-      list: ['Личный бренд', 'Карточки товара и лукбуки'],
+      body: 'Портрет, предметка и лукбуки под единый визуальный код бренда. Отдельного ролика в <strong>dopoln</strong> пока нет — используется тот же превью-ролик, что и для фото/видео в каталоге (<strong>catalog uslug/Photo and video</strong>). Полные серии съёмок — раздел <strong>photos</strong> в портфолио.',
+      list: [
+        'Личный бренд и экспертный контент',
+        'Карточки товара, маркетплейсы, баннеры',
+        'Свет, ретушь и единая палитра',
+        'Согласование референсов до съёмки'
+      ],
       media: {
         type: 'video',
-        folder: 'video',
-        file: '2026-03-02 15.25.38.mp4',
+        folder: 'catalog uslug/Photo and video',
+        file: 'Developer_at_desk_202603291823.mp4',
         fallback: { folder: 'photos', file: '2026-03-02 15.23.18.jpg' }
       }
     }
@@ -1167,6 +1172,9 @@
     }
     closeBtn?.addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) close();
+    });
   }
 
   function initSkillTilt() {
@@ -1209,7 +1217,6 @@
     initCityCanvas();
     initServiceCardHoverVideos();
     initSkillHoverVideos();
-    initHeroBgVideo();
 
     initMatrixTrace();
     initCTANeonTouch();

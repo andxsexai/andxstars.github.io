@@ -203,7 +203,7 @@ video.lazy-video--gpu,
   z-index: 4;
 }
 
-/* Неоновый «город» — фоновый слой */
+/* Неоновый «город» — фоновый слой (hero без видео, только canvas + градиенты) */
 .city-canvas {
   position: fixed;
   top: 0;
@@ -212,7 +212,7 @@ video.lazy-video--gpu,
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.92;
+  opacity: 1;
 }
 
 /* ========== Noise Layer ========== */
@@ -413,10 +413,11 @@ main {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* Полупрозрачный слой — сквозь него виден неоновый город (canvas) */
   background:
-    radial-gradient(ellipse 85% 65% at 50% 0%, rgba(138, 43, 226, 0.22) 0%, transparent 72%),
-    radial-gradient(ellipse 45% 45% at 80% 85%, rgba(191, 0, 255, 0.14) 0%, transparent 62%),
-    #0f0818;
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(138, 43, 226, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 88%, rgba(191, 0, 255, 0.2) 0%, transparent 58%),
+    linear-gradient(180deg, rgba(15, 8, 24, 0.45) 0%, rgba(8, 4, 14, 0.72) 100%);
 }
 
 .hero::before {
@@ -440,26 +441,13 @@ main {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 45%, rgba(138, 43, 226, 0.2) 0%, transparent 58%);
-  filter: blur(50px);
-  animation: heroGlow 7s ease-in-out infinite;
-}
-
-.hero-video-shell {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(176, 38, 255, 0.35) 0%, transparent 55%),
+    radial-gradient(circle at 30% 70%, rgba(138, 43, 226, 0.18) 0%, transparent 45%);
+  filter: blur(56px);
+  animation: heroGlow 6s ease-in-out infinite;
   pointer-events: none;
-  opacity: 0.55;
-}
-
-.hero-bg-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  filter: hue-rotate(280deg) brightness(0.88) saturate(1.15);
 }
 
 @keyframes heroGlow {
@@ -469,7 +457,7 @@ main {
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   width: 100%;
   max-width: min(800px, 100%);
   padding: 0 1.5rem;
@@ -575,10 +563,12 @@ main {
 .hero-scanline {
   position: absolute;
   top: 0; left: 0; right: 0;
+  z-index: 2;
   height: 3px;
   background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
   opacity: 0.4;
   animation: scanline 3s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes scanline {
