@@ -71,15 +71,21 @@
     <div class="hologram hologram-3"></div>
   </div>
   <div class="noise-layer" aria-hidden="true"></div>
+  <div class="neon-flow-lines" aria-hidden="true"></div>
 
   <main>
 
     <section class="hero" id="hero">
       <div class="hero-discount-badge" aria-label="Акция">−15% на первый заказ</div>
       <div class="hero-bg"></div>
+      <canvas id="heroCityCanvas" class="hero-city-canvas" aria-hidden="true"></canvas>
       <div class="hero-content">
         <div class="hero-eyebrow">AIMONAX · SFERA · ANDXSOUND</div>
-        <h1 class="hero-title">ANDXSTARS:<br>АРХИТЕКТОР<br>ЦИФРОВОЙ<br>РЕАЛЬНОСТИ</h1>
+        <h1 class="hero-title">
+          <span class="hero-title-brand">ANDXSTARS</span>
+          <span class="hero-title-tag">Бизнес · AI · Видео · Код</span>
+          <span class="hero-title-line">Архитектор цифровой реальности</span>
+        </h1>
         <p class="hero-value-line">Кто: эксперт по AI, видео и коду. Что: контент, нейромультики, подкасты, автоматизация. Профит: экономия времени и бюджета + <strong>скидка 15%</strong> при первом заказе.</p>
         <p class="hero-subtitle-main">Сжимаю 40 лет поиска в 1 час архитектуры.<br>Синхронизация мышления и AI-технологий для квантового скачка.</p>
         <div class="hero-product glass-panel">
@@ -204,13 +210,6 @@
       </div>
     </section>
 
-    <div class="service-overlay" id="serviceOverlay">
-      <div class="service-slide-panel" id="serviceSlidePanel">
-        <button type="button" class="service-overlay-close" id="serviceOverlayClose" aria-label="Закрыть">×</button>
-        <div class="service-overlay-content" id="serviceOverlayContent"></div>
-      </div>
-    </div>
-
     <section class="section portfolio" id="portfolio">
       <h2 class="section-title">Портфолио</h2>
       <p class="portfolio-intro">Выберите направление — откроется галерея работ. Наведите на карточку для превью.</p>
@@ -237,14 +236,6 @@
         </button>
       </div>
     </section>
-
-    <div class="portfolio-modal" id="portfolioModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="portfolioModalTitle">
-      <div class="portfolio-modal-inner glass-panel">
-        <button type="button" class="portfolio-modal-close" id="portfolioModalClose" aria-label="Закрыть галерею">×</button>
-        <h2 class="portfolio-modal-title" id="portfolioModalTitle"></h2>
-        <div class="portfolio-modal-gallery masonry" id="portfolioModalGallery"></div>
-      </div>
-    </div>
 
     <section class="section cases-reviews" id="cases-reviews">
       <h2 class="section-title">Кейсы и отзывы</h2>
@@ -390,13 +381,6 @@
       </div>
     </section>
 
-    <div class="arsenal-overlay" id="arsenalOverlay">
-      <div class="arsenal-panel glass-panel" id="arsenalPanel">
-        <button type="button" class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
-        <div id="arsenalPanelBody" class="arsenal-panel-body"></div>
-      </div>
-    </div>
-
     <footer class="footer" id="footer">
       <h2 class="footer-title">Моя экосистема</h2>
       <div class="footer-grid">
@@ -433,6 +417,28 @@
       <p class="footer-copy">© ANDXSTARS · Бизнес &amp; Cyber-Tech · Сайт работает по HTTPS (GitHub Pages)</p>
     </footer>
   </main>
+
+  <div class="service-overlay" id="serviceOverlay">
+    <div class="service-slide-panel" id="serviceSlidePanel">
+      <button type="button" class="service-overlay-close" id="serviceOverlayClose" aria-label="Закрыть">×</button>
+      <div class="service-overlay-content" id="serviceOverlayContent"></div>
+    </div>
+  </div>
+
+  <div class="portfolio-modal" id="portfolioModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="portfolioModalTitle">
+    <div class="portfolio-modal-inner glass-panel">
+      <button type="button" class="portfolio-modal-close" id="portfolioModalClose" aria-label="Закрыть галерею">×</button>
+      <h2 class="portfolio-modal-title" id="portfolioModalTitle"></h2>
+      <div class="portfolio-modal-gallery masonry" id="portfolioModalGallery"></div>
+    </div>
+  </div>
+
+  <div class="arsenal-overlay" id="arsenalOverlay">
+    <div class="arsenal-panel glass-panel" id="arsenalPanel">
+      <button type="button" class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
+      <div id="arsenalPanelBody" class="arsenal-panel-body"></div>
+    </div>
+  </div>
 
   <div id="categoryPreviewPop" class="category-preview-pop" aria-hidden="true"></div>
 

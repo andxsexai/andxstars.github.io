@@ -23,9 +23,10 @@
     });
     document.body.classList.add('loaded');
     root.setAttribute('aria-busy', 'false');
-    const panelDelayMs = 1400;
-    const panelDurationMs = 1150;
-    setTimeout(() => root.remove(), panelDelayMs + panelDurationMs + 400);
+    const fast = window.innerWidth <= 768;
+    const panelDelayMs = fast ? 520 : 1400;
+    const panelDurationMs = fast ? 720 : 1150;
+    setTimeout(() => root.remove(), panelDelayMs + panelDurationMs + 350);
   }
 
   function animateTo(target) {
@@ -56,7 +57,7 @@
   window.addEventListener('load', () => animateTo(100), { passive: true });
   setTimeout(() => {
     if (!preloadFinished) animateTo(100);
-  }, 14000);
+  }, window.innerWidth <= 768 ? 9000 : 12000);
 
   const PORTFOLIO_DATA = [
     {
@@ -451,6 +452,136 @@
       pop.style.left = `${Math.max(8, x)}px`;
       pop.style.top = `${Math.max(8, y)}px`;
     }
+  }
+
+  /** Неоновый город только в блоке hero (десктоп; на телефоне не запускаем) */
+  function initHeroCityCanvas() {
+    const hero = document.getElementById('hero');
+    const canvas = document.getElementById('heroCityCanvas');
+    if (!hero || !canvas) return;
+    if (window.matchMedia('(max-width: 768px)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (document.body.classList.contains('is-reduced-effects')) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let w = 0;
+    let h = 0;
+    let buildings = [];
+    let t0 = 0;
+    let frame = 0;
+    let rafId = 0;
+
+    function stopLoop() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      t0 = 0;
+      frame = 0;
+    }
+
+    function startLoop() {
+      if (rafId) return;
+      function loop(ts) {
+        frame += 1;
+        if (frame % 2 !== 0) {
+          rafId = requestAnimationFrame(loop);
+          return;
+        }
+        draw(ts);
+        rafId = requestAnimationFrame(loop);
+      }
+      rafId = requestAnimationFrame(loop);
+    }
+
+    function genBuildings() {
+      buildings = [];
+      let x = -80;
+      const total = Math.max(w * 2.4, 1800);
+      while (x < total) {
+        const bw = 20 + Math.random() * 44;
+        const bh = h * (0.2 + Math.random() * 0.52);
+        buildings.push({ x, w: bw, h: bh, seed: Math.random() * 50 });
+        x += bw + 2 + Math.random() * 14;
+      }
+    }
+
+    function resize() {
+      const r = hero.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = Math.max(1, Math.floor(r.width));
+      h = Math.max(1, Math.floor(r.height));
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      genBuildings();
+    }
+
+    function draw(ts) {
+      if (!t0) t0 = ts;
+      const t = (ts - t0) / 1000;
+      const scroll = (t * 38) % 260;
+
+      const sky = ctx.createLinearGradient(0, 0, 0, h);
+      sky.addColorStop(0, '#2a1848');
+      sky.addColorStop(0.4, '#150a22');
+      sky.addColorStop(1, '#08050e');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.translate(-scroll, 0);
+      buildings.forEach((b) => {
+        const y0 = h - b.h;
+        ctx.fillStyle = 'rgba(18, 10, 32, 0.96)';
+        ctx.strokeStyle = 'rgba(176, 38, 255, 0.55)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(b.x, y0, b.w, b.h);
+        ctx.strokeRect(b.x, y0, b.w, b.h);
+        const cols = Math.max(2, Math.floor(b.w / 12));
+        const rows = Math.max(2, Math.floor(b.h / 22));
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const wx = b.x + 4 + (c * (b.w - 8)) / Math.max(cols - 1, 1);
+            const wy = y0 + 10 + r * 20;
+            const flick = 0.5 + 0.5 * Math.sin(t * 2 + b.seed + r * 0.65 + c * 0.38);
+            ctx.fillStyle = `rgba(191, 0, 255, ${0.22 + flick * 0.55})`;
+            ctx.fillRect(wx, wy, Math.max(4, b.w / (cols + 2)), 6);
+          }
+        }
+        const topGlow = ctx.createLinearGradient(b.x, y0, b.x + b.w, y0);
+        topGlow.addColorStop(0, 'transparent');
+        topGlow.addColorStop(0.5, 'rgba(176, 38, 255, 0.55)');
+        topGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = topGlow;
+        ctx.fillRect(b.x, y0, b.w, 2);
+      });
+      ctx.restore();
+
+      ctx.strokeStyle = 'rgba(176, 38, 255, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.78);
+      ctx.lineTo(w, h * 0.78);
+      ctx.stroke();
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) startLoop();
+          else stopLoop();
+        });
+      },
+      { threshold: 0.06 }
+    );
+    io.observe(hero);
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    startLoop();
   }
 
   /** Каталог услуг: при наведении — ролик из catalog uslug/<slug> (тот же в панели по клику) */
@@ -1165,10 +1296,18 @@
 
     initServiceCardHoverVideos();
     initSkillHoverVideos();
+    initHeroCityCanvas();
 
     if (!document.body.classList.contains('is-reduced-effects')) {
-      initMatrixTrace();
-      initParticles();
+      const runHeavyCanvas = () => {
+        initMatrixTrace();
+        initParticles();
+      };
+      if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(runHeavyCanvas, { timeout: 2000 });
+      } else {
+        setTimeout(runHeavyCanvas, 120);
+      }
     }
     initCTANeonTouch();
   });

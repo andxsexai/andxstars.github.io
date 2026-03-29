@@ -57,6 +57,7 @@ body.t-body.loaded {
 
 /* GPU для видео и карточек (Purple Cyber) */
 video.lazy-video--gpu,
+.hero-city-canvas,
 .service-card,
 .skill-card,
 .portfolio-hub-card {
@@ -104,6 +105,20 @@ video.lazy-video--gpu,
 .loading-top.loaded,
 .loading-bottom.loaded {
   transition-delay: 1.4s;
+}
+
+@media (max-width: 768px) {
+  .loading-top.loaded,
+  .loading-bottom.loaded {
+    transition-delay: 0.45s;
+    transition-duration: 0.75s;
+  }
+
+  .loading-text.loaded,
+  .loading-shape.loaded {
+    transition-delay: 0.25s;
+    transition-duration: 0.4s;
+  }
 }
 
 .loading-top.loaded {
@@ -206,10 +221,21 @@ video.lazy-video--gpu,
   z-index: 3;
   background: radial-gradient(
     ellipse at center,
-    transparent 42%,
-    rgba(10, 4, 18, 0.38) 72%,
-    rgba(10, 10, 14, 0.72) 100%
+    transparent 48%,
+    rgba(10, 4, 18, 0.28) 78%,
+    rgba(10, 10, 14, 0.55) 100%
   );
+}
+
+@media (max-width: 768px) {
+  .vignette {
+    background: radial-gradient(
+      ellipse at center,
+      transparent 55%,
+      rgba(10, 4, 18, 0.18) 82%,
+      rgba(10, 10, 14, 0.42) 100%
+    );
+  }
 }
 
 /* ========== HUD Corners ========== */
@@ -447,9 +473,78 @@ body::after {
   100% { transform: translate3d(4%, -2%, 0) scale(1.06); opacity: 0.95; }
 }
 
+/* Переливающиеся неоновые линии (весь сайт под контентом) */
+.neon-flow-lines {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.4;
+  background:
+    repeating-linear-gradient(
+      102deg,
+      transparent 0,
+      transparent 72px,
+      rgba(176, 38, 255, 0.045) 72px,
+      rgba(176, 38, 255, 0.045) 73px
+    ),
+    repeating-linear-gradient(
+      -12deg,
+      transparent 0,
+      transparent 96px,
+      rgba(138, 43, 226, 0.035) 96px,
+      rgba(138, 43, 226, 0.035) 97px
+    );
+  animation: neonFlowDrift 32s linear infinite;
+}
+
+@keyframes neonFlowDrift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(0, 80px, 0); }
+}
+
+@media (max-width: 768px) {
+  .neon-flow-lines {
+    opacity: 0.72;
+    background:
+      repeating-linear-gradient(
+        102deg,
+        transparent 0,
+        transparent 56px,
+        rgba(176, 38, 255, 0.09) 56px,
+        rgba(176, 38, 255, 0.09) 57px
+      ),
+      repeating-linear-gradient(
+        -12deg,
+        transparent 0,
+        transparent 72px,
+        rgba(191, 0, 255, 0.07) 72px,
+        rgba(191, 0, 255, 0.07) 73px
+      );
+  }
+
+  body::before {
+    background:
+      radial-gradient(ellipse 100% 70% at 50% -10%, rgba(176, 38, 255, 0.32) 0%, transparent 50%),
+      radial-gradient(ellipse 65% 55% at 95% 90%, rgba(191, 0, 255, 0.22) 0%, transparent 48%),
+      radial-gradient(ellipse 55% 45% at 8% 55%, rgba(138, 43, 226, 0.2) 0%, transparent 42%),
+      linear-gradient(168deg, #120a1c 0%, #0a0612 50%, #07040e 100%) !important;
+    animation-duration: 18s;
+  }
+
+  body::after {
+    opacity: 0.92;
+    background: radial-gradient(circle at 50% 40%, rgba(176, 38, 255, 0.22) 0%, transparent 45%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body::before,
   body::after {
+    animation: none !important;
+  }
+
+  .neon-flow-lines {
     animation: none !important;
   }
 }
@@ -520,11 +615,35 @@ main {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* Полупрозрачный слой — сквозь него виден неоновый город (canvas) */
+  isolation: isolate;
+  /* Полупрозрачный слой — на ПК сквозь него виден canvas города */
   background:
     radial-gradient(ellipse 90% 70% at 50% 0%, rgba(138, 43, 226, 0.28) 0%, transparent 70%),
     radial-gradient(ellipse 50% 50% at 85% 88%, rgba(191, 0, 255, 0.2) 0%, transparent 58%),
     linear-gradient(180deg, rgba(15, 8, 24, 0.45) 0%, rgba(8, 4, 14, 0.72) 100%);
+}
+
+.hero-city-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+  opacity: 1;
+  transform: translateZ(0);
+}
+
+@media (min-width: 769px) {
+  .hero-city-canvas {
+    display: block;
+  }
+}
+
+.is-mobile-lite .hero-city-canvas,
+.is-reduced-effects .hero-city-canvas {
+  display: none !important;
 }
 
 .hero::before {
@@ -537,7 +656,7 @@ main {
   background-size: 60px 60px;
   animation: gridShift 22s linear infinite;
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
 }
 
 @keyframes gridShift {
@@ -589,24 +708,65 @@ main {
 }
 
 .hero-title {
-  font-family: var(--font-title);
-  font-size: clamp(2.2rem, 7vw, 6rem);
-  font-weight: 900;
-  letter-spacing: 0.05em;
-  line-height: 1.08;
-  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
   text-align: center;
+  font-family: var(--font-title);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.hero-title-brand {
+  font-size: clamp(1.5rem, 5.5vw, 3.4rem);
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
   text-shadow:
-    0 0 20px rgba(176,38,255,1),
-    0 0 60px rgba(176,38,255,0.6),
-    0 0 120px rgba(176,38,255,0.25);
-  animation: titlePulse 3.5s ease-in-out infinite;
-  margin-bottom: 0.3em;
+    0 0 16px rgba(176, 38, 255, 0.95),
+    0 0 42px rgba(176, 38, 255, 0.45),
+    0 0 80px rgba(176, 38, 255, 0.2);
+  animation: titlePulse 4s ease-in-out infinite;
+}
+
+.hero-title-tag {
+  font-size: clamp(0.55rem, 2.1vw, 0.72rem);
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(176, 38, 255, 0.92);
+  text-shadow: 0 0 14px rgba(176, 38, 255, 0.45);
+}
+
+.hero-title-line {
+  font-size: clamp(0.82rem, 3.4vw, 1.28rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  max-width: 22em;
+  text-transform: none;
+  font-family: var(--font-body);
+  color: rgba(245, 240, 255, 0.94);
+  text-shadow: 0 0 20px rgba(176, 38, 255, 0.35);
 }
 
 @keyframes titlePulse {
-  0%, 100% { text-shadow: 0 0 20px rgba(176,38,255,1), 0 0 60px rgba(176,38,255,0.6), 0 0 120px rgba(176,38,255,0.25); }
-  50%       { text-shadow: 0 0 30px rgba(210,90,255,1), 0 0 90px rgba(210,90,255,0.7), 0 0 160px rgba(210,90,255,0.35); }
+  0%, 100% {
+    text-shadow:
+      0 0 16px rgba(176, 38, 255, 0.95),
+      0 0 42px rgba(176, 38, 255, 0.45),
+      0 0 80px rgba(176, 38, 255, 0.2);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(210, 90, 255, 1),
+      0 0 56px rgba(210, 90, 255, 0.55),
+      0 0 100px rgba(210, 90, 255, 0.28);
+  }
 }
 
 .hero-subtitle-main {
@@ -669,8 +829,22 @@ main {
 
 .hero-scanline {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
+  height: auto;
+  width: 100%;
+  pointer-events: none;
+}
+
+.hero-scanline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
   height: 3px;
   background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
   opacity: 0.4;
@@ -680,7 +854,7 @@ main {
 
 @keyframes scanline {
   0%   { transform: translateY(-4px); }
-  100% { transform: translateY(100vh); }
+  100% { transform: translateY(calc(100% + 4px)); }
 }
 
 /* ========== CTA Button ========== */
@@ -1071,10 +1245,11 @@ main {
 }
 
 /* ========== Service Slide-out Panel ========== */
+/* Вне main — выше мобильной полоски TG/VK (10050) */
 .service-overlay {
   position: fixed;
   inset: 0;
-  z-index: 50000;
+  z-index: 200000;
   background: rgba(3, 2, 8, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -1641,7 +1816,7 @@ main {
 .arsenal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 40000;
+  z-index: 200000;
   background: rgba(5,2,10,0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1864,9 +2039,8 @@ main {
   display: none !important;
 }
 
-.is-mobile-lite .hero-title {
+.is-mobile-lite .hero-title-brand {
   animation: none;
-  text-shadow: 0 0 10px rgba(176, 38, 255, 0.55), 0 0 22px rgba(176, 38, 255, 0.25);
 }
 
 .is-mobile-lite .cta-btn,
@@ -1886,6 +2060,11 @@ main {
 
 .is-mobile-lite .partners-strip {
   animation: none;
+}
+
+.is-mobile-lite .neon-flow-lines {
+  animation: none;
+  opacity: 0.58;
 }
 
 .is-mobile-lite .glass-panel,
@@ -2201,7 +2380,7 @@ main {
 .portfolio-modal {
   position: fixed;
   inset: 0;
-  z-index: 60000;
+  z-index: 200000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2280,7 +2459,7 @@ main {
 /* ========== Category hover preview (desktop) ========== */
 .category-preview-pop {
   position: fixed;
-  z-index: 55000;
+  z-index: 199900;
   width: 220px;
   height: 124px;
   border-radius: 10px;
@@ -2403,16 +2582,28 @@ main {
   }
 
   .hero-title {
-    font-size: clamp(1.45rem, 7.5vw, 2.05rem);
-    line-height: 1.08;
-    margin-bottom: 0;
-    margin-top: 0;
-    text-shadow: 0 0 12px rgba(176, 38, 255, 0.7), 0 0 28px rgba(176, 38, 255, 0.35);
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    hyphens: auto;
-    padding-inline: 2px;
+    gap: 0.3rem;
+    margin-bottom: 0.45rem;
+    padding-inline: 4px;
     max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-title-brand {
+    font-size: clamp(1.2rem, 5.8vw, 1.75rem);
+    letter-spacing: 0.12em;
+    text-indent: 0.12em;
+  }
+
+  .hero-title-tag {
+    font-size: clamp(0.48rem, 2.4vw, 0.6rem);
+    letter-spacing: 0.2em;
+  }
+
+  .hero-title-line {
+    font-size: clamp(0.72rem, 3.5vw, 0.88rem);
+    letter-spacing: 0.06em;
+    max-width: 19em;
   }
 
   .hero-value-line {
@@ -2572,6 +2763,29 @@ main {
   .reviews-grid { grid-template-columns: 1fr; }
   .arsenal-panel { max-width: 100%; }
   .hud-corners { display: none; }
+
+  /* Модалки открыты — убираем верхнюю полоску ANDX/TG/VK, чтобы крестик не перекрывался */
+  body:has(#serviceOverlay.active) .mobile-quick-nav,
+  body:has(#arsenalOverlay.active) .mobile-quick-nav,
+  body:has(#portfolioModal.is-open) .mobile-quick-nav {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .service-slide-panel {
+    max-width: 100%;
+  }
+
+  .service-overlay-close,
+  .arsenal-close {
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+  }
+
+  .portfolio-modal-close {
+    top: max(10px, env(safe-area-inset-top, 0px));
+  }
 }
 
 /* Мобильная панель TG / VK (только ≤768px) */
