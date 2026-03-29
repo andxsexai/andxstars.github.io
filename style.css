@@ -11,6 +11,11 @@ body {
   position: relative;
 }
 
+html:has(body.t-body:not(.loaded)) {
+  overflow: hidden;
+  height: 100%;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -26,6 +31,8 @@ body {
   --glass-border: 1px solid rgba(138, 43, 226, 0.45);
   --font-title: 'Orbitron', sans-serif;
   --font-body: 'Montserrat', sans-serif;
+  /* «Премиальная» кривая из референса */
+  --premium-ease: cubic-bezier(0.9, 0.03, 0.26, 0.99);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; }
@@ -37,6 +44,15 @@ body {
   color: #e8e0f0;
   min-height: 100vh;
   line-height: 1.6;
+}
+
+body.t-body {
+  overflow: hidden;
+}
+
+body.t-body.loaded {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* GPU для видео и карточек (Purple Cyber) */
@@ -51,49 +67,136 @@ video.lazy-video--gpu,
 }
 
 
-/* ========== Preloader ========== */
-#preloader {
+/* ========== Premium preloader (.uc-preload) ========== */
+.uc-preload {
   position: fixed;
   inset: 0;
-  background: #0a0a0a;
   z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.5s ease;
+  pointer-events: auto;
 }
-#preloader.hidden { opacity: 0; pointer-events: none; }
 
-.preloader-inner { text-align: center; }
+.uc-preload.loaded {
+  pointer-events: none;
+}
 
-.preloader-text {
+.loading-top,
+.loading-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: #0a0a0a;
+  transform: translateY(0);
+  transition: transform 1.15s var(--premium-ease);
+  will-change: transform;
+  z-index: 1;
+}
+
+.loading-top {
+  top: 0;
+  border-bottom: 1px solid rgba(176, 38, 255, 0.12);
+}
+
+.loading-bottom {
+  bottom: 0;
+}
+
+.loading-top.loaded,
+.loading-bottom.loaded {
+  transition-delay: 1.4s;
+}
+
+.loading-top.loaded {
+  transform: translateY(-100%);
+}
+
+.loading-bottom.loaded {
+  transform: translateY(100%);
+}
+
+.loading-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  width: min(92vw, 360px);
+  pointer-events: none;
+}
+
+.loading-text {
   font-family: var(--font-title);
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--neon-purple);
-  text-shadow: 0 0 20px rgba(176,38,255,0.8);
+  font-size: clamp(0.65rem, 2.8vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #b026ff;
+  text-shadow: 0 0 24px rgba(176, 38, 255, 0.55), 0 0 48px rgba(176, 38, 255, 0.2);
+  margin: 0 0 1.35rem;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.55s var(--premium-ease),
+    transform 0.55s var(--premium-ease);
+}
+
+.loading-text.loaded {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.98);
+  transition-delay: 1.05s;
+}
+
+.loading-shape {
   display: block;
-  margin-bottom: 20px;
-  letter-spacing: 0.3em;
-}
-
-.preloader-bar {
-  width: 200px;
-  height: 3px;
-  background: rgba(176,38,255,0.2);
-  border-radius: 2px;
+  width: 100%;
+  max-width: 280px;
+  height: 4px;
+  margin: 0 auto;
+  background: rgba(176, 38, 255, 0.12);
+  border-radius: 3px;
   overflow: hidden;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.5s var(--premium-ease),
+    transform 0.5s var(--premium-ease);
 }
 
-.preloader-fill {
+.loading-shape.loaded {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition-delay: 1.1s;
+}
+
+.loading-shape-fill {
+  display: block;
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #7b00ff, #ff00cc);
-  animation: preloadFill 0.85s ease forwards;
-  border-radius: 2px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #b026ff 0%, #bf00ff 55%, #d946ef 100%);
+  box-shadow: 0 0 14px rgba(176, 38, 255, 0.65);
+  transition: width 0.5s var(--premium-ease);
 }
 
-@keyframes preloadFill { to { width: 100%; } }
+@media (prefers-reduced-motion: reduce) {
+  .loading-top,
+  .loading-bottom,
+  .loading-text,
+  .loading-shape,
+  .loading-shape-fill {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  .loading-top.loaded {
+    transform: translateY(-100%);
+  }
+
+  .loading-bottom.loaded {
+    transform: translateY(100%);
+  }
+}
 
 /* ========== Vignette ========== */
 .vignette {

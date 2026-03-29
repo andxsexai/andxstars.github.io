@@ -13,20 +13,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="t-body">
+
+  <div class="uc-preload" id="ucPreload" aria-busy="true" aria-live="polite" aria-label="Загрузка страницы">
+    <div class="loading-top"></div>
+    <div class="loading-bottom"></div>
+    <div class="loading-content">
+      <p class="loading-text">Инициализация систем...</p>
+      <div class="loading-shape" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="loading-shape-fill"></span>
+      </div>
+    </div>
+  </div>
 
   <nav class="mobile-quick-nav" aria-label="Быстрые контакты">
     <span class="quick-nav-logo" aria-hidden="true">ANDX</span>
     <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="quick-nav-link" title="Telegram" aria-label="Написать в Telegram">TG</a>
     <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer" class="quick-nav-link" title="ВКонтакте" aria-label="ВКонтакте">VK</a>
   </nav>
-
-  <div id="preloader">
-    <div class="preloader-inner">
-      <span class="preloader-text">ANDXSTARS</span>
-      <div class="preloader-bar"><div class="preloader-fill"></div></div>
-    </div>
-  </div>
 
   <div class="hud-corners" aria-hidden="true">
     <div class="hud-corner hud-tl">

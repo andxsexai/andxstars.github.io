@@ -6,6 +6,58 @@
 (function () {
   'use strict';
 
+  let preloadProgress = 0;
+  let preloadFinished = false;
+
+  function finishPreload() {
+    if (preloadFinished) return;
+    preloadFinished = true;
+    const root = document.getElementById('ucPreload');
+    if (!root) {
+      document.body.classList.add('loaded');
+      return;
+    }
+    root.classList.add('loaded');
+    root.querySelectorAll('.loading-top, .loading-bottom, .loading-text, .loading-shape').forEach((el) => {
+      el.classList.add('loaded');
+    });
+    document.body.classList.add('loaded');
+    root.setAttribute('aria-busy', 'false');
+    const panelDelayMs = 1400;
+    const panelDurationMs = 1150;
+    setTimeout(() => root.remove(), panelDelayMs + panelDurationMs + 400);
+  }
+
+  function animateTo(target) {
+    const next = Math.max(preloadProgress, Math.min(100, target));
+    preloadProgress = next;
+    const shape = document.querySelector('#ucPreload .loading-shape');
+    const fill = document.querySelector('#ucPreload .loading-shape-fill');
+    if (shape) shape.setAttribute('aria-valuenow', String(Math.round(next)));
+    if (fill) fill.style.width = `${next}%`;
+    if (next >= 100) finishPreload();
+  }
+
+  function syncPreloadFromReadyState() {
+    const rs = document.readyState;
+    if (rs === 'loading') animateTo(18);
+    else if (rs === 'interactive') animateTo(58);
+    else animateTo(88);
+  }
+
+  document.onreadystatechange = function () {
+    const rs = document.readyState;
+    if (rs === 'loading') animateTo(22);
+    else if (rs === 'interactive') animateTo(62);
+    else if (rs === 'complete') animateTo(90);
+  };
+
+  syncPreloadFromReadyState();
+  window.addEventListener('load', () => animateTo(100), { passive: true });
+  setTimeout(() => {
+    if (!preloadFinished) animateTo(100);
+  }, 14000);
+
   const PORTFOLIO_DATA = [
     {
       folder: 'author', category: 'cases', label: 'Автор Я Сам',
@@ -1097,16 +1149,6 @@
       card.addEventListener('mouseleave', () => { inner.style.transform = ''; });
     });
   }
-
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      const pl = document.getElementById('preloader');
-      if (pl) {
-        pl.classList.add('hidden');
-        setTimeout(() => pl.remove(), 450);
-      }
-    }, 800);
-  });
 
   document.addEventListener('DOMContentLoaded', () => {
     applyLayoutMode();
