@@ -114,6 +114,16 @@
     return 'ontouchstart' in window && navigator.maxTouchPoints > 0 && window.innerWidth < 900;
   }
 
+  /** iPhone / Android / планшеты: без matrix, particles и лишнего blur */
+  function isReducedEffects() {
+    if (isMobileLite()) return true;
+    if (isSlowConnection()) return true;
+    try {
+      if (window.matchMedia('(pointer: coarse)').matches && window.innerWidth <= 1024) return true;
+    } catch (e) { /* noop */ }
+    return false;
+  }
+
   function isNarrowViewport() {
     return window.innerWidth < 768;
   }
@@ -138,8 +148,8 @@
     );
 
   function applyLayoutMode() {
-    if (isMobileLite()) document.body.classList.add('is-mobile-lite');
-    else document.body.classList.remove('is-mobile-lite');
+    document.body.classList.toggle('is-mobile-lite', isMobileLite());
+    document.body.classList.toggle('is-reduced-effects', isReducedEffects());
   }
 
   // ========== Gallery item factory ==========
@@ -389,109 +399,6 @@
       pop.style.left = `${Math.max(8, x)}px`;
       pop.style.top = `${Math.max(8, y)}px`;
     }
-  }
-
-  // ========== Neon cityscape (canvas, лёгкий алгоритм; на mobile-lite — реже кадры) ==========
-  function initCityCanvas() {
-    const canvas = document.getElementById('cityCanvas');
-    if (!canvas) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const ctx = canvas.getContext('2d');
-    const lite = document.body.classList.contains('is-mobile-lite');
-    let w = 0;
-    let h = 0;
-    let buildings = [];
-    let t0 = 0;
-    let frame = 0;
-    const skip = lite ? 3 : 1;
-
-    function genBuildings() {
-      buildings = [];
-      let x = -100;
-      const total = Math.max(w * 2.8, 2400);
-      while (x < total) {
-        const bw = 24 + Math.random() * 52;
-        const bh = h * (0.22 + Math.random() * 0.58);
-        buildings.push({
-          x,
-          w: bw,
-          h: bh,
-          seed: Math.random() * 50
-        });
-        x += bw + 3 + Math.random() * 16;
-      }
-    }
-
-    function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-      genBuildings();
-    }
-
-    function draw(ts) {
-      if (!t0) t0 = ts;
-      const t = (ts - t0) / 1000;
-      const scroll = (t * (lite ? 22 : 42)) % 280;
-
-      const sky = ctx.createLinearGradient(0, 0, 0, h);
-      sky.addColorStop(0, '#241038');
-      sky.addColorStop(0.35, '#14081f');
-      sky.addColorStop(1, '#0a0a0a');
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.save();
-      ctx.translate(-scroll, 0);
-      buildings.forEach((b) => {
-        const y0 = h - b.h;
-        ctx.fillStyle = 'rgba(22, 14, 38, 0.95)';
-        ctx.strokeStyle = 'rgba(138, 43, 226, 0.5)';
-        ctx.lineWidth = 1;
-        ctx.fillRect(b.x, y0, b.w, b.h);
-        ctx.strokeRect(b.x, y0, b.w, b.h);
-
-        const cols = Math.max(2, Math.floor(b.w / 14));
-        const rows = Math.max(2, Math.floor(b.h / 24));
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            const wx = b.x + 5 + (c * (b.w - 10)) / Math.max(cols - 1, 1);
-            const wy = y0 + 12 + r * 22;
-            const flick = 0.5 + 0.5 * Math.sin(t * 2.2 + b.seed + r * 0.7 + c * 0.4);
-            ctx.fillStyle = `rgba(191, 0, 255, ${0.18 + flick * 0.52})`;
-            ctx.fillRect(wx, wy, Math.max(5, b.w / (cols + 2)), 7);
-          }
-        }
-        const topGlow = ctx.createLinearGradient(b.x, y0, b.x + b.w, y0);
-        topGlow.addColorStop(0, 'transparent');
-        topGlow.addColorStop(0.5, 'rgba(138, 43, 226, 0.45)');
-        topGlow.addColorStop(1, 'transparent');
-        ctx.fillStyle = topGlow;
-        ctx.fillRect(b.x, y0, b.w, 2);
-      });
-      ctx.restore();
-
-      ctx.strokeStyle = 'rgba(138, 43, 226, 0.25)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, h * 0.78);
-      ctx.lineTo(w, h * 0.78);
-      ctx.stroke();
-    }
-
-    function loop(ts) {
-      frame += 1;
-      if (frame % skip !== 0) {
-        requestAnimationFrame(loop);
-        return;
-      }
-      draw(ts);
-      requestAnimationFrame(loop);
-    }
-
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-    requestAnimationFrame(loop);
   }
 
   /** Каталог услуг: при наведении — ролик из catalog uslug/<slug> (тот же в панели по клику) */
@@ -1214,14 +1121,13 @@
     initHUD();
     initScrollObserver();
 
-    initCityCanvas();
     initServiceCardHoverVideos();
     initSkillHoverVideos();
 
-    initMatrixTrace();
-    initCTANeonTouch();
-    if (!document.body.classList.contains('is-mobile-lite')) {
+    if (!document.body.classList.contains('is-reduced-effects')) {
+      initMatrixTrace();
       initParticles();
     }
+    initCTANeonTouch();
   });
 })();
