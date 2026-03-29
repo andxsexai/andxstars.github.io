@@ -91,6 +91,21 @@
     return 'ontouchstart' in window && navigator.maxTouchPoints > 0 && window.innerWidth < 900;
   }
 
+  function isNarrowViewport() {
+    return window.innerWidth < 768;
+  }
+
+  /** Статичный poster для видео на мобильных (без загрузки ролика до клика) */
+  const VIDEO_POSTER_URL =
+    'data:image/svg+xml,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice">' +
+        '<rect fill="#0a0618" width="640" height="360"/>' +
+        '<circle cx="320" cy="180" r="48" fill="none" stroke="#b026ff" stroke-width="3" opacity="0.85"/>' +
+        '<path fill="#b026ff" d="M300 150l60 40-60 40z" opacity="0.9"/>' +
+      '</svg>'
+    );
+
   function applyLayoutMode() {
     if (isMobileLite()) document.body.classList.add('is-mobile-lite');
     else document.body.classList.remove('is-mobile-lite');
@@ -105,9 +120,13 @@
     item.dataset.category = group.category;
 
     if (vid) {
+      const narrow = isNarrowViewport();
+      const preload = narrow ? 'none' : 'metadata';
+      const posterAttr = narrow ? ` poster="${VIDEO_POSTER_URL}"` : '';
+      const deferCls = narrow ? ' lazy-video--defer-mobile' : '';
       item.innerHTML = `
-        <div class="gallery-video-wrap">
-          <video muted loop playsinline preload="metadata" class="lazy-video">
+        <div class="gallery-video-wrap${narrow ? ' gallery-video-wrap--tap' : ''}">
+          <video muted loop playsinline preload="${preload}" class="lazy-video${deferCls}"${posterAttr}>
             <source data-src="${href}" type="video/mp4">
           </video>
           <div class="gallery-play-icon" aria-hidden="true">▶</div>
@@ -117,7 +136,7 @@
     } else {
       item.innerHTML = `
         <a href="${href}" target="_blank" rel="noopener noreferrer" class="gallery-link">
-          <img src="${href}" alt="${group.label}" loading="lazy">
+          <img src="${href}" alt="${group.label}" loading="lazy" decoding="async">
           <span class="gallery-overlay">${group.label}</span>
         </a>`;
       const img = item.querySelector('img');
@@ -132,6 +151,11 @@
   function initLazyVideoIn(root) {
     const lazyVideos = root.querySelectorAll('.lazy-video');
     if (!lazyVideos.length) return;
+    const narrow = isNarrowViewport();
+    const toObserve = Array.from(lazyVideos).filter(
+      (v) => !v.classList.contains('lazy-video--defer-mobile') && !narrow
+    );
+    if (!toObserve.length) return;
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
@@ -144,7 +168,7 @@
         obs.unobserve(video);
       });
     }, { rootMargin: '200px' });
-    lazyVideos.forEach((v) => obs.observe(v));
+    toObserve.forEach((v) => obs.observe(v));
   }
 
   function initVideoHoverIn(root) {
@@ -152,23 +176,40 @@
       const video = wrap.querySelector('video');
       const playIcon = wrap.querySelector('.gallery-play-icon');
       if (!video) return;
-      wrap.addEventListener('mouseenter', () => {
+      const tapMode = wrap.classList.contains('gallery-video-wrap--tap');
+
+      function ensureSrc() {
         const source = video.querySelector('source');
         if (source && !source.getAttribute('src') && source.dataset.src) {
           source.setAttribute('src', source.dataset.src);
           video.load();
         }
-        setTimeout(() => video.play().catch(() => {}), 50);
-        video.classList.add('playing');
-        if (playIcon) playIcon.classList.add('hidden');
-      });
-      wrap.addEventListener('mouseleave', () => {
-        video.pause();
-        video.currentTime = 0;
-        video.classList.remove('playing');
-        if (playIcon) playIcon.classList.remove('hidden');
-      });
-      wrap.addEventListener('click', () => {
+      }
+
+      if (!tapMode) {
+        wrap.addEventListener('mouseenter', () => {
+          ensureSrc();
+          setTimeout(() => video.play().catch(() => {}), 50);
+          video.classList.add('playing');
+          if (playIcon) playIcon.classList.add('hidden');
+        });
+        wrap.addEventListener('mouseleave', () => {
+          video.pause();
+          video.currentTime = 0;
+          video.classList.remove('playing');
+          if (playIcon) playIcon.classList.remove('hidden');
+        });
+      }
+
+      wrap.addEventListener('click', (e) => {
+        if (tapMode) {
+          e.preventDefault();
+          ensureSrc();
+          video.play().catch(() => {});
+          video.classList.add('playing');
+          if (playIcon) playIcon.classList.add('hidden');
+          return;
+        }
         const source = video.querySelector('source');
         const src = source?.getAttribute('src') || source?.dataset.src;
         if (src) window.open(src, '_blank');
@@ -310,17 +351,25 @@
     }
   }
 
-  // ========== Matrix trace (desktop only) ==========
+  // ========== Matrix trace (легкий; на <768px — в ~3 раза меньше символов) ==========
   function initMatrixTrace() {
     const canvas = document.getElementById('matrixCanvas');
-    if (!canvas || document.body.classList.contains('is-mobile-lite')) return;
+    if (!canvas) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ctx = canvas.getContext('2d');
     let w, h;
-    const glyphs = 'ｱｲｳｴｵ01アイウラΣπ∞ﾊﾝ0xﾃｽﾄ010101';
+    const glyphs = 'ｱｲｳｴｵ01アイウラΣπ∞ﾊﾝ0x010101';
     const particles = [];
-    const MAX = 160;
     let lx = -99, ly = -99, rafId = null;
+
+    function narrow() {
+      return window.innerWidth < 768;
+    }
+
+    function maxParticles() {
+      return narrow() ? 54 : 160;
+    }
 
     function resize() {
       w = canvas.width = window.innerWidth;
@@ -328,26 +377,29 @@
     }
 
     function spawn(cx, cy) {
-      for (let n = 0; n < 2; n++) {
+      const per = narrow() ? 1 : 2;
+      const m = maxParticles();
+      for (let n = 0; n < per; n++) {
         particles.push({
-          x: cx + (Math.random() - 0.5) * 20,
-          y: cy + (Math.random() - 0.5) * 12,
+          x: cx + (Math.random() - 0.5) * 18,
+          y: cy + (Math.random() - 0.5) * 10,
           char: glyphs[Math.floor(Math.random() * glyphs.length)],
-          vy: 1.2 + Math.random() * 2.2,
+          vy: narrow() ? 0.9 + Math.random() * 1.4 : 1.2 + Math.random() * 2.2,
           life: 0.85 + Math.random() * 0.15,
           green: Math.random() > 0.42
         });
       }
-      while (particles.length > MAX) particles.shift();
+      while (particles.length > m) particles.shift();
     }
 
     function tick() {
       ctx.clearRect(0, 0, w, h);
-      ctx.font = '11px ui-monospace, monospace';
+      ctx.font = narrow() ? '10px ui-monospace, monospace' : '11px ui-monospace, monospace';
+      const decay = narrow() ? 0.014 : 0.012;
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.y += p.vy;
-        p.life -= 0.012;
+        p.life -= decay;
         if (p.life <= 0 || p.y > h + 20) {
           particles.splice(i, 1);
           continue;
@@ -363,7 +415,8 @@
     }
 
     function onMove(x, y) {
-      if (Math.hypot(x - lx, y - ly) < 4) return;
+      const minD = narrow() ? 10 : 4;
+      if (Math.hypot(x - lx, y - ly) < minD) return;
       lx = x; ly = y;
       spawn(x, y);
       if (!rafId) rafId = requestAnimationFrame(tick);
@@ -669,8 +722,8 @@
     initHUD();
     initScrollObserver();
 
+    initMatrixTrace();
     if (!document.body.classList.contains('is-mobile-lite')) {
-      initMatrixTrace();
       initParticles();
     }
   });
