@@ -76,6 +76,22 @@
     all: 'Все проекты'
   };
 
+  /** Файлы портфолио > ~500 Кб — принудительно lazy + низкий приоритет загрузки */
+  const HEAVY_PORTFOLIO_IMAGES = new Set([
+    '1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png',
+    '1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png',
+    '1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png',
+    '1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png',
+    '1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png',
+    '1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png',
+    '1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png',
+    '1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png',
+    '1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png',
+    '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg',
+    '1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg',
+    '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg'
+  ]);
+
   function encodePath(folder, file) {
     const encFolder = /^[a-zA-Z0-9_-]+$/.test(folder) ? folder : encodeURIComponent(folder);
     return './' + encFolder + '/' + encodeURIComponent(file);
@@ -134,9 +150,11 @@
         </div>`;
       item.classList.remove('skeleton');
     } else {
+      const heavy = HEAVY_PORTFOLIO_IMAGES.has(file);
+      const lazyAttr = heavy ? ' loading="lazy" fetchpriority="low"' : ' loading="lazy"';
       item.innerHTML = `
         <a href="${href}" target="_blank" rel="noopener noreferrer" class="gallery-link">
-          <img src="${href}" alt="${group.label}" loading="lazy" decoding="async">
+          <img src="${href}" alt="${group.label}"${lazyAttr} decoding="async">
           <span class="gallery-overlay">${group.label}</span>
         </a>`;
       const img = item.querySelector('img');
@@ -351,7 +369,10 @@
     }
   }
 
-  // ========== Matrix trace (легкий; на <768px — в ~3 раза меньше символов) ==========
+  // ========== Matrix Neon Touch: расходящиеся символы #b026ff, затухание ~1.5 с ==========
+  const MATRIX_NEON_FADE_SEC = 1.5;
+  const MATRIX_PURPLE = { r: 176, g: 38, b: 255 };
+
   function initMatrixTrace() {
     const canvas = document.getElementById('matrixCanvas');
     if (!canvas) return;
@@ -359,16 +380,17 @@
 
     const ctx = canvas.getContext('2d');
     let w, h;
-    const glyphs = 'ｱｲｳｴｵ01アイウラΣπ∞ﾊﾝ0x010101';
+    const glyphs = 'ｱｲｳｴｵ01アイウラΣπ∞ﾊﾝ0x010101{}[]<>/\\';
     const particles = [];
     let lx = -99, ly = -99, rafId = null;
+    let lastTs = 0;
 
     function narrow() {
       return window.innerWidth < 768;
     }
 
     function maxParticles() {
-      return narrow() ? 54 : 160;
+      return narrow() ? 48 : 140;
     }
 
     function resize() {
@@ -376,58 +398,107 @@
       h = canvas.height = window.innerHeight;
     }
 
-    function spawn(cx, cy) {
-      const per = narrow() ? 1 : 2;
+    function spawnBurst(cx, cy, count) {
       const m = maxParticles();
-      for (let n = 0; n < per; n++) {
+      for (let n = 0; n < count; n++) {
+        const ang = Math.random() * Math.PI * 2;
+        const sp = (narrow() ? 0.35 : 0.55) + Math.random() * (narrow() ? 1.6 : 2.4);
         particles.push({
-          x: cx + (Math.random() - 0.5) * 18,
-          y: cy + (Math.random() - 0.5) * 10,
+          x: cx + (Math.random() - 0.5) * 12,
+          y: cy + (Math.random() - 0.5) * 12,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp,
           char: glyphs[Math.floor(Math.random() * glyphs.length)],
-          vy: narrow() ? 0.9 + Math.random() * 1.4 : 1.2 + Math.random() * 2.2,
-          life: 0.85 + Math.random() * 0.15,
-          green: Math.random() > 0.42
+          life: 1
         });
       }
       while (particles.length > m) particles.shift();
     }
 
-    function tick() {
+    function tick(ts) {
+      if (!lastTs) lastTs = ts;
+      const dt = Math.min(0.05, (ts - lastTs) / 1000);
+      lastTs = ts;
+
       ctx.clearRect(0, 0, w, h);
-      ctx.font = narrow() ? '10px ui-monospace, monospace' : '11px ui-monospace, monospace';
-      const decay = narrow() ? 0.014 : 0.012;
+      const fontPx = narrow() ? 11 : 13;
+      ctx.font = `${fontPx}px ui-monospace, monospace`;
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+
+      const decay = dt / MATRIX_NEON_FADE_SEC;
+
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
+        p.x += p.vx;
         p.y += p.vy;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
         p.life -= decay;
-        if (p.life <= 0 || p.y > h + 20) {
+        if (p.life <= 0) {
           particles.splice(i, 1);
           continue;
         }
         const a = p.life;
-        ctx.fillStyle = p.green
-          ? `rgba(0, 255, 140, ${a * 0.9})`
-          : `rgba(200, 100, 255, ${a * 0.85})`;
+        ctx.save();
+        ctx.shadowColor = 'rgba(176, 38, 255, 0.95)';
+        ctx.shadowBlur = 12 * a;
+        ctx.fillStyle = `rgba(${MATRIX_PURPLE.r},${MATRIX_PURPLE.g},${MATRIX_PURPLE.b},${0.15 + a * 0.85})`;
         ctx.fillText(p.char, p.x, p.y);
+        ctx.restore();
       }
+
       if (particles.length) rafId = requestAnimationFrame(tick);
-      else rafId = null;
+      else {
+        rafId = null;
+        lastTs = 0;
+      }
     }
 
     function onMove(x, y) {
-      const minD = narrow() ? 10 : 4;
+      const minD = narrow() ? 8 : 5;
       if (Math.hypot(x - lx, y - ly) < minD) return;
-      lx = x; ly = y;
-      spawn(x, y);
-      if (!rafId) rafId = requestAnimationFrame(tick);
+      lx = x;
+      ly = y;
+      spawnBurst(x, y, narrow() ? 2 : 3);
+      if (!rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    function onTouchStart(e) {
+      if (!e.touches.length) return;
+      const t = e.touches[0];
+      lx = t.clientX;
+      ly = t.clientY;
+      spawnBurst(t.clientX, t.clientY, narrow() ? 5 : 7);
+      if (!rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(tick);
+      }
     }
 
     resize();
     window.addEventListener('resize', resize, { passive: true });
     window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', (e) => {
       if (e.touches.length) onMove(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
+  }
+
+  function initCTANeonTouch() {
+    document.querySelectorAll('.cta-btn, .service-open-btn').forEach((btn) => {
+      let touchTimer;
+      btn.addEventListener('mouseenter', () => btn.classList.add('cta-neon-touch-active'));
+      btn.addEventListener('mouseleave', () => btn.classList.remove('cta-neon-touch-active'));
+      btn.addEventListener('touchstart', () => {
+        btn.classList.add('cta-neon-touch-active');
+        clearTimeout(touchTimer);
+        touchTimer = setTimeout(() => btn.classList.remove('cta-neon-touch-active'), 450);
+      }, { passive: true });
+    });
   }
 
   // ========== Particles (desktop) ==========
@@ -723,6 +794,7 @@
     initScrollObserver();
 
     initMatrixTrace();
+    initCTANeonTouch();
     if (!document.body.classList.contains('is-mobile-lite')) {
       initParticles();
     }
