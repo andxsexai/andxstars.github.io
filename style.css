@@ -566,6 +566,11 @@ main {
   box-sizing: border-box;
 }
 
+body.is-low-tier .section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}
+
 .section-title {
   font-family: var(--font-title);
   font-size: clamp(1.4rem, 4vw, 2.2rem);
@@ -642,7 +647,8 @@ main {
 }
 
 .is-mobile-lite .hero-city-canvas,
-.is-reduced-effects .hero-city-canvas {
+.is-reduced-effects .hero-city-canvas,
+.is-low-tier .hero-city-canvas {
   display: none !important;
 }
 
@@ -2255,6 +2261,16 @@ main {
   box-sizing: border-box;
   border: 1px solid rgba(255, 51, 102, 0.45);
   animation: neonBreathe 3.5s ease-in-out infinite;
+}
+
+body.is-low-tier .service-card.glass-panel,
+body.is-low-tier .portfolio-hub-card,
+body.is-low-tier .case-card,
+body.is-low-tier .skill-card,
+body.is-low-tier .cta-btn-pay-card,
+body.is-low-tier .cta-btn-pay-crypto,
+body.is-low-tier .discount-banner {
+  animation: none;
 }
 
 .discount-banner-glow {

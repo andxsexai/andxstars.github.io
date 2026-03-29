@@ -24,9 +24,9 @@
     document.body.classList.add('loaded');
     root.setAttribute('aria-busy', 'false');
     const fast = window.innerWidth <= 768;
-    const panelDelayMs = fast ? 520 : 1400;
-    const panelDurationMs = fast ? 720 : 1150;
-    setTimeout(() => root.remove(), panelDelayMs + panelDurationMs + 350);
+    const panelDelayMs = fast ? 380 : 820;
+    const panelDurationMs = fast ? 520 : 780;
+    setTimeout(() => root.remove(), panelDelayMs + panelDurationMs + 280);
   }
 
   function animateTo(target) {
@@ -41,23 +41,23 @@
 
   function syncPreloadFromReadyState() {
     const rs = document.readyState;
-    if (rs === 'loading') animateTo(18);
-    else if (rs === 'interactive') animateTo(58);
-    else animateTo(88);
+    if (rs === 'loading') animateTo(22);
+    else if (rs === 'interactive') animateTo(78);
+    else animateTo(94);
   }
 
   document.onreadystatechange = function () {
     const rs = document.readyState;
-    if (rs === 'loading') animateTo(22);
-    else if (rs === 'interactive') animateTo(62);
-    else if (rs === 'complete') animateTo(90);
+    if (rs === 'loading') animateTo(26);
+    else if (rs === 'interactive') animateTo(82);
+    else if (rs === 'complete') animateTo(96);
   };
 
   syncPreloadFromReadyState();
   window.addEventListener('load', () => animateTo(100), { passive: true });
   setTimeout(() => {
     if (!preloadFinished) animateTo(100);
-  }, window.innerWidth <= 768 ? 9000 : 12000);
+  }, window.innerWidth <= 768 ? 5500 : 7500);
 
   const PORTFOLIO_DATA = [
     {
@@ -177,6 +177,37 @@
     return false;
   }
 
+  /** Слабое железо / экономия — без matrix и particles (город в hero остаётся по отдельной проверке) */
+  function isLowTierDevice() {
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (c && c.saveData) return true;
+    const cores = navigator.hardwareConcurrency;
+    if (typeof cores === 'number' && cores > 0 && cores <= 4) return true;
+    const mem = navigator.deviceMemory;
+    if (typeof mem === 'number' && mem > 0 && mem <= 4) return true;
+    return false;
+  }
+
+  function allowMatrixEffect() {
+    if (isReducedEffects() || isLowTierDevice()) return false;
+    const cores = navigator.hardwareConcurrency;
+    if (typeof cores === 'number' && cores > 0 && cores < 6) return false;
+    return true;
+  }
+
+  function allowParticleField() {
+    if (isReducedEffects() || isLowTierDevice()) return false;
+    return true;
+  }
+
+  function allowHeroCityCanvas() {
+    if (isMobileLite() || isReducedEffects()) return false;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    if (window.matchMedia('(max-width: 768px)').matches) return false;
+    if (isLowTierDevice()) return false;
+    return true;
+  }
+
   function isNarrowViewport() {
     return window.innerWidth < 768;
   }
@@ -203,6 +234,7 @@
   function applyLayoutMode() {
     document.body.classList.toggle('is-mobile-lite', isMobileLite());
     document.body.classList.toggle('is-reduced-effects', isReducedEffects());
+    document.body.classList.toggle('is-low-tier', isLowTierDevice());
   }
 
   // ========== Gallery item factory ==========
@@ -459,11 +491,9 @@
     const hero = document.getElementById('hero');
     const canvas = document.getElementById('heroCityCanvas');
     if (!hero || !canvas) return;
-    if (window.matchMedia('(max-width: 768px)').matches) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (document.body.classList.contains('is-reduced-effects')) return;
+    if (!allowHeroCityCanvas()) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
     let w = 0;
@@ -481,10 +511,14 @@
     }
 
     function startLoop() {
-      if (rafId) return;
+      if (rafId || document.hidden) return;
       function loop(ts) {
+        if (document.hidden) {
+          stopLoop();
+          return;
+        }
         frame += 1;
-        if (frame % 2 !== 0) {
+        if (frame % 3 !== 0) {
           rafId = requestAnimationFrame(loop);
           return;
         }
@@ -497,18 +531,18 @@
     function genBuildings() {
       buildings = [];
       let x = -80;
-      const total = Math.max(w * 2.4, 1800);
+      const total = Math.max(w * 1.75, 1200);
       while (x < total) {
-        const bw = 20 + Math.random() * 44;
-        const bh = h * (0.2 + Math.random() * 0.52);
+        const bw = 22 + Math.random() * 48;
+        const bh = h * (0.22 + Math.random() * 0.5);
         buildings.push({ x, w: bw, h: bh, seed: Math.random() * 50 });
-        x += bw + 2 + Math.random() * 14;
+        x += bw + 4 + Math.random() * 18;
       }
     }
 
     function resize() {
       const r = hero.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
       w = Math.max(1, Math.floor(r.width));
       h = Math.max(1, Math.floor(r.height));
       canvas.width = Math.floor(w * dpr);
@@ -540,14 +574,15 @@
         ctx.lineWidth = 1;
         ctx.fillRect(b.x, y0, b.w, b.h);
         ctx.strokeRect(b.x, y0, b.w, b.h);
-        const cols = Math.max(2, Math.floor(b.w / 12));
-        const rows = Math.max(2, Math.floor(b.h / 22));
+        const cols = Math.max(2, Math.floor(b.w / 14));
+        const rows = Math.max(2, Math.floor(b.h / 26));
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
+            if (((r + c) & 1) === 0) continue;
             const wx = b.x + 4 + (c * (b.w - 8)) / Math.max(cols - 1, 1);
-            const wy = y0 + 10 + r * 20;
+            const wy = y0 + 10 + r * 22;
             const flick = 0.5 + 0.5 * Math.sin(t * 2 + b.seed + r * 0.65 + c * 0.38);
-            ctx.fillStyle = `rgba(191, 0, 255, ${0.22 + flick * 0.55})`;
+            ctx.fillStyle = `rgba(191, 0, 255, ${0.26 + flick * 0.5})`;
             ctx.fillRect(wx, wy, Math.max(4, b.w / (cols + 2)), 6);
           }
         }
@@ -581,7 +616,19 @@
 
     resize();
     window.addEventListener('resize', resize, { passive: true });
-    startLoop();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopLoop();
+      else {
+        requestAnimationFrame(() => {
+          const r = hero.getBoundingClientRect();
+          if (r.bottom > 0 && r.top < window.innerHeight) startLoop();
+        });
+      }
+    });
+    requestAnimationFrame(() => {
+      const r = hero.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < window.innerHeight) startLoop();
+    });
   }
 
   /** Каталог услуг: при наведении — ролик из catalog uslug/<slug> (тот же в панели по клику) */
@@ -672,9 +719,7 @@
 
   function initMatrixTrace() {
     const canvas = document.getElementById('matrixCanvas');
-    if (!canvas) return;
-    if (document.body.classList.contains('is-mobile-lite')) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!canvas || !allowMatrixEffect()) return;
 
     const ctx = canvas.getContext('2d');
     let w, h;
@@ -688,7 +733,7 @@
     }
 
     function maxParticles() {
-      return narrow() ? 48 : 140;
+      return narrow() ? 28 : 64;
     }
 
     function resize() {
@@ -714,6 +759,11 @@
     }
 
     function tick(ts) {
+      if (document.hidden) {
+        rafId = null;
+        lastTs = 0;
+        return;
+      }
       if (!lastTs) lastTs = ts;
       const dt = Math.min(0.05, (ts - lastTs) / 1000);
       lastTs = ts;
@@ -738,12 +788,8 @@
           continue;
         }
         const a = p.life;
-        ctx.save();
-        ctx.shadowColor = 'rgba(176, 38, 255, 0.95)';
-        ctx.shadowBlur = 12 * a;
-        ctx.fillStyle = `rgba(${MATRIX_PURPLE.r},${MATRIX_PURPLE.g},${MATRIX_PURPLE.b},${0.15 + a * 0.85})`;
+        ctx.fillStyle = `rgba(${MATRIX_PURPLE.r},${MATRIX_PURPLE.g},${MATRIX_PURPLE.b},${0.22 + a * 0.78})`;
         ctx.fillText(p.char, p.x, p.y);
-        ctx.restore();
       }
 
       if (particles.length) rafId = requestAnimationFrame(tick);
@@ -758,7 +804,7 @@
       if (Math.hypot(x - lx, y - ly) < minD) return;
       lx = x;
       ly = y;
-      spawnBurst(x, y, narrow() ? 2 : 3);
+      spawnBurst(x, y, narrow() ? 1 : 2);
       if (!rafId) {
         lastTs = 0;
         rafId = requestAnimationFrame(tick);
@@ -770,7 +816,7 @@
       const t = e.touches[0];
       lx = t.clientX;
       ly = t.clientY;
-      spawnBurst(t.clientX, t.clientY, narrow() ? 5 : 7);
+      spawnBurst(t.clientX, t.clientY, narrow() ? 3 : 4);
       if (!rafId) {
         lastTs = 0;
         rafId = requestAnimationFrame(tick);
@@ -803,14 +849,16 @@
   // ========== Particles (desktop) ==========
   function initParticles() {
     const pCanvas = document.getElementById('particleCanvas');
-    if (!pCanvas || document.body.classList.contains('is-mobile-lite')) return;
+    if (!pCanvas || !allowParticleField()) return;
 
     const pc = pCanvas.getContext('2d');
     let pw = window.innerWidth, ph = window.innerHeight;
     let mouseX = pw / 2, mouseY = ph / 2;
     let tabVisible = true;
+    let lastDrawTs = 0;
+    const FRAME_MIN_MS = 44;
 
-    const PARTICLE_COUNT = 48;
+    const PARTICLE_COUNT = 22;
     const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
       x: Math.random() * pw,
       y: Math.random() * ph,
@@ -826,30 +874,35 @@
       ph = pCanvas.height = window.innerHeight;
     }
 
-    function animateParticles() {
-      if (!tabVisible) {
-        requestAnimationFrame(animateParticles);
-        return;
-      }
-      pc.clearRect(0, 0, pw, ph);
+    function animateParticles(ts) {
+      requestAnimationFrame(animateParticles);
+      if (!tabVisible || document.hidden) return;
       const cx = mouseX - pw / 2;
       const cy = mouseY - ph / 2;
       particles.forEach((p) => {
         p.x = (p.x + p.vx + pw) % pw;
         p.y = (p.y + p.vy + ph) % ph;
+      });
+      const now = ts || performance.now();
+      if (now - lastDrawTs < FRAME_MIN_MS) return;
+      lastDrawTs = now;
+      pc.clearRect(0, 0, pw, ph);
+      particles.forEach((p) => {
         pc.beginPath();
         pc.arc(p.x + cx * p.depth, p.y + cy * p.depth, p.r, 0, Math.PI * 2);
         pc.fillStyle = `rgba(176,38,255,${p.a})`;
         pc.fill();
       });
-      requestAnimationFrame(animateParticles);
     }
 
     pResize();
     window.addEventListener('resize', pResize, { passive: true });
     window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
-    document.addEventListener('visibilitychange', () => { tabVisible = !document.hidden; });
-    animateParticles();
+    document.addEventListener('visibilitychange', () => {
+      tabVisible = !document.hidden;
+      if (tabVisible) lastDrawTs = 0;
+    });
+    requestAnimationFrame(animateParticles);
   }
 
   // ========== HUD ==========
@@ -890,10 +943,21 @@
     hudType(document.getElementById('hudTypeBL'), 'ANDX·v5.0·SECURE', 48, true);
     hudType(document.getElementById('hudTypeBR'), 'CORE:AI-READY', 62, true);
     if (!ticker || !coords) return;
-    let mx = 0, my = 0;
+    let mx = 0;
+    let my = 0;
+    let lastHudTs = 0;
+    const hudInterval = document.body.classList.contains('is-low-tier') ? 380 : 300;
     window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    setInterval(() => { ticker.textContent = String(Math.floor(Math.random() * 9999)).padStart(4, '0'); }, 200);
-    setInterval(() => { coords.textContent = `X:${String(mx).padStart(4, '0')} Y:${String(my).padStart(4, '0')}`; }, 90);
+    function hudFrame(ts) {
+      requestAnimationFrame(hudFrame);
+      if (document.hidden) return;
+      const t = ts || performance.now();
+      if (t - lastHudTs < hudInterval) return;
+      lastHudTs = t;
+      ticker.textContent = String(Math.floor(Math.random() * 9999)).padStart(4, '0');
+      coords.textContent = `X:${String(mx).padStart(4, '0')} Y:${String(my).padStart(4, '0')}`;
+    }
+    requestAnimationFrame(hudFrame);
   }
 
   // ========== Scroll observer ==========
@@ -1269,6 +1333,7 @@
 
   function initSkillTilt() {
     if (document.body.classList.contains('is-mobile-lite')) return;
+    if (document.body.classList.contains('is-low-tier')) return;
     document.querySelectorAll('.skill-card').forEach((card) => {
       const inner = card.querySelector('.skill-card-inner') || card;
       card.addEventListener('mousemove', (e) => {
@@ -1298,15 +1363,15 @@
     initSkillHoverVideos();
     initHeroCityCanvas();
 
-    if (!document.body.classList.contains('is-reduced-effects')) {
-      const runHeavyCanvas = () => {
-        initMatrixTrace();
-        initParticles();
-      };
+    const runHeavyCanvas = () => {
+      if (allowMatrixEffect()) initMatrixTrace();
+      if (allowParticleField()) initParticles();
+    };
+    if (allowMatrixEffect() || allowParticleField()) {
       if (typeof window.requestIdleCallback === 'function') {
-        window.requestIdleCallback(runHeavyCanvas, { timeout: 2000 });
+        window.requestIdleCallback(runHeavyCanvas, { timeout: 2500 });
       } else {
-        setTimeout(runHeavyCanvas, 120);
+        setTimeout(runHeavyCanvas, 80);
       }
     }
     initCTANeonTouch();
