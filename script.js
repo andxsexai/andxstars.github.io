@@ -111,6 +111,14 @@
     return window.innerWidth < 768;
   }
 
+  function isSlowConnection() {
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!c) return false;
+    if (c.saveData) return true;
+    const t = c.effectiveType;
+    return t === 'slow-2g' || t === '2g' || t === '3g';
+  }
+
   /** Статичный poster для видео на мобильных (без загрузки ролика до клика) */
   const VIDEO_POSTER_URL =
     'data:image/svg+xml,' +
@@ -137,12 +145,13 @@
 
     if (vid) {
       const narrow = isNarrowViewport();
-      const preload = narrow ? 'none' : 'metadata';
-      const posterAttr = narrow ? ` poster="${VIDEO_POSTER_URL}"` : '';
+      const slow = isSlowConnection();
+      const preload = narrow || slow ? 'none' : 'none';
+      const posterAttr = narrow || slow ? ` poster="${VIDEO_POSTER_URL}"` : '';
       const deferCls = narrow ? ' lazy-video--defer-mobile' : '';
       item.innerHTML = `
         <div class="gallery-video-wrap${narrow ? ' gallery-video-wrap--tap' : ''}">
-          <video muted loop playsinline preload="${preload}" class="lazy-video${deferCls}"${posterAttr}>
+          <video muted loop playsinline preload="${preload}" class="lazy-video lazy-video--gpu${deferCls}"${posterAttr}>
             <source data-src="${href}" type="video/mp4">
           </video>
           <div class="gallery-play-icon" aria-hidden="true">▶</div>
@@ -177,6 +186,10 @@
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
+        if (isSlowConnection()) {
+          obs.unobserve(entry.target);
+          return;
+        }
         const video = entry.target;
         const source = video.querySelector('source[data-src]');
         if (source && !source.getAttribute('src')) {
@@ -271,6 +284,7 @@
 
     initLazyVideoIn(gallery);
     initVideoHoverIn(gallery);
+    attachVideoPauseWhenHidden(gallery);
     gallery.querySelectorAll('.gallery-item').forEach((el, i) => {
       el.style.transitionDelay = `${(i % 10) * 0.03}s`;
     });
@@ -331,7 +345,8 @@
             v.muted = true;
             v.loop = true;
             v.playsInline = true;
-            v.preload = 'metadata';
+            v.preload = 'none';
+            v.className = 'lazy-video lazy-video--gpu';
             v.src = data.src;
             pop.appendChild(v);
             v.play().catch(() => {});
@@ -367,6 +382,193 @@
       pop.style.left = `${Math.max(8, x)}px`;
       pop.style.top = `${Math.max(8, y)}px`;
     }
+  }
+
+  // ========== Neon cityscape (canvas, лёгкий алгоритм; на mobile-lite — реже кадры) ==========
+  function initCityCanvas() {
+    const canvas = document.getElementById('cityCanvas');
+    if (!canvas) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const ctx = canvas.getContext('2d');
+    const lite = document.body.classList.contains('is-mobile-lite');
+    let w = 0;
+    let h = 0;
+    let buildings = [];
+    let t0 = 0;
+    let frame = 0;
+    const skip = lite ? 3 : 1;
+
+    function genBuildings() {
+      buildings = [];
+      let x = -100;
+      const total = Math.max(w * 2.8, 2400);
+      while (x < total) {
+        const bw = 24 + Math.random() * 52;
+        const bh = h * (0.22 + Math.random() * 0.58);
+        buildings.push({
+          x,
+          w: bw,
+          h: bh,
+          seed: Math.random() * 50
+        });
+        x += bw + 3 + Math.random() * 16;
+      }
+    }
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      genBuildings();
+    }
+
+    function draw(ts) {
+      if (!t0) t0 = ts;
+      const t = (ts - t0) / 1000;
+      const scroll = (t * (lite ? 22 : 42)) % 280;
+
+      const sky = ctx.createLinearGradient(0, 0, 0, h);
+      sky.addColorStop(0, '#241038');
+      sky.addColorStop(0.35, '#14081f');
+      sky.addColorStop(1, '#0a0a0a');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.translate(-scroll, 0);
+      buildings.forEach((b) => {
+        const y0 = h - b.h;
+        ctx.fillStyle = 'rgba(22, 14, 38, 0.95)';
+        ctx.strokeStyle = 'rgba(138, 43, 226, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(b.x, y0, b.w, b.h);
+        ctx.strokeRect(b.x, y0, b.w, b.h);
+
+        const cols = Math.max(2, Math.floor(b.w / 14));
+        const rows = Math.max(2, Math.floor(b.h / 24));
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const wx = b.x + 5 + (c * (b.w - 10)) / Math.max(cols - 1, 1);
+            const wy = y0 + 12 + r * 22;
+            const flick = 0.5 + 0.5 * Math.sin(t * 1.8 + b.seed + r * 0.7 + c * 0.4);
+            ctx.fillStyle = `rgba(191, 0, 255, ${0.12 + flick * 0.42})`;
+            ctx.fillRect(wx, wy, Math.max(5, b.w / (cols + 2)), 7);
+          }
+        }
+        const topGlow = ctx.createLinearGradient(b.x, y0, b.x + b.w, y0);
+        topGlow.addColorStop(0, 'transparent');
+        topGlow.addColorStop(0.5, 'rgba(138, 43, 226, 0.45)');
+        topGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = topGlow;
+        ctx.fillRect(b.x, y0, b.w, 2);
+      });
+      ctx.restore();
+
+      ctx.strokeStyle = 'rgba(138, 43, 226, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.78);
+      ctx.lineTo(w, h * 0.78);
+      ctx.stroke();
+    }
+
+    function loop(ts) {
+      frame += 1;
+      if (frame % skip !== 0) {
+        requestAnimationFrame(loop);
+        return;
+      }
+      draw(ts);
+      requestAnimationFrame(loop);
+    }
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    requestAnimationFrame(loop);
+  }
+
+  function initServiceCatalogPreviews() {
+    const slow = isSlowConnection();
+    document.querySelectorAll('.service-card-preview--has-video').forEach((wrap) => {
+      const card = wrap.closest('.service-card');
+      const video = wrap.querySelector('.service-card-video');
+      const thumb = wrap.querySelector('.service-card-thumb');
+      const source = video?.querySelector('source[data-src]');
+      if (!card || !video || !source) return;
+
+      if (isNarrowViewport() || slow) {
+        video.remove();
+        return;
+      }
+
+      card.addEventListener('mouseenter', () => {
+        if (!source.getAttribute('src')) {
+          source.setAttribute('src', source.dataset.src);
+          video.load();
+        }
+        video.classList.add('is-playing');
+        thumb.classList.add('is-hidden');
+        video.play().catch(() => {});
+      });
+      card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+        video.classList.remove('is-playing');
+        thumb.classList.remove('is-hidden');
+      });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) {
+            video.pause();
+            video.currentTime = 0;
+            video.classList.remove('is-playing');
+            thumb.classList.remove('is-hidden');
+          }
+        });
+      }, { threshold: 0.04 });
+      io.observe(card);
+    });
+  }
+
+  function initHeroBgVideo() {
+    const hero = document.getElementById('hero');
+    const video = document.querySelector('.hero-bg-video');
+    if (!hero || !video) return;
+    if (isNarrowViewport() || isSlowConnection() || document.body.classList.contains('is-mobile-lite')) {
+      video.remove();
+      return;
+    }
+    const source = video.querySelector('source[data-src]');
+    if (!source) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (!source.getAttribute('src')) {
+            source.setAttribute('src', source.dataset.src);
+            video.load();
+          }
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.15 });
+    obs.observe(hero);
+  }
+
+  /** Пауза видео вне экрана (экономия CPU/GPU) */
+  function attachVideoPauseWhenHidden(root) {
+    if (!root) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const v = entry.target;
+        if (v instanceof HTMLVideoElement && !entry.isIntersecting) v.pause();
+      });
+    }, { threshold: 0.08 });
+    root.querySelectorAll('video.lazy-video').forEach((v) => {
+      if (v.classList.contains('service-card-video') || v.classList.contains('hero-bg-video')) return;
+      obs.observe(v);
+    });
   }
 
   // ========== Matrix Neon Touch: расходящиеся символы #b026ff, затухание ~1.5 с ==========
@@ -489,8 +691,9 @@
     }, { passive: true });
   }
 
-  function initCTANeonTouch() {
-    document.querySelectorAll('.cta-btn, .service-open-btn').forEach((btn) => {
+  function initCTANeonTouch(root) {
+    const scope = root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll('.cta-btn, .service-open-btn').forEach((btn) => {
       let touchTimer;
       btn.addEventListener('mouseenter', () => btn.classList.add('cta-neon-touch-active'));
       btn.addEventListener('mouseleave', () => btn.classList.remove('cta-neon-touch-active'));
@@ -617,6 +820,41 @@
     document.querySelectorAll('.case-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.06}s`; });
   }
 
+  const SERVICE_PANEL_MEDIA = {
+    content: { kind: 'image', folder: 'photos', file: '2026-03-02 15.23.13.jpg' },
+    neuro: {
+      kind: 'video',
+      folder: 'video',
+      file: '2026-03-02 15.24.56.mp4',
+      poster: VIDEO_POSTER_URL,
+      fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
+    },
+    podcast: {
+      kind: 'video',
+      folder: 'video',
+      file: '2026-03-02 15.25.24.mp4',
+      poster: VIDEO_POSTER_URL,
+      fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
+    },
+    dev: { kind: 'image', folder: 'cards', file: '2026-03-02 15.50.57.jpg' }
+  };
+
+  function buildServicePanelMedia(serviceId) {
+    const m = SERVICE_PANEL_MEDIA[serviceId];
+    if (!m) return '';
+    if (m.kind === 'image') {
+      const u = encodePath(m.folder, m.file);
+      return `<div class="soc-media"><img src="${u}" alt="" class="soc-media-img" loading="lazy" decoding="async"/></div>`;
+    }
+    const u = encodePath(m.folder, m.file);
+    if (!isNarrowViewport() && !isSlowConnection()) {
+      return `<div class="soc-media"><video class="lazy-video lazy-video--gpu lazy-video--panel" muted playsinline loop preload="none" poster="${m.poster}">
+        <source data-src="${u}" type="video/mp4"></video></div>`;
+    }
+    const fb = encodePath(m.fallback.folder, m.fallback.file);
+    return `<div class="soc-media"><img src="${fb}" alt="" class="soc-media-img" loading="lazy" decoding="async"/></div>`;
+  }
+
   const SERVICE_DATA = {
     content: {
       icon: '▣',
@@ -624,7 +862,8 @@
       title: 'ФОТО И ВИДЕО КОНТЕНТ',
       sub: 'Съёмка и постпродакшн',
       highlight: 'Визуал, который продаёт ваш бренд в Reels, Shorts и рекламе.',
-      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях.',
+      purpose: 'Зачем: единый узнаваемый визуал снижает стоимость лида и ускоряет решение о покупке. Для экспертов, брендов и маркетплейсов, где кадр = первый аргумент.',
+      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях. Примеры — папка <strong>photos</strong> в портфолио.',
       list: [
         'Предметная и портретная съёмка',
         'Рекламные ролики и тизеры',
@@ -639,6 +878,7 @@
       title: 'НЕЙРОМУЛЬТИКИ (AI-ANIMATION)',
       sub: 'ИИ + продакшн',
       highlight: 'Виральные мультфильмы и анимация в сжатые сроки.',
+      purpose: 'Зачем: быстро получить движение и историю в кадре без полного аниме-студио — для рекламы, тизеров и виральных форматов. Ролики из папки <strong>video</strong>.',
       body: 'Комбинируем нейросети (Runway, Midjourney и др.) с классическим монтажом и саундом. Подходит для рекламы, обучающего контента и соцсетей.',
       list: [
         'AI-анимация и motion-графика',
@@ -654,6 +894,7 @@
       title: 'ВЫЕЗДНЫЕ ПОДКАСТЫ',
       sub: 'Звук · свет · картинка',
       highlight: 'Запись у вас в студии или на площадке — «под ключ».',
+      purpose: 'Зачем: выезд экономит ваше время и даёт студийное качество без аренды площадки. Визуальный контекст — папка <strong>author</strong>, динамика продакшна — примеры из <strong>video</strong>.',
       body: 'Приезжаем с оборудованием: микрофоны, рекордер, базовый свет, при необходимости — камеры. Настраиваем акустику, даём гостям комфорт, отдаём чистые дорожки и монтаж.',
       list: [
         'Мультитрек-запись голоса',
@@ -669,6 +910,7 @@
       title: 'IT-РАЗРАБОТКА',
       sub: 'Код · n8n · интеграции',
       highlight: 'Автоматизация бизнеса через код и n8n.',
+      purpose: 'Зачем: убрать ручные перекладывания данных между чатами, CRM и таблицами — меньше ошибок и быстрее отклик клиенту. Визуал цифровых продуктов — папка <strong>cards</strong>.',
       body: 'Лендинги, боты, внутренние инструменты, связка CRM–мессенджеры–таблицы. Проектируем так, чтобы система жила без лишней ручной работы.',
       list: [
         'Сайты и лендинги',
@@ -690,20 +932,28 @@
       el.addEventListener('click', () => {
         const card = el.classList.contains('service-card') ? el : el.closest('.service-card');
         if (!card) return;
-        const data = SERVICE_DATA[card.dataset.service];
+        const sid = card.dataset.service;
+        const data = SERVICE_DATA[sid];
         if (!data) return;
         const listHTML = data.list.map((item) => `<li>${item}</li>`).join('');
+        const mediaHTML = buildServicePanelMedia(sid);
         contentEl.innerHTML = `
+          ${mediaHTML}
           <span class="soc-tag">${data.tag}</span>
           <span class="soc-icon">${data.icon}</span>
           <h2 class="soc-title">${data.title}</h2>
           <p class="soc-sub">${data.sub}</p>
           <div class="soc-divider"></div>
+          <p class="soc-purpose">${data.purpose || ''}</p>
           <span class="soc-highlight">${data.highlight}</span>
           <p class="soc-body">${data.body}</p>
           <ul class="soc-list">${listHTML}</ul>
           <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
-             class="cta-btn cta-btn-lead" style="margin-top:1.5rem;display:inline-flex">
+             class="cta-btn cta-zapis cyber-pulse-glow" style="margin-top:1.25rem;display:inline-flex">
+            ЗАПИСАТЬСЯ
+          </a>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
+             class="cta-btn cta-btn-lead" style="margin-top:1rem;display:inline-flex">
             ПОЛУЧИТЬ AI-АУДИТ (БЕСПЛАТНО)
           </a>
           <p class="pay-options-caption" style="margin-top:1.25rem">Оплата</p>
@@ -715,12 +965,23 @@
                target="_blank" rel="noopener noreferrer"
                class="cta-btn cta-btn-pay cta-btn-pay-crypto">КРИПТОВАЛЮТА</a>
           </div>`;
+        const pv = contentEl.querySelector('video.lazy-video--panel');
+        if (pv) {
+          const src = pv.querySelector('source[data-src]');
+          if (src) {
+            src.setAttribute('src', src.dataset.src);
+            pv.load();
+          }
+          pv.play().catch(() => {});
+        }
+        initCTANeonTouch(contentEl);
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       });
     });
 
     function closePanel() {
+      contentEl.querySelectorAll('video').forEach((v) => v.pause());
       overlay.classList.remove('active');
       document.body.style.overflow = '';
     }
@@ -729,32 +990,119 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
   }
 
-  const SKILLS = {
-    sites:      { title: 'Сайты', text: 'Продающие интерфейсы и лендинги под ваш бренд.' },
-    music:      { title: 'Музыка', text: 'Авторский саунд (andxsound) под проекты и видео.' },
-    ai:         { title: 'Нейросети', text: 'Генерация контента и ускорение продакшна.' },
-    automation: { title: 'Автоматизация', text: 'n8n, боты, интеграции без лишней рутины.' },
-    qigong:     { title: 'Цигун', text: 'Фокус и энергия как основа продуктивности.' },
-    photo:      { title: 'Фотосессии', text: 'Образ для личного бренда и соцсетей.' }
+  const SKILL_DETAIL = {
+    sites: {
+      title: 'Сайты',
+      folderLabel: 'covers',
+      purpose: 'Сайт — основа диджитал-присутствия: на нём принимают решение о доверии, заявке и покупке.',
+      body: 'Структура под вашу воронку: оффер, блоки доверия, явные CTA, скорость загрузки и адаптив. Материалы из папки портфолио <strong>covers</strong>.',
+      list: [
+        'Лендинги под запуск и рекламу',
+        'Многостраничные сайты под услуги',
+        'Интеграции с формами, мессенджерами и оплатой'
+      ],
+      media: { type: 'image', folder: 'covers', file: '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg' }
+    },
+    music: {
+      title: 'Музыка (ANDXSOUND)',
+      folderLabel: 'posters',
+      purpose: 'Аудио задаёт эмоцию ролика, подкаста и бренда — от узнаваемости до удержания внимания.',
+      body: 'Авторский саунд и шлифовка под площадки. Примеры визуала к релизам — папка <strong>posters</strong>.',
+      list: ['Треки под видео и подкасты', 'Сведение и мастеринг', 'Синхронизация с монтажом'],
+      media: { type: 'image', folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
+    },
+    ai: {
+      title: 'Нейросети',
+      folderLabel: 'video',
+      purpose: 'Нейросети ускоряют идеацию, визуал и черновики — при грамотном пайплайне экономят недели production.',
+      body: 'Инструменты под задачу: кадры, озвучка, апскейл, ассистенты. Примеры роликов — папка <strong>video</strong>.',
+      list: ['Генерация визуала и motion', 'Ускорение препродакшна', 'Встраивание AI в процессы'],
+      media: {
+        type: 'video',
+        folder: 'video',
+        file: '2026-03-02 15.25.38.mp4',
+        fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
+      }
+    },
+    automation: {
+      title: 'Автоматизация',
+      folderLabel: 'cards',
+      purpose: 'Автоматизация убирает ручной ввод и задержки между CRM, чатами и таблицами.',
+      body: 'Сценарии n8n, webhooks, боты. Примеры визуала цифровых продуктов — папка <strong>cards</strong>.',
+      list: ['Цепочки уведомлений', 'Telegram / почта / таблицы', 'Мониторинг ошибок'],
+      media: { type: 'image', folder: 'cards', file: '2026-03-02 15.51.06.jpg' }
+    },
+    qigong: {
+      title: 'Цигун',
+      folderLabel: 'author',
+      purpose: 'Ресурс и ясность влияют на качество решений и устойчивость в долгих проектах.',
+      body: 'Короткие практики для концентрации. Кадры личного бренда — папка <strong>author</strong>.',
+      list: ['Настрой перед съёмкой или эфиром', 'Комплексы на рабочий день'],
+      media: { type: 'image', folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
+    },
+    photo: {
+      title: 'Фотосессии',
+      folderLabel: 'photos',
+      purpose: 'Сильные кадры усиливают экспертность и конверсию в соцсетях и на маркетплейсах.',
+      body: 'Портрет и предметка под единый код: свет, постановка, отбор. Папка <strong>photos</strong>.',
+      list: ['Личный бренд', 'Карточки товара и лукбуки'],
+      media: { type: 'image', folder: 'photos', file: '2026-03-02 15.23.18.jpg' }
+    }
   };
+
+  function renderSkillDetail(skillId) {
+    const d = SKILL_DETAIL[skillId];
+    const bodyEl = document.getElementById('arsenalPanelBody');
+    if (!d || !bodyEl) return;
+    const m = d.media;
+    const url = encodePath(m.folder, m.file);
+    let mediaBlock = '';
+    if (m.type === 'video' && !isNarrowViewport() && !isSlowConnection()) {
+      mediaBlock = `<div class="arsenal-media"><video class="lazy-video lazy-video--gpu lazy-video--arsenal" muted playsinline loop preload="none" poster="${VIDEO_POSTER_URL}">
+        <source data-src="${url}" type="video/mp4"></video></div>`;
+    } else if (m.type === 'video' && m.fallback) {
+      const fu = encodePath(m.fallback.folder, m.fallback.file);
+      mediaBlock = `<div class="arsenal-media arsenal-media--static"><img src="${fu}" alt="" class="arsenal-media-img" loading="lazy" decoding="async"/></div>`;
+    } else {
+      mediaBlock = `<div class="arsenal-media arsenal-media--static"><img src="${url}" alt="" class="arsenal-media-img" loading="lazy" decoding="async"/></div>`;
+    }
+    const listHTML = d.list.map((x) => `<li>${x}</li>`).join('');
+    bodyEl.innerHTML = `${mediaBlock}
+      <h3 class="arsenal-panel-title">${d.title}</h3>
+      <p class="arsenal-purpose">${d.purpose}</p>
+      <p class="arsenal-panel-text">${d.body}</p>
+      <ul class="arsenal-detail-list">${listHTML}</ul>
+      <p class="arsenal-folder-tag">Папка проекта: <strong>${d.folderLabel}</strong></p>
+      <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-zapis cyber-pulse-glow">ЗАПИСАТЬСЯ</a>`;
+    const vid = bodyEl.querySelector('video.lazy-video--arsenal');
+    if (vid) {
+      const s = vid.querySelector('source[data-src]');
+      if (s) {
+        s.setAttribute('src', s.dataset.src);
+        vid.load();
+      }
+      vid.play().catch(() => {});
+    }
+    initCTANeonTouch(bodyEl);
+  }
 
   function initArsenalPanels() {
     const overlay = document.getElementById('arsenalOverlay');
     const closeBtn = document.getElementById('arsenalClose');
-    const panelTitle = document.getElementById('arsenalPanelTitle');
-    const panelText = document.getElementById('arsenalPanelText');
     if (!overlay) return;
     document.querySelectorAll('.skill-card').forEach((card) => {
       card.addEventListener('click', () => {
-        const data = SKILLS[card.dataset.skill];
-        if (!data) return;
-        panelTitle.textContent = data.title;
-        panelText.textContent = data.text;
+        renderSkillDetail(card.dataset.skill);
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       });
     });
-    function close() { overlay.classList.remove('active'); document.body.style.overflow = ''; }
+    function close() {
+      const bodyEl = document.getElementById('arsenalPanelBody');
+      bodyEl?.querySelectorAll('video').forEach((v) => v.pause());
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
     closeBtn?.addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   }
@@ -794,6 +1142,10 @@
     initSkillTilt();
     initHUD();
     initScrollObserver();
+
+    initCityCanvas();
+    initServiceCatalogPreviews();
+    initHeroBgVideo();
 
     initMatrixTrace();
     initCTANeonTouch();

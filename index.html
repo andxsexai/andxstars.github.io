@@ -16,6 +16,7 @@
 <body>
 
   <nav class="mobile-quick-nav" aria-label="Быстрые контакты">
+    <span class="quick-nav-logo" aria-hidden="true">ANDX</span>
     <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="quick-nav-link" title="Telegram" aria-label="Написать в Telegram">TG</a>
     <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer" class="quick-nav-link" title="ВКонтакте" aria-label="ВКонтакте">VK</a>
   </nav>
@@ -46,6 +47,7 @@
 
   <div class="vignette" aria-hidden="true"></div>
 
+  <canvas id="cityCanvas" class="city-canvas" aria-hidden="true"></canvas>
   <canvas id="particleCanvas" aria-hidden="true"></canvas>
   <canvas id="matrixCanvas" aria-hidden="true"></canvas>
 
@@ -72,6 +74,11 @@
     <section class="hero" id="hero">
       <div class="hero-discount-badge" aria-label="Акция">−15% на первый заказ</div>
       <div class="hero-bg"></div>
+      <div class="hero-video-shell" aria-hidden="true">
+        <video class="hero-bg-video lazy-video lazy-video--gpu" muted playsinline loop preload="none" data-hero-video="1">
+          <source data-src="./video/2026-03-02%2015.25.38.mp4" type="video/mp4">
+        </video>
+      </div>
       <div class="hero-content">
         <div class="hero-eyebrow">AIMONAX · SFERA · ANDXSOUND</div>
         <h1 class="hero-title">ANDXSTARS:<br>АРХИТЕКТОР<br>ЦИФРОВОЙ<br>РЕАЛЬНОСТИ</h1>
@@ -130,42 +137,72 @@
 
     <section class="section big-three" id="catalog">
       <h2 class="section-title">Каталог услуг</h2>
+      <p class="catalog-lead cyber-stats-strip">Наведите на карточку — превью из портфолио (видео/кадры из папок проекта). На телефоне показывается статичный кадр.</p>
+      <div class="catalog-cta-row">
+        <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-zapis cyber-pulse-glow">ЗАПИСАТЬСЯ</a>
+      </div>
       <div class="big-three-grid big-three-grid--four">
 
-        <div class="service-card glass-panel" data-service="content">
-          <div class="service-tag">01</div>
-          <div class="service-icon">▣</div>
-          <h3 class="service-title">ФОТО И ВИДЕО</h3>
-          <p class="service-sub">Контент для бренда</p>
-          <p class="service-trigger">Съёмка, монтаж, упаковка визуала под соцсети и рекламу</p>
-          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+        <div class="service-card glass-panel service-card--cyber" data-service="content">
+          <div class="service-card-preview">
+            <img class="service-card-thumb" src="./photos/2026-03-02%2015.23.13.jpg" alt="" loading="lazy" decoding="async" width="640" height="360">
+          </div>
+          <div class="service-card-main">
+            <div class="service-tag">01</div>
+            <div class="service-icon">▣</div>
+            <h3 class="service-title">ФОТО И ВИДЕО</h3>
+            <p class="service-sub">Контент для бренда</p>
+            <p class="service-trigger">Съёмка, монтаж, упаковка визуала под соцсети и рекламу · папка <strong>photos</strong></p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+          </div>
         </div>
 
-        <div class="service-card glass-panel" data-service="neuro">
-          <div class="service-tag">02</div>
-          <div class="service-icon">◈</div>
-          <h3 class="service-title">НЕЙРОМУЛЬТИКИ</h3>
-          <p class="service-sub">AI-Animation</p>
-          <p class="service-trigger">Виральные ролики и анимация за счёт нейросетей и продакшн-пайплайна</p>
-          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+        <div class="service-card glass-panel service-card--cyber" data-service="neuro">
+          <div class="service-card-preview service-card-preview--has-video">
+            <img class="service-card-thumb" src="./posters/2026-03-02%2015.32.19.jpg" alt="" loading="lazy" decoding="async" width="640" height="360">
+            <video class="service-card-video lazy-video lazy-video--gpu" muted playsinline loop preload="none" aria-hidden="true">
+              <source data-src="./video/2026-03-02%2015.24.56.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="service-card-main">
+            <div class="service-tag">02</div>
+            <div class="service-icon">◈</div>
+            <h3 class="service-title">НЕЙРОМУЛЬТИКИ</h3>
+            <p class="service-sub">AI-Animation</p>
+            <p class="service-trigger">Виральные ролики и анимация · папка <strong>video</strong></p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+          </div>
         </div>
 
-        <div class="service-card glass-panel" data-service="podcast">
-          <div class="service-tag">03</div>
-          <div class="service-icon">◎</div>
-          <h3 class="service-title">ВЫЕЗДНЫЕ ПОДКАСТЫ</h3>
-          <p class="service-sub">Звук · свет · картинка</p>
-          <p class="service-trigger">Профессиональное оборудование, запись на вашей площадке</p>
-          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+        <div class="service-card glass-panel service-card--cyber" data-service="podcast">
+          <div class="service-card-preview service-card-preview--has-video">
+            <img class="service-card-thumb" src="./author/1767549655237-2026-01-04%2020.48.46.jpg" alt="" loading="lazy" decoding="async" width="640" height="360">
+            <video class="service-card-video lazy-video lazy-video--gpu" muted playsinline loop preload="none" aria-hidden="true">
+              <source data-src="./video/2026-03-02%2015.25.24.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="service-card-main">
+            <div class="service-tag">03</div>
+            <div class="service-icon">◎</div>
+            <h3 class="service-title">ВЫЕЗДНЫЕ ПОДКАСТЫ</h3>
+            <p class="service-sub">Звук · свет · картинка</p>
+            <p class="service-trigger">Запись на площадке · превью — кадр из <strong>author</strong>, видео из <strong>video</strong></p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+          </div>
         </div>
 
-        <div class="service-card glass-panel" data-service="dev">
-          <div class="service-tag">04</div>
-          <div class="service-icon">⚡</div>
-          <h3 class="service-title">IT-РАЗРАБОТКА</h3>
-          <p class="service-sub">Код · n8n · автоматизация</p>
-          <p class="service-trigger">Сайты, боты, интеграции и бизнес на автопилоте</p>
-          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+        <div class="service-card glass-panel service-card--cyber" data-service="dev">
+          <div class="service-card-preview">
+            <img class="service-card-thumb" src="./cards/2026-03-02%2015.50.57.jpg" alt="" loading="lazy" decoding="async" width="640" height="360">
+          </div>
+          <div class="service-card-main">
+            <div class="service-tag">04</div>
+            <div class="service-icon">⚡</div>
+            <h3 class="service-title">IT-РАЗРАБОТКА</h3>
+            <p class="service-sub">Код · n8n · автоматизация</p>
+            <p class="service-trigger">Цифровые продукты и интеграции · визуал из папки <strong>cards</strong></p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+          </div>
         </div>
 
       </div>
@@ -318,8 +355,7 @@
     <div class="arsenal-overlay" id="arsenalOverlay">
       <div class="arsenal-panel glass-panel" id="arsenalPanel">
         <button type="button" class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
-        <h3 class="arsenal-panel-title" id="arsenalPanelTitle"></h3>
-        <p class="arsenal-panel-text" id="arsenalPanelText"></p>
+        <div id="arsenalPanelBody" class="arsenal-panel-body"></div>
       </div>
     </div>
 
