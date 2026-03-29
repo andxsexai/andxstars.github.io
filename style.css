@@ -576,6 +576,71 @@ main { position: relative; z-index: 1; }
   margin-top: 0.75rem;
 }
 
+/* Оплата: подпись + две кнопки (карта СНГ / крипта) */
+.pay-options-caption {
+  font-family: var(--font-title);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(176, 38, 255, 0.55);
+  margin-top: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+.pay-options-caption--center {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.payment-split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: stretch;
+  width: 100%;
+  max-width: 520px;
+}
+
+.payment-split--center {
+  justify-content: center;
+  max-width: none;
+  margin: 0 auto;
+}
+
+.cta-btn-pay {
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: 280px;
+  height: 52px;
+  padding: 0 1.25rem;
+  font-size: clamp(0.62rem, 1.4vw, 0.78rem);
+  letter-spacing: 0.1em;
+  animation: none;
+}
+
+.cta-btn-pay:hover {
+  animation: none;
+}
+
+.cta-btn-pay-card {
+  background: linear-gradient(135deg, #7b00ff 0%, #b026ff 55%, #c94dff 100%);
+  box-shadow: 0 0 15px rgba(176, 38, 255, 0.45);
+}
+
+.cta-btn-pay-card:hover {
+  box-shadow: 0 0 22px rgba(176, 38, 255, 0.65), 0 0 40px rgba(176, 38, 255, 0.25);
+}
+
+.cta-btn-pay-crypto {
+  background: linear-gradient(135deg, #1e1630 0%, #3d2a5c 45%, #c97812 100%);
+  box-shadow: 0 0 15px rgba(232, 163, 23, 0.35);
+}
+
+.cta-btn-pay-crypto:hover {
+  box-shadow: 0 0 22px rgba(232, 163, 23, 0.5), 0 0 35px rgba(176, 38, 255, 0.2);
+}
+
 /* Secondary text link */
 .cta-btn-secondary {
   font-family: var(--font-title);

@@ -478,14 +478,18 @@
           <p class="soc-body">${data.body}</p>
           <ul class="soc-list">${listHTML}</ul>
           <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
-             class="cta-btn cta-btn-lead" style="margin-top:1.5rem;display:inline-block">
+             class="cta-btn cta-btn-lead" style="margin-top:1.5rem;display:inline-flex">
             ПОЛУЧИТЬ AI-АУДИТ (БЕСПЛАТНО)
           </a>
-          <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377"
-             target="_blank" rel="noopener noreferrer"
-             class="cta-btn-secondary" style="display:block;margin-top:0.75rem">
-            или оплатить консультацию →
-          </a>`;
+          <p class="pay-options-caption" style="margin-top:1.25rem">Оплата консультации</p>
+          <div class="payment-split">
+            <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377"
+               target="_blank" rel="noopener noreferrer"
+               class="cta-btn cta-btn-pay cta-btn-pay-card">КАРТА (СНГ)</a>
+            <a href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts"
+               target="_blank" rel="noopener noreferrer"
+               class="cta-btn cta-btn-pay cta-btn-pay-crypto">КРИПТОВАЛЮТА</a>
+          </div>`;
 
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
