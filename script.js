@@ -487,45 +487,70 @@
     requestAnimationFrame(loop);
   }
 
-  function initServiceCatalogPreviews() {
-    const slow = isSlowConnection();
-    document.querySelectorAll('.service-card-preview--has-video').forEach((wrap) => {
-      const card = wrap.closest('.service-card');
-      const video = wrap.querySelector('.service-card-video');
-      const thumb = wrap.querySelector('.service-card-thumb');
+  /** Каталог услуг: при наведении — ролик из папки video (тот же показывается в панели по клику) */
+  function initServiceCardHoverVideos() {
+    if (isNarrowViewport() || isSlowConnection()) return;
+    document.querySelectorAll('.service-card').forEach((card) => {
+      const video = card.querySelector('.service-card-hover-video');
       const source = video?.querySelector('source[data-src]');
-      if (!card || !video || !source) return;
-
-      if (isNarrowViewport() || slow) {
-        video.remove();
-        return;
-      }
+      if (!video || !source) return;
 
       card.addEventListener('mouseenter', () => {
         if (!source.getAttribute('src')) {
           source.setAttribute('src', source.dataset.src);
           video.load();
         }
-        video.classList.add('is-playing');
-        thumb.classList.add('is-hidden');
+        card.classList.add('service-card--hover-video');
         video.play().catch(() => {});
       });
       card.addEventListener('mouseleave', () => {
         video.pause();
         video.currentTime = 0;
-        video.classList.remove('is-playing');
-        thumb.classList.remove('is-hidden');
+        card.classList.remove('service-card--hover-video');
       });
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
           if (!e.isIntersecting) {
             video.pause();
             video.currentTime = 0;
-            video.classList.remove('is-playing');
-            thumb.classList.remove('is-hidden');
+            card.classList.remove('service-card--hover-video');
           }
         });
-      }, { threshold: 0.04 });
+      }, { threshold: 0.06 });
+      io.observe(card);
+    });
+  }
+
+  /** Дополнительно: при наведении на карточку — своё видео из папки video */
+  function initSkillHoverVideos() {
+    if (isNarrowViewport() || isSlowConnection()) return;
+    document.querySelectorAll('.skill-card').forEach((card) => {
+      const video = card.querySelector('.skill-card-hover-video');
+      const source = video?.querySelector('source[data-src]');
+      if (!video || !source) return;
+
+      card.addEventListener('mouseenter', () => {
+        if (!source.getAttribute('src')) {
+          source.setAttribute('src', source.dataset.src);
+          video.load();
+        }
+        card.classList.add('skill-card--hover-video');
+        video.play().catch(() => {});
+      });
+      card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+        card.classList.remove('skill-card--hover-video');
+      });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) {
+            video.pause();
+            video.currentTime = 0;
+            card.classList.remove('skill-card--hover-video');
+          }
+        });
+      }, { threshold: 0.08 });
       io.observe(card);
     });
   }
@@ -566,7 +591,7 @@
       });
     }, { threshold: 0.08 });
     root.querySelectorAll('video.lazy-video').forEach((v) => {
-      if (v.classList.contains('service-card-video') || v.classList.contains('hero-bg-video')) return;
+      if (v.classList.contains('hero-bg-video')) return;
       obs.observe(v);
     });
   }
@@ -820,39 +845,51 @@
     document.querySelectorAll('.case-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.06}s`; });
   }
 
+  /** Те же файлы, что на карточках каталога (папка video, по порядку) */
   const SERVICE_PANEL_MEDIA = {
-    content: { kind: 'image', folder: 'photos', file: '2026-03-02 15.23.13.jpg' },
-    neuro: {
+    content: {
       kind: 'video',
       folder: 'video',
       file: '2026-03-02 15.24.56.mp4',
+      poster: VIDEO_POSTER_URL,
+      fallback: { folder: 'photos', file: '2026-03-02 15.23.13.jpg' }
+    },
+    neuro: {
+      kind: 'video',
+      folder: 'video',
+      file: '2026-03-02 15.25.24.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
     },
     podcast: {
       kind: 'video',
       folder: 'video',
-      file: '2026-03-02 15.25.24.mp4',
+      file: '2026-03-02 15.25.38.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
     },
-    dev: { kind: 'image', folder: 'cards', file: '2026-03-02 15.50.57.jpg' }
+    dev: {
+      kind: 'video',
+      folder: 'video',
+      file: '2026-03-02 15.24.56.mp4',
+      poster: VIDEO_POSTER_URL,
+      fallback: { folder: 'cards', file: '2026-03-02 15.50.57.jpg' }
+    }
   };
 
   function buildServicePanelMedia(serviceId) {
     const m = SERVICE_PANEL_MEDIA[serviceId];
     if (!m) return '';
-    if (m.kind === 'image') {
-      const u = encodePath(m.folder, m.file);
-      return `<div class="soc-media"><img src="${u}" alt="" class="soc-media-img" loading="lazy" decoding="async"/></div>`;
-    }
     const u = encodePath(m.folder, m.file);
-    if (!isNarrowViewport() && !isSlowConnection()) {
+    if (m.kind === 'video' && !isNarrowViewport() && !isSlowConnection()) {
       return `<div class="soc-media"><video class="lazy-video lazy-video--gpu lazy-video--panel" muted playsinline loop preload="none" poster="${m.poster}">
         <source data-src="${u}" type="video/mp4"></video></div>`;
     }
-    const fb = encodePath(m.fallback.folder, m.fallback.file);
-    return `<div class="soc-media"><img src="${fb}" alt="" class="soc-media-img" loading="lazy" decoding="async"/></div>`;
+    if (m.fallback) {
+      const fb = encodePath(m.fallback.folder, m.fallback.file);
+      return `<div class="soc-media"><img src="${fb}" alt="" class="soc-media-img" loading="lazy" decoding="async"/></div>`;
+    }
+    return '';
   }
 
   const SERVICE_DATA = {
@@ -993,29 +1030,39 @@
   const SKILL_DETAIL = {
     sites: {
       title: 'Сайты',
-      folderLabel: 'covers',
+      folderLabel: 'video / covers',
       purpose: 'Сайт — основа диджитал-присутствия: на нём принимают решение о доверии, заявке и покупке.',
-      body: 'Структура под вашу воронку: оффер, блоки доверия, явные CTA, скорость загрузки и адаптив. Материалы из папки портфолио <strong>covers</strong>.',
+      body: 'Структура под вашу воронку: оффер, блоки доверия, явные CTA, скорость загрузки и адаптив. Превью — ролик из папки <strong>video</strong>; кейсы визуала — <strong>covers</strong> в портфолио.',
       list: [
         'Лендинги под запуск и рекламу',
         'Многостраничные сайты под услуги',
         'Интеграции с формами, мессенджерами и оплатой'
       ],
-      media: { type: 'image', folder: 'covers', file: '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg' }
+      media: {
+        type: 'video',
+        folder: 'video',
+        file: '2026-03-02 15.24.56.mp4',
+        fallback: { folder: 'covers', file: '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg' }
+      }
     },
     music: {
       title: 'Музыка (ANDXSOUND)',
-      folderLabel: 'posters',
+      folderLabel: 'video / posters',
       purpose: 'Аудио задаёт эмоцию ролика, подкаста и бренда — от узнаваемости до удержания внимания.',
-      body: 'Авторский саунд и шлифовка под площадки. Примеры визуала к релизам — папка <strong>posters</strong>.',
+      body: 'Авторский саунд и шлифовка под площадки. На карточке — ролик из <strong>video</strong>; обложки — папка <strong>posters</strong>.',
       list: ['Треки под видео и подкасты', 'Сведение и мастеринг', 'Синхронизация с монтажом'],
-      media: { type: 'image', folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
+      media: {
+        type: 'video',
+        folder: 'video',
+        file: '2026-03-02 15.25.24.mp4',
+        fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
+      }
     },
     ai: {
       title: 'Нейросети',
       folderLabel: 'video',
       purpose: 'Нейросети ускоряют идеацию, визуал и черновики — при грамотном пайплайне экономят недели production.',
-      body: 'Инструменты под задачу: кадры, озвучка, апскейл, ассистенты. Примеры роликов — папка <strong>video</strong>.',
+      body: 'Инструменты под задачу: кадры, озвучка, апскейл, ассистенты. Все примеры роликов — папка <strong>video</strong> в портфолио.',
       list: ['Генерация визуала и motion', 'Ускорение препродакшна', 'Встраивание AI в процессы'],
       media: {
         type: 'video',
@@ -1026,27 +1073,42 @@
     },
     automation: {
       title: 'Автоматизация',
-      folderLabel: 'cards',
+      folderLabel: 'video / cards',
       purpose: 'Автоматизация убирает ручной ввод и задержки между CRM, чатами и таблицами.',
-      body: 'Сценарии n8n, webhooks, боты. Примеры визуала цифровых продуктов — папка <strong>cards</strong>.',
+      body: 'Сценарии n8n, webhooks, боты. Превью — ролик из <strong>video</strong>; визуал продуктов — <strong>cards</strong>.',
       list: ['Цепочки уведомлений', 'Telegram / почта / таблицы', 'Мониторинг ошибок'],
-      media: { type: 'image', folder: 'cards', file: '2026-03-02 15.51.06.jpg' }
+      media: {
+        type: 'video',
+        folder: 'video',
+        file: '2026-03-02 15.24.56.mp4',
+        fallback: { folder: 'cards', file: '2026-03-02 15.51.06.jpg' }
+      }
     },
     qigong: {
       title: 'Цигун',
-      folderLabel: 'author',
+      folderLabel: 'video / author',
       purpose: 'Ресурс и ясность влияют на качество решений и устойчивость в долгих проектах.',
-      body: 'Короткие практики для концентрации. Кадры личного бренда — папка <strong>author</strong>.',
+      body: 'Короткие практики для концентрации. Превью — ролик из <strong>video</strong>; кадры бренда — <strong>author</strong>.',
       list: ['Настрой перед съёмкой или эфиром', 'Комплексы на рабочий день'],
-      media: { type: 'image', folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
+      media: {
+        type: 'video',
+        folder: 'video',
+        file: '2026-03-02 15.25.24.mp4',
+        fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
+      }
     },
     photo: {
       title: 'Фотосессии',
-      folderLabel: 'photos',
+      folderLabel: 'video / photos',
       purpose: 'Сильные кадры усиливают экспертность и конверсию в соцсетях и на маркетплейсах.',
-      body: 'Портрет и предметка под единый код: свет, постановка, отбор. Папка <strong>photos</strong>.',
+      body: 'Портрет и предметка под единый код. Превью — ролик из <strong>video</strong>; съёмки — папка <strong>photos</strong>.',
       list: ['Личный бренд', 'Карточки товара и лукбуки'],
-      media: { type: 'image', folder: 'photos', file: '2026-03-02 15.23.18.jpg' }
+      media: {
+        type: 'video',
+        folder: 'video',
+        file: '2026-03-02 15.25.38.mp4',
+        fallback: { folder: 'photos', file: '2026-03-02 15.23.18.jpg' }
+      }
     }
   };
 
@@ -1110,13 +1172,14 @@
   function initSkillTilt() {
     if (document.body.classList.contains('is-mobile-lite')) return;
     document.querySelectorAll('.skill-card').forEach((card) => {
+      const inner = card.querySelector('.skill-card-inner') || card;
       card.addEventListener('mousemove', (e) => {
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(4px)`;
+        inner.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(4px)`;
       });
-      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      card.addEventListener('mouseleave', () => { inner.style.transform = ''; });
     });
   }
 
@@ -1144,7 +1207,8 @@
     initScrollObserver();
 
     initCityCanvas();
-    initServiceCatalogPreviews();
+    initServiceCardHoverVideos();
+    initSkillHoverVideos();
     initHeroBgVideo();
 
     initMatrixTrace();
