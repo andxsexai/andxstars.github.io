@@ -1,13 +1,11 @@
 /**
- * ANDXSTARS · Architect of Digital Reality · v4.0
- * Smart Media Loader · Lazy Video · Parallax · Lightning · HUD Typewriter
+ * ANDXSTARS · Business & Cyber-Tech v5.0
+ * Matrix trace · Portfolio hub + modal · Mobile lite · Compliance-ready
  */
 
 (function () {
   'use strict';
 
-  // ========== Portfolio Data ==========
-  // Категории: neuro | design | cases
   const PORTFOLIO_DATA = [
     {
       folder: 'author', category: 'cases', label: 'Автор Я Сам',
@@ -71,116 +69,105 @@
     }
   ];
 
+  const CATEGORY_TITLES = {
+    neuro: 'Нейромультики',
+    design: 'Дизайн',
+    cases: 'Кейсы',
+    all: 'Все проекты'
+  };
+
   function encodePath(folder, file) {
     const encFolder = /^[a-zA-Z0-9_-]+$/.test(folder) ? folder : encodeURIComponent(folder);
     return './' + encFolder + '/' + encodeURIComponent(file);
   }
 
-  // Handles mp4, webm, ogg, mov
   function isVideo(file) {
     return /\.(mp4|webm|ogg|mov)$/i.test(file);
   }
 
-  // ========== Smart Media Loader ==========
-  function buildPortfolioGallery() {
-    const gallery = document.getElementById('gallery');
-    if (!gallery) return;
-    gallery.innerHTML = '';
-
-    PORTFOLIO_DATA.forEach((group) => {
-      group.files.forEach((file) => {
-        const href = encodePath(group.folder, file);
-        const vid = isVideo(file);
-        const item = document.createElement('div');
-        item.className = 'gallery-item skeleton';
-        item.dataset.category = group.category;
-
-        if (vid) {
-          // preload="metadata" → browser fetches first frame without downloading full file
-          item.innerHTML = `
-            <div class="gallery-video-wrap">
-              <video muted loop playsinline preload="metadata" class="lazy-video">
-                <source data-src="${href}" type="video/mp4">
-              </video>
-              <div class="gallery-play-icon" aria-hidden="true">▶</div>
-              <span class="gallery-overlay">${group.label}</span>
-            </div>`;
-          item.classList.remove('skeleton');
-        } else {
-          item.innerHTML = `
-            <a href="${href}" target="_blank" rel="noopener noreferrer" class="gallery-link">
-              <img src="${href}" alt="${group.label}" loading="lazy">
-              <span class="gallery-overlay">${group.label}</span>
-            </a>`;
-          const img = item.querySelector('img');
-          if (img) {
-            img.addEventListener('load',  () => item.classList.remove('skeleton'));
-            img.addEventListener('error', () => { item.style.display = 'none'; });
-          }
-        }
-
-        gallery.appendChild(item);
-      });
-    });
-
-    initLazyVideo();
-    initVideoHover();
-    initPortfolioFilter();
-    initScrollObserver();
+  function isMobileLite() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+    if (window.matchMedia('(max-width: 768px)').matches) return true;
+    return 'ontouchstart' in window && navigator.maxTouchPoints > 0 && window.innerWidth < 900;
   }
 
-  // ========== Lazy Video: swap data-src → src when near viewport ==========
-  function initLazyVideo() {
-    const lazyVideos = document.querySelectorAll('.lazy-video');
-    if (!lazyVideos.length) return;
+  function applyLayoutMode() {
+    if (isMobileLite()) document.body.classList.add('is-mobile-lite');
+    else document.body.classList.remove('is-mobile-lite');
+  }
 
+  // ========== Gallery item factory ==========
+  function createGalleryItem(group, file) {
+    const href = encodePath(group.folder, file);
+    const vid = isVideo(file);
+    const item = document.createElement('div');
+    item.className = 'gallery-item skeleton visible';
+    item.dataset.category = group.category;
+
+    if (vid) {
+      item.innerHTML = `
+        <div class="gallery-video-wrap">
+          <video muted loop playsinline preload="metadata" class="lazy-video">
+            <source data-src="${href}" type="video/mp4">
+          </video>
+          <div class="gallery-play-icon" aria-hidden="true">▶</div>
+          <span class="gallery-overlay">${group.label}</span>
+        </div>`;
+      item.classList.remove('skeleton');
+    } else {
+      item.innerHTML = `
+        <a href="${href}" target="_blank" rel="noopener noreferrer" class="gallery-link">
+          <img src="${href}" alt="${group.label}" loading="lazy">
+          <span class="gallery-overlay">${group.label}</span>
+        </a>`;
+      const img = item.querySelector('img');
+      if (img) {
+        img.addEventListener('load', () => item.classList.remove('skeleton'));
+        img.addEventListener('error', () => { item.style.display = 'none'; });
+      }
+    }
+    return item;
+  }
+
+  function initLazyVideoIn(root) {
+    const lazyVideos = root.querySelectorAll('.lazy-video');
+    if (!lazyVideos.length) return;
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         const video = entry.target;
         const source = video.querySelector('source[data-src]');
-        if (source) {
-          // Only assign if not already set (avoids reload)
-          if (!source.getAttribute('src')) {
-            source.setAttribute('src', source.dataset.src);
-            video.load(); // kick the browser to read metadata & first frame
-          }
+        if (source && !source.getAttribute('src')) {
+          source.setAttribute('src', source.dataset.src);
+          video.load();
         }
         obs.unobserve(video);
       });
-    }, { rootMargin: '300px' }); // start loading 300px before entering view
-
+    }, { rootMargin: '200px' });
     lazyVideos.forEach((v) => obs.observe(v));
   }
 
-  // ========== Video: fade-in play on hover ==========
-  function initVideoHover() {
-    document.querySelectorAll('.gallery-item .gallery-video-wrap').forEach((wrap) => {
+  function initVideoHoverIn(root) {
+    root.querySelectorAll('.gallery-video-wrap').forEach((wrap) => {
       const video = wrap.querySelector('video');
       const playIcon = wrap.querySelector('.gallery-play-icon');
       if (!video) return;
-
       wrap.addEventListener('mouseenter', () => {
-        // Ensure src is set before playing (fallback if lazy observer missed it)
         const source = video.querySelector('source');
         if (source && !source.getAttribute('src') && source.dataset.src) {
           source.setAttribute('src', source.dataset.src);
           video.load();
         }
-        // Small delay to let load() start before play()
         setTimeout(() => video.play().catch(() => {}), 50);
         video.classList.add('playing');
         if (playIcon) playIcon.classList.add('hidden');
       });
-
       wrap.addEventListener('mouseleave', () => {
         video.pause();
         video.currentTime = 0;
         video.classList.remove('playing');
         if (playIcon) playIcon.classList.remove('hidden');
       });
-
-      // Click: open in new tab
       wrap.addEventListener('click', () => {
         const source = video.querySelector('source');
         const src = source?.getAttribute('src') || source?.dataset.src;
@@ -189,129 +176,241 @@
     });
   }
 
-  // ========== Portfolio Filter ==========
-  function initPortfolioFilter() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const galleryItems = document.querySelectorAll('.gallery-item');
+  // ========== Preview URL for hub hover ==========
+  function getPreviewForCategory(cat) {
+    if (cat === 'all') {
+      const g = PORTFOLIO_DATA.find((x) => x.category === 'neuro');
+      const vf = g?.files.find((f) => isVideo(f));
+      if (g && vf) return { type: 'video', src: encodePath(g.folder, vf) };
+    }
+    for (const g of PORTFOLIO_DATA) {
+      if (g.category !== cat) continue;
+      if (cat === 'neuro') {
+        const vf = g.files.find((f) => isVideo(f));
+        if (vf) return { type: 'video', src: encodePath(g.folder, vf) };
+      }
+      const imgf = g.files.find((f) => !isVideo(f));
+      if (imgf) return { type: 'image', src: encodePath(g.folder, imgf) };
+      const f0 = g.files[0];
+      return { type: isVideo(f0) ? 'video' : 'image', src: encodePath(g.folder, f0) };
+    }
+    return null;
+  }
 
-    galleryItems.forEach((item) => {
-      item.classList.remove('hidden');
-      item.classList.add('visible');
+  // ========== Portfolio modal ==========
+  function fillPortfolioModal(category) {
+    const gallery = document.getElementById('portfolioModalGallery');
+    const title = document.getElementById('portfolioModalTitle');
+    if (!gallery || !title) return;
+    gallery.innerHTML = '';
+    title.textContent = CATEGORY_TITLES[category] || 'Портфолио';
+
+    PORTFOLIO_DATA.forEach((group) => {
+      if (category !== 'all' && group.category !== category) return;
+      group.files.forEach((file) => gallery.appendChild(createGalleryItem(group, file)));
     });
 
-    filterBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        galleryItems.forEach((item, i) => {
-          const show = filter === 'all' || item.dataset.category === filter;
-          item.classList.toggle('hidden', !show);
-          item.style.transitionDelay = show ? `${(i % 10) * 0.04}s` : '0s';
-          if (show) item.classList.add('visible');
-        });
-      });
+    initLazyVideoIn(gallery);
+    initVideoHoverIn(gallery);
+    gallery.querySelectorAll('.gallery-item').forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 10) * 0.03}s`;
     });
   }
 
-  // ========== Lightning Cursor (rAF-demand, pauses when idle) ==========
-  const lightCanvas = document.getElementById('lightningCanvas');
-  if (lightCanvas) {
-    const ctx = lightCanvas.getContext('2d');
-    let lw = window.innerWidth, lh = window.innerHeight;
-    const trail = [];
-    const FADE = 0.09, JITTER = 5, LEN = 16, SEG = 5;
-    let lx = -1, ly = -1;
-    let loopRunning = false;
+  function initPortfolioModal() {
+    const modal = document.getElementById('portfolioModal');
+    const closeBtn = document.getElementById('portfolioModalClose');
+    const hub = document.getElementById('portfolioHub');
+    const pop = document.getElementById('categoryPreviewPop');
+    if (!modal || !hub) return;
 
-    function lResize() {
-      lw = window.innerWidth; lh = window.innerHeight;
-      lightCanvas.width = lw; lightCanvas.height = lh;
+    let previewVideo = null;
+
+    function openModal(cat) {
+      fillPortfolioModal(cat);
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
     }
 
-    function jitter() { return (Math.random() - 0.5) * JITTER; }
-
-    function drawSeg(x1, y1, x2, y2, a) {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = `rgba(210,110,255,${a})`;
-      ctx.shadowColor = '#b026ff';
-      ctx.shadowBlur = 10;
-      ctx.stroke();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = `rgba(176,38,255,${a * 0.5})`;
-      ctx.shadowBlur = 0;
-      ctx.stroke();
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      const g = document.getElementById('portfolioModalGallery');
+      if (g) {
+        g.querySelectorAll('video').forEach((v) => { v.pause(); });
+        g.innerHTML = '';
+      }
     }
 
-    function lightLoop() {
-      ctx.clearRect(0, 0, lw, lh);
-      let alive = false;
-      for (let i = trail.length - 1; i >= 0; i--) {
-        const p = trail[i];
-        p.a -= FADE;
-        if (p.a <= 0) { trail.splice(i, 1); continue; }
-        alive = true;
-        if (i > 0) {
-          const prev = trail[i - 1];
-          drawSeg(prev.x + prev.jx, prev.y + prev.jy, p.x + jitter(), p.y + jitter(), p.a);
+    hub.querySelectorAll('.portfolio-hub-card').forEach((btn) => {
+      btn.addEventListener('click', () => openModal(btn.dataset.category || 'all'));
+    });
+
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+
+    const showPreview = !document.body.classList.contains('is-mobile-lite');
+
+    if (showPreview && pop) {
+      hub.querySelectorAll('.portfolio-hub-card').forEach((btn) => {
+        const cat = btn.dataset.category;
+        if (btn.dataset.previewKind === 'none') return;
+
+        btn.addEventListener('mouseenter', (e) => {
+          const data = getPreviewForCategory(cat);
+          if (!data) return;
+          pop.innerHTML = '';
+          pop.classList.add('is-visible');
+          pop.setAttribute('aria-hidden', 'false');
+          if (data.type === 'video') {
+            const v = document.createElement('video');
+            v.muted = true;
+            v.loop = true;
+            v.playsInline = true;
+            v.preload = 'metadata';
+            v.src = data.src;
+            pop.appendChild(v);
+            v.play().catch(() => {});
+            previewVideo = v;
+          } else {
+            const im = document.createElement('img');
+            im.src = data.src;
+            im.alt = '';
+            pop.appendChild(im);
+          }
+          positionPreview(e);
+        });
+
+        btn.addEventListener('mousemove', positionPreview);
+
+        btn.addEventListener('mouseleave', () => {
+          pop.classList.remove('is-visible');
+          pop.setAttribute('aria-hidden', 'true');
+          pop.innerHTML = '';
+          if (previewVideo) { previewVideo.pause(); previewVideo = null; }
+        });
+      });
+    }
+
+    function positionPreview(e) {
+      if (!pop || !pop.classList.contains('is-visible')) return;
+      const pad = 16;
+      let x = e.clientX + pad;
+      let y = e.clientY + pad;
+      const rect = pop.getBoundingClientRect();
+      if (x + 220 > window.innerWidth) x = e.clientX - rect.width - pad;
+      if (y + 140 > window.innerHeight) y = e.clientY - rect.height - pad;
+      pop.style.left = `${Math.max(8, x)}px`;
+      pop.style.top = `${Math.max(8, y)}px`;
+    }
+  }
+
+  // ========== Matrix trace (desktop only) ==========
+  function initMatrixTrace() {
+    const canvas = document.getElementById('matrixCanvas');
+    if (!canvas || document.body.classList.contains('is-mobile-lite')) return;
+
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    const glyphs = 'ｱｲｳｴｵ01アイウラΣπ∞ﾊﾝ0xﾃｽﾄ010101';
+    const particles = [];
+    const MAX = 160;
+    let lx = -99, ly = -99, rafId = null;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+
+    function spawn(cx, cy) {
+      for (let n = 0; n < 2; n++) {
+        particles.push({
+          x: cx + (Math.random() - 0.5) * 20,
+          y: cy + (Math.random() - 0.5) * 12,
+          char: glyphs[Math.floor(Math.random() * glyphs.length)],
+          vy: 1.2 + Math.random() * 2.2,
+          life: 0.85 + Math.random() * 0.15,
+          green: Math.random() > 0.42
+        });
+      }
+      while (particles.length > MAX) particles.shift();
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.font = '11px ui-monospace, monospace';
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.y += p.vy;
+        p.life -= 0.012;
+        if (p.life <= 0 || p.y > h + 20) {
+          particles.splice(i, 1);
+          continue;
         }
+        const a = p.life;
+        ctx.fillStyle = p.green
+          ? `rgba(0, 255, 140, ${a * 0.9})`
+          : `rgba(200, 100, 255, ${a * 0.85})`;
+        ctx.fillText(p.char, p.x, p.y);
       }
-      if (alive) requestAnimationFrame(lightLoop);
-      else loopRunning = false;
+      if (particles.length) rafId = requestAnimationFrame(tick);
+      else rafId = null;
     }
 
-    function addPoint(x, y) {
-      if (lx >= 0 && Math.hypot(x - lx, y - ly) < SEG && trail.length) return;
+    function onMove(x, y) {
+      if (Math.hypot(x - lx, y - ly) < 4) return;
       lx = x; ly = y;
-      trail.push({ x, y, jx: jitter(), jy: jitter(), a: 1 });
-      if (trail.length > LEN) trail.shift();
-      if (!loopRunning) {
-        loopRunning = true;
-        requestAnimationFrame(lightLoop);
-      }
+      spawn(x, y);
+      if (!rafId) rafId = requestAnimationFrame(tick);
     }
 
-    lResize();
-    window.addEventListener('resize', lResize, { passive: true });
-    window.addEventListener('mousemove', (e) => addPoint(e.clientX, e.clientY), { passive: true });
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY), { passive: true });
     window.addEventListener('touchmove', (e) => {
-      if (e.touches.length) addPoint(e.touches[0].clientX, e.touches[0].clientY);
+      if (e.touches.length) onMove(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
   }
 
-  // ========== Parallax Particle Canvas (pauses on hidden tab) ==========
-  const pCanvas = document.getElementById('particleCanvas');
-  if (pCanvas) {
+  // ========== Particles (desktop) ==========
+  function initParticles() {
+    const pCanvas = document.getElementById('particleCanvas');
+    if (!pCanvas || document.body.classList.contains('is-mobile-lite')) return;
+
     const pc = pCanvas.getContext('2d');
     let pw = window.innerWidth, ph = window.innerHeight;
     let mouseX = pw / 2, mouseY = ph / 2;
     let tabVisible = true;
 
-    const PARTICLE_COUNT = 50;
+    const PARTICLE_COUNT = 48;
     const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
       x: Math.random() * pw,
       y: Math.random() * ph,
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-      r: Math.random() * 1.8 + 0.4,
-      a: Math.random() * 0.45 + 0.08,
-      depth: Math.random() * 0.04 + 0.004
+      vx: (Math.random() - 0.5) * 0.22,
+      vy: (Math.random() - 0.5) * 0.22,
+      r: Math.random() * 1.6 + 0.35,
+      a: Math.random() * 0.42 + 0.07,
+      depth: Math.random() * 0.038 + 0.004
     }));
 
     function pResize() {
-      pw = window.innerWidth; ph = window.innerHeight;
-      pCanvas.width = pw; pCanvas.height = ph;
+      pw = pCanvas.width = window.innerWidth;
+      ph = pCanvas.height = window.innerHeight;
     }
 
     function animateParticles() {
-      if (!tabVisible) { requestAnimationFrame(animateParticles); return; }
+      if (!tabVisible) {
+        requestAnimationFrame(animateParticles);
+        return;
+      }
       pc.clearRect(0, 0, pw, ph);
       const cx = mouseX - pw / 2;
       const cy = mouseY - ph / 2;
-
       particles.forEach((p) => {
         p.x = (p.x + p.vx + pw) % pw;
         p.y = (p.y + p.vy + ph) % ph;
@@ -330,20 +429,18 @@
     animateParticles();
   }
 
-  // ========== HUD Typewriter ==========
+  // ========== HUD ==========
   function hudType(el, text, speed, loop) {
     if (!el) return;
     let i = 0;
     let forward = true;
-
     function tick() {
       if (forward) {
         el.textContent = text.slice(0, i);
         i++;
         if (i > text.length) {
           if (!loop) return;
-          // Pause then erase
-          setTimeout(() => { forward = false; tick(); }, 1800);
+          setTimeout(() => { forward = false; tick(); }, 1600);
           return;
         }
       } else {
@@ -352,121 +449,123 @@
         if (i < 0) {
           i = 0;
           forward = true;
-          setTimeout(tick, 600);
+          setTimeout(tick, 500);
           return;
         }
       }
-      setTimeout(tick, forward ? speed : speed * 0.5);
+      setTimeout(tick, forward ? speed : speed * 0.45);
     }
-    // Stagger start
-    setTimeout(tick, Math.random() * 800);
+    setTimeout(tick, Math.random() * 600);
   }
 
   function initHUD() {
     const ticker = document.getElementById('hudTicker');
     const coords = document.getElementById('hudCoords');
-
     hudType(document.getElementById('hudTypeTL'), 'LOCATION:MOSCOW/2095', 55, true);
-    hudType(document.getElementById('hudTypeTR'), 'STATUS:OPTIMIZING...', 60, true);
-    hudType(document.getElementById('hudTypeBL'), 'ANDX·v4.0·AI-READY', 50, true);
-    hudType(document.getElementById('hudTypeBR'), 'CORE:NEURAL-SYNC', 65, true);
-
+    hudType(document.getElementById('hudTypeTR'), 'STATUS:OPTIMIZING...', 58, true);
+    hudType(document.getElementById('hudTypeBL'), 'ANDX·v5.0·SECURE', 48, true);
+    hudType(document.getElementById('hudTypeBR'), 'CORE:AI-READY', 62, true);
     if (!ticker || !coords) return;
     let mx = 0, my = 0;
     window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    setInterval(() => { ticker.textContent = String(Math.floor(Math.random() * 9999)).padStart(4, '0'); }, 180);
-    setInterval(() => { coords.textContent = `X:${String(mx).padStart(4,'0')} Y:${String(my).padStart(4,'0')}`; }, 80);
+    setInterval(() => { ticker.textContent = String(Math.floor(Math.random() * 9999)).padStart(4, '0'); }, 200);
+    setInterval(() => { coords.textContent = `X:${String(mx).padStart(4, '0')} Y:${String(my).padStart(4, '0')}`; }, 90);
   }
 
-  // ========== Scroll Observer ==========
+  // ========== Scroll observer ==========
   function initScrollObserver() {
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { rootMargin: '0px 0px -50px 0px', threshold: 0.07 });
+    }, { rootMargin: '0px 0px -45px 0px', threshold: 0.06 });
 
     document.querySelectorAll(
       '.section-title, .glass-panel, .hero-product, .skill-card, ' +
-      '.gallery-item, .review-card, .cta-content, .service-card'
+      '.review-card, .cta-content, .service-card, .portfolio-hub-card, ' +
+      '.case-card, .discount-banner, .pricing-pill'
     ).forEach((el) => obs.observe(el));
 
-    document.querySelectorAll('.gallery-item').forEach((item, i) => {
-      item.style.transitionDelay = `${(i % 12) * 0.035}s`;
-    });
-    document.querySelectorAll('.skill-card').forEach((card, i) => {
-      card.style.transitionDelay = `${i * 0.06}s`;
-    });
-    document.querySelectorAll('.review-card').forEach((card, i) => {
-      card.style.transitionDelay = `${i * 0.1}s`;
-    });
-    document.querySelectorAll('.service-card').forEach((card, i) => {
-      card.style.transitionDelay = `${i * 0.12}s`;
-    });
+    document.querySelectorAll('.skill-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.06}s`; });
+    document.querySelectorAll('.review-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.08}s`; });
+    document.querySelectorAll('.service-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.08}s`; });
+    document.querySelectorAll('.portfolio-hub-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.07}s`; });
+    document.querySelectorAll('.case-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.06}s`; });
   }
 
-  // ========== Service Slide-out Panel ==========
   const SERVICE_DATA = {
+    content: {
+      icon: '▣',
+      tag: '01 · ФОТО И ВИДЕО',
+      title: 'ФОТО И ВИДЕО КОНТЕНТ',
+      sub: 'Съёмка и постпродакшн',
+      highlight: 'Визуал, который продаёт ваш бренд в Reels, Shorts и рекламе.',
+      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях.',
+      list: [
+        'Предметная и портретная съёмка',
+        'Рекламные ролики и тизеры',
+        'Монтаж под форматы платформ',
+        'Обложки, баннеры, карточки товара',
+        'Согласование ТЗ и сметы до старта'
+      ]
+    },
     neuro: {
       icon: '◈',
-      tag: '01 · NEURO-ANIMATION',
-      title: 'NEURO-ANIMATION',
-      sub: 'Нейромультики для бизнеса',
-      highlight: 'Создание виральных мультфильмов и контента за 24 часа.',
-      body: 'Мы создаём вирусные анимации и мультфильмы с помощью ИИ — за долю стоимости классической студии. Runway Gen-2, Midjourney, ElevenLabs работают в одном пайплайне, давая голливудский результат за часы, а не месяцы.',
+      tag: '02 · НЕЙРОМУЛЬТИКИ',
+      title: 'НЕЙРОМУЛЬТИКИ (AI-ANIMATION)',
+      sub: 'ИИ + продакшн',
+      highlight: 'Виральные мультфильмы и анимация в сжатые сроки.',
+      body: 'Комбинируем нейросети (Runway, Midjourney и др.) с классическим монтажом и саундом. Подходит для рекламы, обучающего контента и соцсетей.',
       list: [
-        'Анимационные ролики для соцсетей и рекламы',
-        'Персонажи и маскоты бренда на базе AI',
-        'Объяснительные видео с нейро-голосом',
-        'Виральный контент: шорты, рилсы, истории',
-        'Полный пайплайн: сценарий → монтаж → саунд'
+        'AI-анимация и motion-графика',
+        'Озвучка и саунд-дизайн',
+        'Адаптация под вертикальные форматы',
+        'Серии роликов под контент-план',
+        'Прозрачный пайплайн и правки'
       ]
     },
-    avatar: {
-      icon: '◉',
-      tag: '02 · DIGITAL AVATAR',
-      title: 'DIGITAL AVATAR & CONTENT',
-      sub: 'AI-Контент и цифровой аватар',
-      highlight: 'Ваше присутствие в сети без вашего участия (AI-копии).',
-      body: 'Создаём ваш цифровой образ — от фотосессий до AI-клонирования голоса и внешности. Персональный бренд упакован в единый визуальный язык для всех платформ, работающий 24/7.',
+    podcast: {
+      icon: '◎',
+      tag: '03 · ПОДКАСТЫ',
+      title: 'ВЫЕЗДНЫЕ ПОДКАСТЫ',
+      sub: 'Звук · свет · картинка',
+      highlight: 'Запись у вас в студии или на площадке — «под ключ».',
+      body: 'Приезжаем с оборудованием: микрофоны, рекордер, базовый свет, при необходимости — камеры. Настраиваем акустику, даём гостям комфорт, отдаём чистые дорожки и монтаж.',
       list: [
-        'Фотосессии в стиле личного бренда',
-        'AI-клонирование голоса и образа',
-        'Видео-перебивки и динамичный монтаж',
-        'Генерация контента на месяц вперёд',
-        'Адаптация под TikTok, YouTube, Instagram'
+        'Мультитрек-запись голоса',
+        'Шумоподавление и сведение',
+        'Видеоверсия выпуска (опционально)',
+        'Тизеры для соцсетей',
+        'График выездов по договорённости'
       ]
     },
-    logic: {
+    dev: {
       icon: '⚡',
-      tag: '03 · AI-LOGIC & CODE',
-      title: 'AI-LOGIC & CODE',
-      sub: 'Smart-Автоматизация бизнеса',
-      highlight: 'Автоматизация бизнеса через n8n и нейросети. Свобода от рутины.',
-      body: 'Строим нейронные конвейеры на базе n8n, OpenAI API и кастомного кода. Один раз настроил — система работает без вас: публикует, отвечает, анализирует, продаёт.',
+      tag: '04 · IT',
+      title: 'IT-РАЗРАБОТКА',
+      sub: 'Код · n8n · интеграции',
+      highlight: 'Автоматизация бизнеса через код и n8n.',
+      body: 'Лендинги, боты, внутренние инструменты, связка CRM–мессенджеры–таблицы. Проектируем так, чтобы система жила без лишней ручной работы.',
       list: [
-        'Автоматизация постинга и CRM через n8n',
-        'AI-ассистент для бизнеса (Telegram / Web)',
-        'Лендинги и продающие сайты',
-        'Аналитические дашборды и отчёты',
-        'Интеграция с платёжными системами и CRM'
+        'Сайты и лендинги',
+        'Сценарии n8n и webhooks',
+        'Интеграция OpenAI / API',
+        'Telegram- и web-ассистенты',
+        'Документация и передача проекта'
       ]
     }
   };
 
   function initServiceOverlays() {
     const overlay = document.getElementById('serviceOverlay');
-    const panel   = document.getElementById('serviceSlidePanel');
     const closeBtn = document.getElementById('serviceOverlayClose');
     const contentEl = document.getElementById('serviceOverlayContent');
-    if (!overlay || !panel || !closeBtn || !contentEl) return;
+    if (!overlay || !closeBtn || !contentEl) return;
 
     document.querySelectorAll('.service-card, .service-open-btn').forEach((el) => {
-      el.addEventListener('click', (e) => {
-        // Find the parent .service-card regardless of what was clicked
+      el.addEventListener('click', () => {
         const card = el.classList.contains('service-card') ? el : el.closest('.service-card');
         if (!card) return;
         const data = SERVICE_DATA[card.dataset.service];
         if (!data) return;
-
         const listHTML = data.list.map((item) => `<li>${item}</li>`).join('');
         contentEl.innerHTML = `
           <span class="soc-tag">${data.tag}</span>
@@ -481,7 +580,7 @@
              class="cta-btn cta-btn-lead" style="margin-top:1.5rem;display:inline-flex">
             ПОЛУЧИТЬ AI-АУДИТ (БЕСПЛАТНО)
           </a>
-          <p class="pay-options-caption" style="margin-top:1.25rem">Оплата консультации</p>
+          <p class="pay-options-caption" style="margin-top:1.25rem">Оплата</p>
           <div class="payment-split">
             <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377"
                target="_blank" rel="noopener noreferrer"
@@ -490,7 +589,6 @@
                target="_blank" rel="noopener noreferrer"
                class="cta-btn cta-btn-pay cta-btn-pay-crypto">КРИПТОВАЛЮТА</a>
           </div>`;
-
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       });
@@ -500,73 +598,80 @@
       overlay.classList.remove('active');
       document.body.style.overflow = '';
     }
-
     closeBtn.addEventListener('click', closePanel);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closePanel(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
   }
 
-  // ========== Arsenal Slide-in Panels (skill cards) ==========
   const SKILLS = {
-    sites:      { title: 'Создание сайтов', text: 'Упакуем твой продукт так, чтобы он продавал сам. Футуристичный дизайн, который выделяет тебя из серой массы. Боль: «Мой сайт выглядит как у всех». Решение: уникальный киберпанк-интерфейс, который запоминается.' },
-    music:      { title: 'Написание музыки', text: 'Авторский звук (andxsound) для твоих проектов, видео или медитаций. Задаём правильный вайб и ритм. Боль: «Музыка не передаёт мой бренд». Решение: эксклюзивный саундтрек под твою аудиторию.' },
-    ai:         { title: 'Нейросети', text: 'Освободи 80% времени. Автоматизация контента, генерация идей и визуалов со скоростью мысли. Боль: «Я не успеваю создавать контент». Решение: нейросети работают на тебя 24/7.' },
-    automation: { title: 'Автоматизация', text: 'Настрой системы один раз и позволь алгоритмам работать на тебя 24/7. Боль: «Рутина съедает время». Решение: автоматические пайплайны для контента и продаж через n8n.' },
-    qigong:     { title: 'Цигун и Гунфу', text: 'Дисциплина тела и энергии. Без правильного состояния технологии не работают. Настроим твой внутренний фокус. Боль: «Выгораю и не могу сосредоточиться». Решение: энергия и ясность для продуктивной работы.' },
-    photo:      { title: 'Фотосессии', text: 'Создадим твой идеальный цифровой и реальный аватар для личного бренда. Упакуем тебя дорого. Боль: «Не знаю, как подать себя». Решение: профессиональный визуал для соцсетей и сайта.' }
+    sites:      { title: 'Сайты', text: 'Продающие интерфейсы и лендинги под ваш бренд.' },
+    music:      { title: 'Музыка', text: 'Авторский саунд (andxsound) под проекты и видео.' },
+    ai:         { title: 'Нейросети', text: 'Генерация контента и ускорение продакшна.' },
+    automation: { title: 'Автоматизация', text: 'n8n, боты, интеграции без лишней рутины.' },
+    qigong:     { title: 'Цигун', text: 'Фокус и энергия как основа продуктивности.' },
+    photo:      { title: 'Фотосессии', text: 'Образ для личного бренда и соцсетей.' }
   };
 
   function initArsenalPanels() {
-    const overlay    = document.getElementById('arsenalOverlay');
-    const closeBtn   = document.getElementById('arsenalClose');
+    const overlay = document.getElementById('arsenalOverlay');
+    const closeBtn = document.getElementById('arsenalClose');
     const panelTitle = document.getElementById('arsenalPanelTitle');
-    const panelText  = document.getElementById('arsenalPanelText');
+    const panelText = document.getElementById('arsenalPanelText');
     if (!overlay) return;
-
     document.querySelectorAll('.skill-card').forEach((card) => {
       card.addEventListener('click', () => {
         const data = SKILLS[card.dataset.skill];
         if (!data) return;
         panelTitle.textContent = data.title;
-        panelText.textContent  = data.text;
+        panelText.textContent = data.text;
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       });
     });
-
     function close() { overlay.classList.remove('active'); document.body.style.overflow = ''; }
     closeBtn?.addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   }
 
-  // ========== Skill Card 3D Tilt ==========
   function initSkillTilt() {
+    if (document.body.classList.contains('is-mobile-lite')) return;
     document.querySelectorAll('.skill-card').forEach((card) => {
       card.addEventListener('mousemove', (e) => {
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top)  / r.height - 0.5;
-        card.style.transform = `perspective(600px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) translateZ(6px)`;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(4px)`;
       });
       card.addEventListener('mouseleave', () => { card.style.transform = ''; });
     });
   }
 
-  // ========== Preloader ==========
   window.addEventListener('load', () => {
     setTimeout(() => {
       const pl = document.getElementById('preloader');
-      if (pl) { pl.classList.add('hidden'); setTimeout(() => pl.remove(), 500); }
-    }, 950);
+      if (pl) {
+        pl.classList.add('hidden');
+        setTimeout(() => pl.remove(), 450);
+      }
+    }, 800);
   });
 
-  // ========== Init ==========
   document.addEventListener('DOMContentLoaded', () => {
-    buildPortfolioGallery();
+    applyLayoutMode();
+    window.addEventListener('resize', () => {
+      applyLayoutMode();
+    }, { passive: true });
+
+    initPortfolioModal();
     initServiceOverlays();
     initArsenalPanels();
     initSkillTilt();
     initHUD();
-  });
+    initScrollObserver();
 
+    if (!document.body.classList.contains('is-mobile-lite')) {
+      initMatrixTrace();
+      initParticles();
+    }
+  });
 })();

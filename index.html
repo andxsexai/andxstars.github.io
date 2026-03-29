@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ANDXSTARS — Архитектор цифровой реальности. Нейромультики, AI-контент, автоматизация бизнеса.">
-  <title>ANDXSTARS | АРХИТЕКТОР ЦИФРОВОЙ РЕАЛЬНОСТИ</title>
+  <meta name="description" content="ANDXSTARS — бизнес-платформа: AI, видео, нейромультики, подкасты, IT и автоматизация. Консультация от 990 ₽.">
+  <title>ANDXSTARS | Бизнес &amp; Cyber-Tech v5.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
 </head>
 <body>
 
-  <!-- Preloader -->
   <div id="preloader">
     <div class="preloader-inner">
       <span class="preloader-text">ANDXSTARS</span>
@@ -20,7 +19,6 @@
     </div>
   </div>
 
-  <!-- HUD corners -->
   <div class="hud-corners" aria-hidden="true">
     <div class="hud-corner hud-tl">
       <div class="hud-type" id="hudTypeTL"></div>
@@ -38,16 +36,11 @@
     </div>
   </div>
 
-  <!-- Vignette -->
   <div class="vignette" aria-hidden="true"></div>
 
-  <!-- Parallax particle canvas -->
   <canvas id="particleCanvas" aria-hidden="true"></canvas>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
 
-  <!-- Lightning cursor canvas -->
-  <canvas id="lightningCanvas" aria-hidden="true"></canvas>
-
-  <!-- Floating shapes -->
   <div class="floating-shapes" aria-hidden="true">
     <div class="floating-shape shape-circle"></div>
     <div class="floating-shape shape-circle"></div>
@@ -59,7 +52,6 @@
     <div class="floating-shape shape-diamond"></div>
   </div>
 
-  <!-- Holograms + noise -->
   <div class="holograms" aria-hidden="true">
     <div class="hologram hologram-1"></div>
     <div class="hologram hologram-2"></div>
@@ -69,17 +61,18 @@
 
   <main>
 
-    <!-- Block 1: Hero -->
     <section class="hero" id="hero">
+      <div class="hero-discount-badge" aria-label="Акция">−15% на первый заказ</div>
       <div class="hero-bg"></div>
       <div class="hero-content">
         <div class="hero-eyebrow">AIMONAX · SFERA · ANDXSOUND</div>
         <h1 class="hero-title">ANDXSTARS:<br>АРХИТЕКТОР<br>ЦИФРОВОЙ<br>РЕАЛЬНОСТИ</h1>
+        <p class="hero-value-line">Кто: эксперт по AI, видео и коду. Что: контент, нейромультики, подкасты, автоматизация. Профит: экономия времени и бюджета + <strong>скидка 15%</strong> при первом заказе.</p>
         <p class="hero-subtitle-main">Сжимаю 40 лет поиска в 1 час архитектуры.<br>Синхронизация мышления и AI-технологий для квантового скачка.</p>
         <div class="hero-product glass-panel">
           <p class="hero-trigger">
-            <span class="hero-trigger-highlight">Инвестиция в консультацию — это сохранение 40 лет вашей жизни. Мы строим систему, а не просто картинки.</span>
-            Без осознанного мышления человек выбирает путь ради денег и может ошибиться на 40 лет вперед. Подходит для предпринимателей, фрилансеров, танцоров и сотрудников 5/2.
+            <span class="hero-trigger-highlight">Консультация по продукту — от 990 ₽. Инвестиция в ясность — это сохранение лет вашей жизни. Мы строим систему, а не просто картинки.</span>
+            Подходит предпринимателям, фрилансерам, танцорам и сотрудникам 5/2.
           </p>
           <div class="hero-cta-group">
             <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-lead" id="ctaBtnAudit">
@@ -100,7 +93,20 @@
       <div class="hero-scanline"></div>
     </section>
 
-    <!-- Block 2: Partners -->
+    <section class="section sales-engine" id="sales">
+      <div class="discount-banner glass-panel">
+        <span class="discount-banner-glow">−15%</span>
+        <div class="discount-banner-text">
+          <strong>Скидка 15%</strong> на любую услугу при первом заказе. Упомяните акцию в Telegram при оформлении.
+        </div>
+      </div>
+      <div class="pricing-pill glass-panel">
+        <span class="pricing-pill-label">Старт</span>
+        <p class="pricing-pill-price">Консультация по продукту — <strong>от 990 ₽</strong></p>
+        <p class="pricing-pill-note">Итоговая смета по проекту — после брифа.</p>
+      </div>
+    </section>
+
     <section class="section partners" id="partners">
       <h2 class="section-title">Технологии в моем арсенале</h2>
       <div class="partners-track">
@@ -111,64 +117,110 @@
       </div>
     </section>
 
-    <!-- Block 3: Big Three Services -->
-    <section class="section big-three" id="big-three">
-      <h2 class="section-title">Три кита экосистемы</h2>
-      <div class="big-three-grid">
+    <section class="section big-three" id="catalog">
+      <h2 class="section-title">Каталог услуг</h2>
+      <div class="big-three-grid big-three-grid--four">
+
+        <div class="service-card glass-panel" data-service="content">
+          <div class="service-tag">01</div>
+          <div class="service-icon">▣</div>
+          <h3 class="service-title">ФОТО И ВИДЕО</h3>
+          <p class="service-sub">Контент для бренда</p>
+          <p class="service-trigger">Съёмка, монтаж, упаковка визуала под соцсети и рекламу</p>
+          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+        </div>
 
         <div class="service-card glass-panel" data-service="neuro">
-          <div class="service-tag">01</div>
-          <div class="service-icon">◈</div>
-          <h3 class="service-title">NEURO-ANIMATION</h3>
-          <p class="service-sub">Нейромультики</p>
-          <p class="service-trigger">Создание виральных мультфильмов и контента за 24 часа</p>
-          <button class="service-open-btn">ПОДРОБНЕЕ →</button>
-        </div>
-
-        <div class="service-card glass-panel" data-service="avatar">
           <div class="service-tag">02</div>
-          <div class="service-icon">◉</div>
-          <h3 class="service-title">DIGITAL AVATAR</h3>
-          <p class="service-sub">AI-Контент</p>
-          <p class="service-trigger">Ваше присутствие в сети без вашего участия (AI-копии)</p>
-          <button class="service-open-btn">ПОДРОБНЕЕ →</button>
+          <div class="service-icon">◈</div>
+          <h3 class="service-title">НЕЙРОМУЛЬТИКИ</h3>
+          <p class="service-sub">AI-Animation</p>
+          <p class="service-trigger">Виральные ролики и анимация за счёт нейросетей и продакшн-пайплайна</p>
+          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
         </div>
 
-        <div class="service-card glass-panel" data-service="logic">
+        <div class="service-card glass-panel" data-service="podcast">
           <div class="service-tag">03</div>
+          <div class="service-icon">◎</div>
+          <h3 class="service-title">ВЫЕЗДНЫЕ ПОДКАСТЫ</h3>
+          <p class="service-sub">Звук · свет · картинка</p>
+          <p class="service-trigger">Профессиональное оборудование, запись на вашей площадке</p>
+          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
+        </div>
+
+        <div class="service-card glass-panel" data-service="dev">
+          <div class="service-tag">04</div>
           <div class="service-icon">⚡</div>
-          <h3 class="service-title">AI-LOGIC & CODE</h3>
-          <p class="service-sub">Smart-Автоматизация</p>
-          <p class="service-trigger">Автоматизация бизнеса через n8n и нейросети. Свобода от рутины</p>
-          <button class="service-open-btn">ПОДРОБНЕЕ →</button>
+          <h3 class="service-title">IT-РАЗРАБОТКА</h3>
+          <p class="service-sub">Код · n8n · автоматизация</p>
+          <p class="service-trigger">Сайты, боты, интеграции и бизнес на автопилоте</p>
+          <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
         </div>
 
       </div>
     </section>
 
-    <!-- Service slide-out panel -->
     <div class="service-overlay" id="serviceOverlay">
       <div class="service-slide-panel" id="serviceSlidePanel">
-        <button class="service-overlay-close" id="serviceOverlayClose" aria-label="Закрыть">×</button>
+        <button type="button" class="service-overlay-close" id="serviceOverlayClose" aria-label="Закрыть">×</button>
         <div class="service-overlay-content" id="serviceOverlayContent"></div>
       </div>
     </div>
 
-    <!-- Block 4: Portfolio -->
     <section class="section portfolio" id="portfolio">
       <h2 class="section-title">Портфолио</h2>
-      <div class="portfolio-filters">
-        <button class="filter-btn active" data-filter="all">Все</button>
-        <button class="filter-btn" data-filter="neuro">Нейромультики</button>
-        <button class="filter-btn" data-filter="design">Дизайн</button>
-        <button class="filter-btn" data-filter="cases">Кейсы</button>
+      <p class="portfolio-intro">Выберите направление — откроется галерея работ. Наведите на карточку для превью.</p>
+      <div class="portfolio-hub" id="portfolioHub" role="navigation" aria-label="Категории портфолио">
+        <button type="button" class="portfolio-hub-card glass-panel" data-category="neuro" data-preview-kind="video">
+          <span class="hub-code">01</span>
+          <h3 class="hub-title">Нейромультики</h3>
+          <p class="hub-desc">AI-видео и анимация</p>
+        </button>
+        <button type="button" class="portfolio-hub-card glass-panel" data-category="design" data-preview-kind="image">
+          <span class="hub-code">02</span>
+          <h3 class="hub-title">Дизайн</h3>
+          <p class="hub-desc">Карточки, обложки, визуал</p>
+        </button>
+        <button type="button" class="portfolio-hub-card glass-panel" data-category="cases" data-preview-kind="image">
+          <span class="hub-code">03</span>
+          <h3 class="hub-title">Кейсы</h3>
+          <p class="hub-desc">Автор, фото, личный бренд</p>
+        </button>
+        <button type="button" class="portfolio-hub-card glass-panel portfolio-hub-card--all" data-category="all" data-preview-kind="none">
+          <span class="hub-code">∞</span>
+          <h3 class="hub-title">Все проекты</h3>
+          <p class="hub-desc">Полная подборка</p>
+        </button>
       </div>
-      <div class="portfolio-gallery masonry" id="gallery"></div>
     </section>
 
-    <!-- Block 5: Reviews -->
-    <section class="section reviews" id="reviews">
-      <h2 class="section-title">Отзывы</h2>
+    <div class="portfolio-modal" id="portfolioModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="portfolioModalTitle">
+      <div class="portfolio-modal-inner glass-panel">
+        <button type="button" class="portfolio-modal-close" id="portfolioModalClose" aria-label="Закрыть галерею">×</button>
+        <h2 class="portfolio-modal-title" id="portfolioModalTitle"></h2>
+        <div class="portfolio-modal-gallery masonry" id="portfolioModalGallery"></div>
+      </div>
+    </div>
+
+    <section class="section cases-reviews" id="cases-reviews">
+      <h2 class="section-title">Кейсы и отзывы</h2>
+      <div class="cases-grid">
+        <article class="case-card glass-panel">
+          <span class="case-tag">Кейс</span>
+          <h3 class="case-title">Личный бренд + AI</h3>
+          <p class="case-text">Упаковка эксперта: визуал, контент-план и внедрение нейросетей. Срок окупаемости — 2 месяца.</p>
+        </article>
+        <article class="case-card glass-panel">
+          <span class="case-tag">Кейс</span>
+          <h3 class="case-title">Подкаст на выезде</h3>
+          <p class="case-text">Запись 4 выпусков за день: звук, свет, монтаж тизеров для соцсетей.</p>
+        </article>
+        <article class="case-card glass-panel">
+          <span class="case-tag">Кейс</span>
+          <h3 class="case-title">Автоматизация n8n</h3>
+          <p class="case-text">Связка CRM + Telegram + отчёты: минус 12 ч рутины в неделю у команды из 3 человек.</p>
+        </article>
+      </div>
       <div class="reviews-grid">
         <div class="review-card glass-panel">
           <div class="review-header">
@@ -206,10 +258,9 @@
       </div>
     </section>
 
-    <!-- Block 6: CTA -->
     <section class="section cta" id="cta">
       <div class="cta-content">
-        <p class="pay-options-caption pay-options-caption--center">Сложить пазл — выберите способ оплаты</p>
+        <p class="pay-options-caption pay-options-caption--center">Оплата — выберите способ</p>
         <div class="payment-split payment-split--center" role="group" aria-label="Способы оплаты">
           <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-card cta-btn-shine" id="ctaBtnMain">
             КАРТА (СНГ)
@@ -221,18 +272,17 @@
       </div>
     </section>
 
-    <!-- Arsenal -->
     <section class="section arsenal arsenal-bottom" id="arsenal">
-      <h2 class="section-title">Мой арсенал</h2>
+      <h2 class="section-title">Дополнительно</h2>
       <div class="skills-scroll">
         <div class="skills-grid">
           <div class="skill-card" data-skill="sites">
             <span class="skill-icon">◈</span>
-            <h3>Создание сайтов</h3>
+            <h3>Сайты</h3>
           </div>
           <div class="skill-card" data-skill="music">
             <span class="skill-icon">♪</span>
-            <h3>Написание музыки</h3>
+            <h3>Музыка</h3>
           </div>
           <div class="skill-card" data-skill="ai">
             <span class="skill-icon">◇</span>
@@ -244,7 +294,7 @@
           </div>
           <div class="skill-card" data-skill="qigong">
             <span class="skill-icon">◎</span>
-            <h3>Цигун и Гунфу</h3>
+            <h3>Цигун</h3>
           </div>
           <div class="skill-card" data-skill="photo">
             <span class="skill-icon">◉</span>
@@ -254,10 +304,9 @@
       </div>
     </section>
 
-    <!-- Arsenal slide-in panel (for skill cards) -->
     <div class="arsenal-overlay" id="arsenalOverlay">
       <div class="arsenal-panel glass-panel" id="arsenalPanel">
-        <button class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
+        <button type="button" class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
         <h3 class="arsenal-panel-title" id="arsenalPanelTitle"></h3>
         <p class="arsenal-panel-text" id="arsenalPanelText"></p>
       </div>
@@ -266,6 +315,12 @@
     <footer class="footer" id="footer">
       <h2 class="footer-title">Моя экосистема</h2>
       <div class="footer-grid">
+        <div class="footer-group">
+          <h3>Документы</h3>
+          <a href="legal-privacy.html">Политика персональных данных</a>
+          <a href="legal-offer.html">Пользовательское соглашение (оферта)</a>
+          <a href="legal-requisites.html">Реквизиты</a>
+        </div>
         <div class="footer-group">
           <h3>YouTube</h3>
           <a href="https://www.youtube.com/@andxstars" target="_blank" rel="noopener noreferrer">ANDXSTARS</a>
@@ -282,17 +337,19 @@
         </div>
         <div class="footer-group">
           <h3>ВКонтакте</h3>
-          <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer">Личка (andxstars)</a>
-          <a href="https://vk.com/andxstar" target="_blank" rel="noopener noreferrer">Группа (andxstar)</a>
+          <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer">Личка</a>
+          <a href="https://vk.com/andxstar" target="_blank" rel="noopener noreferrer">Группа</a>
         </div>
         <div class="footer-group">
           <h3>Telegram</h3>
           <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">t.me/andxxstars</a>
         </div>
       </div>
-      <p class="footer-copy">© ANDXSTARS · Архитектор цифровой реальности</p>
+      <p class="footer-copy">© ANDXSTARS · Бизнес &amp; Cyber-Tech · Сайт работает по HTTPS (GitHub Pages)</p>
     </footer>
   </main>
+
+  <div id="categoryPreviewPop" class="category-preview-pop" aria-hidden="true"></div>
 
   <script src="script.js"></script>
 </body>
