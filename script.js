@@ -17,20 +17,6 @@
     document.body.classList.toggle('overlay-open', !!any);
   }
 
-  /** Один набор узлов в HTML; второй ряд — клон (без дублирования разметки). */
-  function initPartnersMarqueeDup() {
-    const strip = document.querySelector('.partners-strip');
-    if (!strip || strip.dataset.marqueeReady === '1') return;
-    strip.dataset.marqueeReady = '1';
-    const inner = document.createElement('div');
-    inner.className = 'partners-strip-inner';
-    while (strip.firstChild) inner.appendChild(strip.firstChild);
-    const dup = inner.cloneNode(true);
-    dup.setAttribute('aria-hidden', 'true');
-    strip.appendChild(inner);
-    strip.appendChild(dup);
-  }
-
   let preloadProgress = 0;
   let preloadFinished = false;
 
@@ -664,7 +650,7 @@
     });
   }
 
-  /** Каталог услуг: при наведении — ролик из catalog-uslug/<slug> (тот же в панели по клику) */
+  /** Каталог услуг: при наведении — ролик из catalog uslug/<slug> (тот же в панели по клику) */
   function initServiceCardHoverVideos() {
     if (isNarrowViewport() || isSlowConnection()) return;
     document.querySelectorAll('.service-card').forEach((card) => {
@@ -1012,32 +998,32 @@
     document.querySelectorAll('.case-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.06}s`; });
   }
 
-  /** Ролики из папки catalog-uslug (photo-video, multikif, podcustle, it) */
+  /** Ролики из папки catalog uslug (Photo and video, MULTIKI, PODCUSTLE, IT) */
   const SERVICE_PANEL_MEDIA = {
     content: {
       kind: 'video',
-      folder: 'catalog-uslug/photo-video',
+      folder: 'catalog uslug/Photo and video',
       file: 'Developer_at_desk_202603291823.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'photos', file: '2026-03-02 15.23.13.jpg' }
     },
     neuro: {
       kind: 'video',
-      folder: 'catalog-uslug/multikif',
+      folder: 'catalog uslug/MULTIKI',
       file: 'Flow_delpmaspu_ (1).mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
     },
     podcast: {
       kind: 'video',
-      folder: 'catalog-uslug/podcustle',
+      folder: 'catalog uslug/PODCUSTLE',
       file: 'Holograms_purple_sounds_202603291733.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
     },
     dev: {
       kind: 'video',
-      folder: 'catalog-uslug/it',
+      folder: 'catalog uslug/IT',
       file: 'Frame_approximation_moves_202603291824.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'cards', file: '2026-03-02 15.50.57.jpg' }
@@ -1067,7 +1053,7 @@
       sub: 'Съёмка и постпродакшн',
       highlight: 'Визуал, который продаёт ваш бренд в Reels, Shorts и рекламе.',
       purpose: 'Зачем: единый узнаваемый визуал снижает стоимость лида и ускоряет решение о покупке. Для экспертов, брендов и маркетплейсов, где кадр = первый аргумент.',
-      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях. Ролик карточки — <strong>catalog-uslug/photo-video</strong>; примеры съёмок — папка <strong>photos</strong> в портфолио.',
+      body: 'Создаём фото- и видеоконтент под задачи: личный бренд, маркетплейсы, соцсети, презентации. Сценарий, свет, монтаж, цветокор — единый стиль на всех носителях. Ролик карточки — <strong>catalog uslug/Photo and video</strong>; примеры съёмок — папка <strong>photos</strong> в портфолио.',
       list: [
         'Предметная и портретная съёмка',
         'Рекламные ролики и тизеры',
@@ -1082,7 +1068,7 @@
       title: 'НЕЙРОМУЛЬТИКИ (AI-ANIMATION)',
       sub: 'ИИ + продакшн',
       highlight: 'Виральные мультфильмы и анимация в сжатые сроки.',
-      purpose: 'Зачем: быстро получить движение и историю в кадре без полного аниме-студио — для рекламы, тизеров и виральных форматов. Превью услуги — <strong>catalog-uslug/multikif</strong>; полная подборка — <strong>video</strong> в портфолио.',
+      purpose: 'Зачем: быстро получить движение и историю в кадре без полного аниме-студио — для рекламы, тизеров и виральных форматов. Превью услуги — <strong>catalog uslug/MULTIKI</strong>; полная подборка — <strong>video</strong> в портфолио.',
       body: 'Комбинируем нейросети (Runway, Midjourney и др.) с классическим монтажом и саундом. Подходит для рекламы, обучающего контента и соцсетей.',
       list: [
         'AI-анимация и motion-графика',
@@ -1098,7 +1084,7 @@
       title: 'ВЫЕЗДНЫЕ ПОДКАСТЫ',
       sub: 'Звук · свет · картинка',
       highlight: 'Запись у вас в студии или на площадке — «под ключ».',
-      purpose: 'Зачем: выезд экономит ваше время и даёт студийное качество без аренды площадки. Превью услуги — <strong>catalog-uslug/podcustle</strong>; кадры бренда — <strong>author</strong>, больше роликов — <strong>video</strong> в портфолио.',
+      purpose: 'Зачем: выезд экономит ваше время и даёт студийное качество без аренды площадки. Превью услуги — <strong>catalog uslug/PODCUSTLE</strong>; кадры бренда — <strong>author</strong>, больше роликов — <strong>video</strong> в портфолио.',
       body: 'Приезжаем с оборудованием: микрофоны, рекордер, базовый свет, при необходимости — камеры. Настраиваем акустику, даём гостям комфорт, отдаём чистые дорожки и монтаж.',
       list: [
         'Мультитрек-запись голоса',
@@ -1114,7 +1100,7 @@
       title: 'IT-РАЗРАБОТКА',
       sub: 'Код · n8n · интеграции',
       highlight: 'Автоматизация бизнеса через код и n8n.',
-      purpose: 'Зачем: убрать ручные перекладывания данных между чатами, CRM и таблицами — меньше ошибок и быстрее отклик клиенту. Превью услуги — <strong>catalog-uslug/it</strong>; визуал продуктов — <strong>cards</strong> в портфолио.',
+      purpose: 'Зачем: убрать ручные перекладывания данных между чатами, CRM и таблицами — меньше ошибок и быстрее отклик клиенту. Превью услуги — <strong>catalog uslug/IT</strong>; визуал продуктов — <strong>cards</strong> в портфолио.',
       body: 'Лендинги, боты, внутренние инструменты, связка CRM–мессенджеры–таблицы. Проектируем так, чтобы система жила без лишней ручной работы.',
       list: [
         'Сайты и лендинги',
@@ -1290,9 +1276,9 @@
     },
     photo: {
       title: 'Фотосессии',
-      folderLabel: 'catalog-uslug/photo-video · портфолио: photos',
+      folderLabel: 'catalog uslug/Photo and video · портфолио: photos',
       purpose: 'Сильные кадры усиливают экспертность и конверсию в соцсетях и на маркетплейсах.',
-      body: 'Портрет, предметка и лукбуки под единый визуальный код бренда. Отдельного ролика в <strong>dopoln</strong> пока нет — используется тот же превью-ролик, что и для фото/видео в каталоге (<strong>catalog-uslug/photo-video</strong>). Полные серии съёмок — раздел <strong>photos</strong> в портфолио.',
+      body: 'Портрет, предметка и лукбуки под единый визуальный код бренда. Отдельного ролика в <strong>dopoln</strong> пока нет — используется тот же превью-ролик, что и для фото/видео в каталоге (<strong>catalog uslug/Photo and video</strong>). Полные серии съёмок — раздел <strong>photos</strong> в портфолио.',
       list: [
         'Личный бренд и экспертный контент',
         'Карточки товара, маркетплейсы, баннеры',
@@ -1301,7 +1287,7 @@
       ],
       media: {
         type: 'video',
-        folder: 'catalog-uslug/photo-video',
+        folder: 'catalog uslug/Photo and video',
         file: 'Developer_at_desk_202603291823.mp4',
         fallback: { folder: 'photos', file: '2026-03-02 15.23.18.jpg' }
       }
@@ -1387,7 +1373,6 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     applyLayoutMode();
-    initPartnersMarqueeDup();
     window.addEventListener('resize', () => {
       applyLayoutMode();
     }, { passive: true });

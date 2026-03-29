@@ -1056,16 +1056,9 @@ body.is-low-tier .section {
 
 .partners-strip {
   display: flex;
-  width: max-content;
+  gap: 3.5rem;
   animation: partnersScroll 28s linear infinite;
   white-space: nowrap;
-}
-
-.partners-strip-inner {
-  display: flex;
-  gap: 3.5rem;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .partners-strip span {
