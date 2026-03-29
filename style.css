@@ -384,6 +384,7 @@ main {
   max-width: 100%;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -432,6 +433,7 @@ main {
   padding: 0 1.5rem;
   text-align: center;
   box-sizing: border-box;
+  flex: 0 1 auto;
 }
 
 .hero-eyebrow {
@@ -1477,8 +1479,9 @@ main {
   color: rgba(232,224,240,0.4);
 }
 
-/* ========== v5.0: Mobile lite (static BG; matrix остаётся — см. script) ========== */
-.is-mobile-lite #particleCanvas {
+/* ========== v5.0: Mobile lite — без тяжёлых слоёв (canvas, blur, лишние анимации) ========== */
+.is-mobile-lite #particleCanvas,
+.is-mobile-lite #matrixCanvas {
   display: none !important;
 }
 
@@ -1499,6 +1502,77 @@ main {
 
 .is-mobile-lite .hero::before {
   animation: none;
+}
+
+.is-mobile-lite .hero-bg {
+  filter: none;
+  animation: none;
+  opacity: 0.55;
+}
+
+.is-mobile-lite .hero-scanline {
+  display: none !important;
+}
+
+.is-mobile-lite .hero-title {
+  animation: none;
+  text-shadow: 0 0 10px rgba(176, 38, 255, 0.55), 0 0 22px rgba(176, 38, 255, 0.25);
+}
+
+.is-mobile-lite .cta-btn,
+.is-mobile-lite .cta-btn-lead {
+  animation: none !important;
+}
+
+.is-mobile-lite .cta-btn-shine::after {
+  animation: none !important;
+}
+
+.is-mobile-lite .cta-btn.cta-neon-touch-active,
+.is-mobile-lite .service-open-btn.cta-neon-touch-active {
+  filter: none !important;
+  box-shadow: 0 0 14px rgba(176, 38, 255, 0.6);
+}
+
+.is-mobile-lite .partners-strip {
+  animation: none;
+}
+
+.is-mobile-lite .glass-panel,
+.is-mobile-lite .skill-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(10, 5, 20, 0.94);
+}
+
+.is-mobile-lite .service-overlay,
+.is-mobile-lite .arsenal-overlay,
+.is-mobile-lite .portfolio-modal {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.is-mobile-lite .service-overlay {
+  background: rgba(3, 2, 8, 0.94);
+}
+
+.is-mobile-lite .arsenal-overlay {
+  background: rgba(5, 2, 10, 0.95);
+}
+
+.is-mobile-lite .portfolio-modal {
+  background: rgba(2, 1, 8, 0.97);
+}
+
+.is-mobile-lite .gallery-play-icon {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.is-mobile-lite .mobile-quick-nav {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(5, 2, 10, 0.96);
 }
 
 .is-mobile-lite .floating-shape {
@@ -1889,8 +1963,14 @@ main {
     position: relative;
     top: auto;
     right: auto;
+    left: auto;
     margin: 0 auto 1rem;
-    display: inline-block;
+    display: block;
+    width: fit-content;
+    max-width: calc(100% - 32px);
+    text-align: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
   }
 }
 
@@ -1929,6 +2009,11 @@ main {
     margin-bottom: 0;
     margin-top: 0;
     text-shadow: 0 0 12px rgba(176, 38, 255, 0.7), 0 0 28px rgba(176, 38, 255, 0.35);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    padding-inline: 2px;
+    max-width: 100%;
   }
 
   .hero-value-line {

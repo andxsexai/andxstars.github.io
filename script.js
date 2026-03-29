@@ -376,6 +376,7 @@
   function initMatrixTrace() {
     const canvas = document.getElementById('matrixCanvas');
     if (!canvas) return;
+    if (document.body.classList.contains('is-mobile-lite')) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ctx = canvas.getContext('2d');
@@ -583,6 +584,7 @@
   }
 
   function initHUD() {
+    if (document.body.classList.contains('is-mobile-lite')) return;
     const ticker = document.getElementById('hudTicker');
     const coords = document.getElementById('hudCoords');
     hudType(document.getElementById('hudTypeTL'), 'LOCATION:MOSCOW/2095', 55, true);
