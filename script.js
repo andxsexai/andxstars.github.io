@@ -1,7 +1,8 @@
 /**
- * ANDXSTARS v6.0 stable
- * — isLowTierDevice, spiral resize via setTransform, lazy video (no poster)
+ * ANDXSTARS v6.0 — hero canvas, glow; модули: ./scripts/features.js (вкладки, lazy, оверлеи)
  */
+
+import { initMainTabs, initAndxFeatures, observeLazyVideosIn } from './scripts/features.js';
 
 function isLowTierDevice() {
   const cores = navigator.hardwareConcurrency || 4;
@@ -11,24 +12,16 @@ function isLowTierDevice() {
   return cores < 4 || memory < 4 || isMobile || saveData;
 }
 
-const lazyVideoObserver = new IntersectionObserver(
-  (entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const video = entry.target;
-      const source = video.querySelector('source');
-      if (source && source.hasAttribute('data-src')) {
-        const url = source.getAttribute('data-src');
-        source.setAttribute('src', url);
-        source.removeAttribute('data-src');
-        video.load();
-        video.play().catch(() => {});
-      }
-      observer.unobserve(video);
-    });
-  },
-  { rootMargin: '0px 0px 200px 0px' }
-);
+function scheduleFeaturesBundle() {
+  const run = () => {
+    initAndxFeatures();
+  };
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(run, { timeout: 2500 });
+  } else {
+    setTimeout(run, 120);
+  }
+}
 
 function initGlowCardTracking() {
   document.addEventListener(
@@ -42,10 +35,6 @@ function initGlowCardTracking() {
     },
     { passive: true }
   );
-}
-
-function initLazyVideos() {
-  document.querySelectorAll('.lazy-video').forEach((v) => lazyVideoObserver.observe(v));
 }
 
 function initSpiral() {
@@ -258,13 +247,21 @@ function initMatrix() {
   setInterval(draw, 33);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+function boot() {
   initGlowCardTracking();
-  initLazyVideos();
+  initMainTabs();
+  observeLazyVideosIn(document);
   initMatrix();
   if (typeof requestIdleCallback === 'function') {
     requestIdleCallback(() => initSpiral());
   } else {
     setTimeout(initSpiral, 300);
   }
-});
+  scheduleFeaturesBundle();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}

@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ANDXSTARS | Архитектор цифровой реальности</title>
-  <meta name="description" content="ANDXSTARS v6.0 — AI и цифровая архитектура."/>
+  <meta name="description" content="ANDXSTARS v6.0 — AI, нейромультики, продакшн, IT и цифровая архитектура."/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -36,190 +36,388 @@
   </script>
   <link rel="stylesheet" href="./style.css"/>
 </head>
-<body class="bg-background text-white antialiased">
+<body class="bg-background text-white antialiased has-mobile-quick">
 
-  <nav class="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
-    <div class="text-2xl font-black tracking-tighter uppercase font-headline">ANDXSTARS</div>
+  <div class="mobile-quick-nav" aria-label="Быстрые контакты">
+    <span class="quick-nav-logo">ANDX</span>
+    <a class="quick-nav-link" href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">TG</a>
+    <a class="quick-nav-link" href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">Заявка</a>
+  </div>
+
+  <nav class="fixed top-0 md:top-0 max-md:top-[52px] w-full flex justify-between items-center px-6 md:px-8 py-5 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
+    <a href="#hero" class="text-xl md:text-2xl font-black tracking-tighter uppercase font-headline text-white no-underline">ANDXSTARS</a>
     <div class="hidden md:flex gap-10 font-headline text-xs tracking-widest uppercase text-white/50">
-      <a href="#services" class="hover:text-primary transition-colors">Services</a>
-      <a href="#portfolio" class="hover:text-primary transition-colors">Portfolio</a>
-      <a href="#ecosystem" class="hover:text-primary transition-colors">Ecosystem</a>
+      <a href="#panel-services" class="hover:text-primary transition-colors js-tab-jump" data-tab="services">Услуги</a>
+      <a href="#panel-portfolio" class="hover:text-primary transition-colors js-tab-jump" data-tab="portfolio">Портфолио</a>
+      <a href="#panel-arsenal" class="hover:text-primary transition-colors js-tab-jump" data-tab="arsenal">Арсенал</a>
     </div>
-    <button type="button" class="bg-primary text-[#39005c] font-black px-6 py-2 rounded-full text-xs uppercase tracking-tighter hover:scale-105 transition-transform">AI AUDIT</button>
+    <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
+       class="bg-primary text-[#39005c] font-black px-5 py-2 rounded-full text-[10px] md:text-xs uppercase tracking-tighter hover:scale-105 transition-transform no-underline inline-flex items-center">
+      AI AUDIT
+    </a>
   </nav>
 
-  <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-    <canvas id="spiralCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
-    <canvas id="matrixCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-20"></canvas>
+  <div class="h-[52px] max-md:block md:hidden" aria-hidden="true"></div>
+  <div class="h-[72px] md:h-[88px]" aria-hidden="true"></div>
 
-    <div class="relative z-10 text-center px-6 max-w-6xl">
-      <div class="inline-block py-2 px-4 mb-6 rounded-full border border-primary/20 bg-surface-container-low/50 backdrop-blur-md">
-        <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Synthetic Entropy v6.0</span>
+  <div class="main-tab-bar" role="tablist" aria-label="Разделы сайта">
+    <button type="button" role="tab" id="tab-overview" aria-selected="true" aria-controls="panel-overview">Обзор</button>
+    <button type="button" role="tab" id="tab-services" aria-selected="false" aria-controls="panel-services">Услуги</button>
+    <button type="button" role="tab" id="tab-portfolio" aria-selected="false" aria-controls="panel-portfolio">Портфолио</button>
+    <button type="button" role="tab" id="tab-arsenal" aria-selected="false" aria-controls="panel-arsenal">Арсенал</button>
+    <button type="button" role="tab" id="tab-contact" aria-selected="false" aria-controls="panel-contact">Связь</button>
+  </div>
+
+  <div id="panel-overview" class="tab-panel" role="tabpanel" aria-labelledby="tab-overview">
+    <section id="hero" class="relative min-h-[85vh] flex items-center justify-center pt-6 overflow-hidden">
+      <canvas id="spiralCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
+      <canvas id="matrixCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-20"></canvas>
+
+      <div class="relative z-10 text-center px-6 max-w-6xl">
+        <div class="inline-block py-2 px-4 mb-6 rounded-full border border-primary/20 bg-surface-container-low/50 backdrop-blur-md">
+          <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Synthetic Entropy v6.0</span>
+        </div>
+        <h1 class="font-headline font-black text-5xl sm:text-6xl md:text-9xl leading-none tracking-tighter mb-8">
+          Архитектор <br/> <span class="text-primary italic">цифровой</span> реальности
+        </h1>
+        <p class="font-body text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto mb-10">
+          Мы создаём архитектуру будущего, где ИИ и человеческое творчество сливаются в единую экосистему.
+        </p>
+        <div class="glow-btn-wrap">
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
+             class="glow-btn-orb uppercase font-headline text-sm md:text-base no-underline text-white">
+            ПОЛУЧИТЬ AI-АУДИТ БРЕНДА
+            <span class="material-symbols-outlined fill-icon" aria-hidden="true">bolt</span>
+          </a>
+        </div>
       </div>
-      <h1 class="font-headline font-black text-6xl md:text-9xl leading-none tracking-tighter mb-8">
-        Архитектор <br/> <span class="text-primary italic">цифровой</span> реальности
-      </h1>
-      <p class="font-body text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto mb-12">
-        Мы создаем архитектуру будущего, где ИИ и человеческое творчество сливаются в единую экосистему.
-      </p>
-      <div class="glow-btn-wrap">
-        <button type="button" class="glow-btn-orb uppercase font-headline text-sm md:text-base">
-          ПОЛУЧИТЬ AI-АУДИТ БРЕНДА
-          <span class="material-symbols-outlined fill-icon" aria-hidden="true">bolt</span>
+
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-40" aria-hidden="true">
+        <span class="material-symbols-outlined text-4xl">keyboard_double_arrow_down</span>
+      </div>
+    </section>
+
+    <div class="py-10 bg-surface-container-low border-y border-white/5 overflow-hidden">
+      <div class="marquee-container">
+        <div class="marquee-content font-headline text-2xl sm:text-3xl font-bold opacity-30 tracking-widest text-white flex">
+          <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
+          <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
+          <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
+          <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
+          <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
+          <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
+          <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
+          <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
+          <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
+          <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="ecosystem" class="py-20 px-6 md:px-8 bg-surface/40 border-b border-white/5">
+      <div class="max-w-[1200px] mx-auto">
+        <h2 class="font-headline font-black text-3xl md:text-5xl mb-10 uppercase text-secondary">Экосистема</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all no-underline text-inherit">
+            <span class="material-symbols-outlined text-primary text-5xl mb-4" aria-hidden="true">psychology</span>
+            <h4 class="font-headline text-xl font-bold">AIMONAX</h4>
+            <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">AI Lab &amp; Content</p>
+          </a>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all no-underline text-inherit">
+            <span class="material-symbols-outlined text-primary text-5xl mb-4" aria-hidden="true">graphic_eq</span>
+            <h4 class="font-headline text-xl font-bold">ANDXSOUND</h4>
+            <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">Neural Music</p>
+          </a>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all no-underline text-inherit">
+            <span class="material-symbols-outlined text-primary text-5xl mb-4" aria-hidden="true">shield_person</span>
+            <h4 class="font-headline text-xl font-bold">SFERA STARS</h4>
+            <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">Ethical Hacking</p>
+          </a>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all no-underline text-inherit">
+            <span class="material-symbols-outlined text-primary text-5xl mb-4" aria-hidden="true">integration_instructions</span>
+            <h4 class="font-headline text-xl font-bold">N8N HACK</h4>
+            <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">Automations</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="panel-services" class="tab-panel" role="tabpanel" aria-labelledby="tab-services" hidden>
+    <section id="services" class="py-20 px-6 md:px-8 max-w-[1400px] mx-auto">
+      <h2 class="section-title font-headline">Системные сервисы</h2>
+      <div class="big-three-grid big-three-grid--four grid gap-6">
+        <article class="glow-card service-card glass-panel min-h-[380px]" data-service="content">
+          <div class="service-card-video-bg" aria-hidden="true">
+            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+              <source data-src="./catalog-uslug/photo-video/Developer_at_desk_202603291823.mp4" type="video/mp4"/>
+            </video>
+          </div>
+          <div class="service-card-inner">
+            <span class="service-tag">01 · ФОТО И ВИДЕО</span>
+            <span class="service-icon" aria-hidden="true">▣</span>
+            <h3 class="service-title">Фото и видео</h3>
+            <p class="service-sub">Съёмка и постпродакшн</p>
+            <p class="service-trigger">Визуал для Reels, Shorts и рекламы.</p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ</button>
+          </div>
+        </article>
+
+        <article class="glow-card service-card glass-panel min-h-[380px]" data-service="neuro">
+          <div class="service-card-video-bg" aria-hidden="true">
+            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+              <source data-src="./catalog-uslug/multikif/Flow_delpmaspu_%20(1).mp4" type="video/mp4"/>
+            </video>
+          </div>
+          <div class="service-card-inner">
+            <span class="service-tag">02 · НЕЙРОМУЛЬТИКИ</span>
+            <span class="service-icon" aria-hidden="true">◈</span>
+            <h3 class="service-title">Нейромультики</h3>
+            <p class="service-sub">ИИ + продакшн</p>
+            <p class="service-trigger">Виральные AI-ролики и анимация в сжатые сроки.</p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ</button>
+          </div>
+        </article>
+
+        <article class="glow-card service-card glass-panel min-h-[380px]" data-service="podcast">
+          <div class="service-card-video-bg" aria-hidden="true">
+            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+              <source data-src="./catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4" type="video/mp4"/>
+            </video>
+          </div>
+          <div class="service-card-inner">
+            <span class="service-tag">03 · ПОДКАСТЫ</span>
+            <span class="service-icon" aria-hidden="true">◎</span>
+            <h3 class="service-title">Выездные подкасты</h3>
+            <p class="service-sub">Звук · свет · картинка</p>
+            <p class="service-trigger">Запись у вас на площадке — под ключ.</p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ</button>
+          </div>
+        </article>
+
+        <article class="glow-card service-card glass-panel min-h-[380px]" data-service="dev">
+          <div class="service-card-video-bg" aria-hidden="true">
+            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+              <source data-src="./catalog-uslug/it/Frame_approximation_moves_202603291824.mp4" type="video/mp4"/>
+            </video>
+          </div>
+          <div class="service-card-inner">
+            <span class="service-tag">04 · IT</span>
+            <span class="service-icon" aria-hidden="true">⚡</span>
+            <h3 class="service-title">IT и автоматизация</h3>
+            <p class="service-sub">Код · n8n · интеграции</p>
+            <p class="service-trigger">Сайты, боты и сценарии без ручной рутины.</p>
+            <button type="button" class="service-open-btn">ПОДРОБНЕЕ</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <div id="panel-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="tab-portfolio" hidden>
+    <section class="portfolio py-16 px-6 md:px-8 max-w-[1000px] mx-auto">
+      <h2 class="section-title font-headline text-center">Портфолио</h2>
+      <p class="portfolio-intro">Выберите категорию — откроется полноэкранная сетка работ. На десктопе при наведении показывается превью.</p>
+      <div id="portfolioHub" class="portfolio-hub">
+        <button type="button" class="portfolio-hub-card glass-panel" data-category="neuro">
+          <span class="hub-code">CAT · 01</span>
+          <span class="hub-title">Нейромультики</span>
+          <span class="hub-desc">AI-видео и motion</span>
+        </button>
+        <button type="button" class="portfolio-hub-card glass-panel" data-category="design">
+          <span class="hub-code">CAT · 02</span>
+          <span class="hub-title">Дизайн</span>
+          <span class="hub-desc">Обложки, карточки, одежда</span>
+        </button>
+        <button type="button" class="portfolio-hub-card glass-panel" data-category="cases">
+          <span class="hub-code">CAT · 03</span>
+          <span class="hub-title">Кейсы</span>
+          <span class="hub-desc">Фото, бренд, запуски</span>
+        </button>
+        <button type="button" class="portfolio-hub-card glass-panel portfolio-hub-card--all" data-category="all">
+          <span class="hub-code">ALL</span>
+          <span class="hub-title">Все проекты</span>
+          <span class="hub-desc">Полная подборка</span>
         </button>
       </div>
-    </div>
+    </section>
 
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-40" aria-hidden="true">
-      <span class="material-symbols-outlined text-4xl">keyboard_double_arrow_down</span>
-    </div>
-  </section>
-
-  <!-- Два одинаковых блока в разметке — бесшовный marquee без JS -->
-  <div class="py-10 bg-surface-container-low border-y border-white/5 overflow-hidden">
-    <div class="marquee-container">
-      <div class="marquee-content font-headline text-3xl font-bold opacity-30 tracking-widest text-white flex">
-        <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
-        <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
-        <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
-        <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
-        <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
-        <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
-        <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
-        <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
-        <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
-        <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
+    <section class="cases-reviews py-12 px-6 md:px-8 max-w-[1200px] mx-auto border-t border-white/5">
+      <h3 class="section-title font-headline">Кейсы и отзывы</h3>
+      <div class="cases-grid">
+        <article class="glow-card case-card glass-panel">
+          <span class="case-tag">КЕЙС</span>
+          <h4 class="case-title">Запуск личного бренда</h4>
+          <p class="case-text">Визуал, нейроролики и сайт под единую воронку — меньше согласований, быстрее публикации.</p>
+        </article>
+        <article class="glow-card case-card glass-panel">
+          <span class="case-tag">КЕЙС</span>
+          <h4 class="case-title">Подкаст на выезде</h4>
+          <p class="case-text">Мультитрек, шумодав и тизеры для соцсетей в одном графике съёмочного дня.</p>
+        </article>
       </div>
+      <div class="reviews-grid">
+        <article class="glow-card review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar" aria-hidden="true">A</div>
+            <div class="review-meta">
+              <span class="review-name">Александр</span>
+              <span class="review-source">Telegram</span>
+            </div>
+            <span class="review-stars" aria-hidden="true">★★★★★</span>
+          </div>
+          <p class="review-text">«Собрали нейроролик за неделю — картинка и звук на уровне студии.»</p>
+        </article>
+        <article class="glow-card review-card glass-panel">
+          <div class="review-header">
+            <div class="review-avatar" aria-hidden="true">M</div>
+            <div class="review-meta">
+              <span class="review-name">Марина</span>
+              <span class="review-source">Рекомендация</span>
+            </div>
+            <span class="review-stars" aria-hidden="true">★★★★★</span>
+          </div>
+          <p class="review-text">«Автоматизация n8n сняла ручной перенос заявок — команда в восторге.»</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <div id="panel-arsenal" class="tab-panel" role="tabpanel" aria-labelledby="tab-arsenal" hidden>
+    <section class="arsenal-bottom px-6 md:px-8 max-w-[1200px] mx-auto py-16">
+      <h2 class="section-title font-headline">Арсенал навыков</h2>
+      <p class="portfolio-intro text-left max-w-none mb-4">Нажмите на карточку — откроется панель с деталями и роликом (на десктопе превью при наведении).</p>
+      <div class="skills-scroll">
+        <div class="skills-grid">
+          <div class="glow-card skill-card glass-panel" data-skill="sites">
+            <div class="skill-card-video-bg" aria-hidden="true">
+              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+                <source data-src="./dopoln/сайты/Sensors_moving,_camera_202603291842.mp4" type="video/mp4"/>
+              </video>
+            </div>
+            <div class="skill-card-inner">
+              <span class="skill-icon" aria-hidden="true">🌐</span>
+              <h3>Сайты</h3>
+            </div>
+          </div>
+          <div class="glow-card skill-card glass-panel" data-skill="music">
+            <div class="skill-card-video-bg" aria-hidden="true">
+              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+                <source data-src="./dopoln/музыка/Guy_plays_bass_202603291841.mp4" type="video/mp4"/>
+              </video>
+            </div>
+            <div class="skill-card-inner">
+              <span class="skill-icon" aria-hidden="true">🎵</span>
+              <h3>Музыка</h3>
+            </div>
+          </div>
+          <div class="glow-card skill-card glass-panel" data-skill="ai">
+            <div class="skill-card-video-bg" aria-hidden="true">
+              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+                <source data-src="./dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4" type="video/mp4"/>
+              </video>
+            </div>
+            <div class="skill-card-inner">
+              <span class="skill-icon" aria-hidden="true">✦</span>
+              <h3>Нейросети</h3>
+            </div>
+          </div>
+          <div class="glow-card skill-card glass-panel" data-skill="automation">
+            <div class="skill-card-video-bg" aria-hidden="true">
+              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+                <source data-src="./dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4" type="video/mp4"/>
+              </video>
+            </div>
+            <div class="skill-card-inner">
+              <span class="skill-icon" aria-hidden="true">⚙</span>
+              <h3>Автоматизация</h3>
+            </div>
+          </div>
+          <div class="glow-card skill-card glass-panel" data-skill="qigong">
+            <div class="skill-card-video-bg" aria-hidden="true">
+              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+                <source data-src="./dopoln/цигун/Moves_technology_engaging_202603291845.mp4" type="video/mp4"/>
+              </video>
+            </div>
+            <div class="skill-card-inner">
+              <span class="skill-icon" aria-hidden="true">☯</span>
+              <h3>Цигун</h3>
+            </div>
+          </div>
+          <div class="glow-card skill-card glass-panel" data-skill="photo">
+            <div class="skill-card-video-bg" aria-hidden="true">
+              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
+                <source data-src="./catalog-uslug/photo-video/Developer_at_desk_202603291823.mp4" type="video/mp4"/>
+              </video>
+            </div>
+            <div class="skill-card-inner">
+              <span class="skill-icon" aria-hidden="true">📷</span>
+              <h3>Фотосессии</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="panel-contact" class="tab-panel" role="tabpanel" aria-labelledby="tab-contact" hidden>
+    <section class="cta py-20 px-6">
+      <div class="cta-content max-w-2xl mx-auto">
+        <h2 class="section-title font-headline">Связь и старт</h2>
+        <p class="text-on-surface-variant font-body text-center mb-8">Напишите в Telegram — обсудим задачу, сроки и формат. Ниже — оплата картой (СНГ) или криптой.</p>
+        <div class="flex flex-col items-center gap-4">
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-hero cta-btn-shine">ЗАПИСАТЬСЯ В TELEGRAM</a>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-lead cta-btn-shine">ПОЛУЧИТЬ AI-АУДИТ (БЕСПЛАТНО)</a>
+          <p class="pay-options-caption pay-options-caption--center">Оплата</p>
+          <div class="payment-split payment-split--center">
+            <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-card">КАРТА (СНГ)</a>
+            <a href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-crypto">КРИПТОВАЛЮТА</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <h2 class="footer-title font-headline">ANDXSTARS</h2>
+      <div class="footer-grid font-body">
+        <div class="footer-group">
+          <h3>Документы</h3>
+          <a href="./legal-offer.html">Оферта</a>
+          <a href="./legal-privacy.html">Конфиденциальность</a>
+          <a href="./legal-requisites.html">Реквизиты</a>
+        </div>
+        <div class="footer-group">
+          <h3>Связь</h3>
+          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">Telegram</a>
+        </div>
+      </div>
+      <p class="footer-copy">© ANDXSTARS · Цифровая архитектура</p>
+    </footer>
+  </div>
+
+  <div id="serviceOverlay" class="service-overlay" aria-hidden="true">
+    <button type="button" id="serviceOverlayClose" class="service-overlay-close" aria-label="Закрыть панель">×</button>
+    <div class="service-slide-panel glass-panel">
+      <div id="serviceOverlayContent" class="service-overlay-content"></div>
     </div>
   </div>
 
-  <section id="services" class="py-32 px-8 max-w-[1400px] mx-auto">
-    <h2 class="font-headline font-black text-5xl md:text-7xl text-white mb-16 uppercase leading-tight">Системные <br/><span class="text-secondary">Сервисы</span></h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="glow-card p-1 flex flex-col justify-between min-h-[400px] group">
-        <div class="absolute inset-0 z-0">
-          <video class="w-full h-full object-cover opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity duration-700 lazy-video" autoplay loop muted playsinline preload="none">
-            <source data-src="./catalog%20uslug/MULTIKI/Flow_delpmaspu_%20(1).mp4" type="video/mp4">
-          </video>
-          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
-        </div>
-        <div class="relative z-10 p-10 flex flex-col h-full justify-end">
-          <span class="material-symbols-outlined text-5xl text-primary mb-4" aria-hidden="true">neurology</span>
-          <h3 class="font-headline text-4xl font-bold mb-4">Нейросети &amp; Мультипликация</h3>
-          <p class="text-on-surface-variant text-lg">AI-генерация графики и видео контента.</p>
-        </div>
-      </div>
-
-      <div class="glow-card p-1 flex flex-col justify-between min-h-[400px] group">
-        <div class="absolute inset-0 z-0">
-          <video class="w-full h-full object-cover opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity duration-700 lazy-video" autoplay loop muted playsinline preload="none">
-            <source data-src="./catalog%20uslug/Photo%20and%20video/Developer_at_desk_202603291823.mp4" type="video/mp4">
-          </video>
-          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
-        </div>
-        <div class="relative z-10 p-10 flex flex-col h-full justify-end">
-          <span class="material-symbols-outlined text-5xl text-secondary mb-4" aria-hidden="true">videocam</span>
-          <h3 class="font-headline text-4xl font-bold mb-4">Видеопродакшн</h3>
-          <p class="text-on-surface-variant text-lg">Съемка и монтаж коммерческого видео.</p>
-        </div>
-      </div>
+  <div id="arsenalOverlay" class="arsenal-overlay" aria-hidden="true">
+    <button type="button" id="arsenalClose" class="arsenal-close" aria-label="Закрыть">×</button>
+    <div class="arsenal-panel glass-panel">
+      <div id="arsenalPanelBody" class="arsenal-panel-body"></div>
     </div>
-  </section>
+  </div>
 
-  <script src="./script.js" defer></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html class="dark" lang="ru">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>ANDXSTARS | AI Architecture</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#d394ff",
-                        secondary: "#ff68a7",
-                        background: "#0e0e0e",
-                        surface: "#1f1f1f"
-                    },
-                    fontFamily: { headline: ["Space Grotesk", "sans-serif"], body: ["Manrope", "sans-serif"] }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700;900&family=Manrope:wght@300;600&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-background text-white antialiased">
+  <div id="portfolioModal" class="portfolio-modal" aria-hidden="true">
+    <div class="portfolio-modal-inner glow-card glass-panel">
+      <button type="button" id="portfolioModalClose" class="portfolio-modal-close" aria-label="Закрыть портфолио">×</button>
+      <h2 id="portfolioModalTitle" class="portfolio-modal-title font-headline"></h2>
+      <div id="portfolioModalGallery" class="portfolio-modal-gallery masonry"></div>
+    </div>
+  </div>
+  <div id="categoryPreviewPop" class="category-preview-pop" aria-hidden="true"></div>
 
-    <nav class="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
-        <div class="text-2xl font-black tracking-tighter uppercase font-headline">ANDXSTARS</div>
-        <div class="hidden md:flex gap-10 font-headline text-xs tracking-widest uppercase text-white/50">
-            <a href="#services" class="hover:text-primary">Services</a>
-            <a href="#portfolio" class="hover:text-primary">Portfolio</a>
-            <a href="#ecosystem" class="hover:text-primary">Ecosystem</a>
-        </div>
-        <button class="bg-primary text-black font-black px-6 py-2 rounded-full text-xs uppercase hover:scale-105 transition-all">AI AUDIT</button>
-    </nav>
-
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <canvas id="matrixCanvas" class="absolute inset-0 opacity-20"></canvas>
-        <canvas id="spiralCanvas" class="absolute inset-0 z-10 pointer-events-none"></canvas>
-        <div class="relative z-20 text-center px-4">
-            <h1 class="font-headline font-black text-6xl md:text-9xl tracking-tighter uppercase">ANDX<span class="text-primary italic">STARS</span></h1>
-            <p class="mt-6 text-white/50 font-body text-lg max-w-xl mx-auto">Архитектура будущего: ИИ-автоматизация, нейросети и цифровые экосистемы.</p>
-        </div>
-    </section>
-
-    <section id="services" class="py-24 px-8 max-w-7xl mx-auto">
-        <h2 class="font-headline text-5xl font-black mb-12 uppercase">Services</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glow-card aspect-video relative rounded-3xl overflow-hidden group">
-                <video class="w-full h-full object-cover opacity-40 group-hover:opacity-90 transition-opacity lazy-video" autoplay loop muted playsinline>
-                    <source data-src="./catalog%20uslug/MULTIKI/Flow_delpmaspu_%20(1).mp4" type="video/mp4">
-                </video>
-                <div class="absolute inset-0 p-10 flex flex-col justify-end bg-gradient-to-t from-black to-transparent">
-                    <h3 class="text-3xl font-bold font-headline">AI Multiki</h3>
-                </div>
-            </div>
-            </div>
-    </section>
-
-    <section id="ecosystem" class="py-24 px-8 bg-surface/50 border-y border-white/5">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="font-headline text-5xl font-black mb-12 uppercase text-secondary">Ecosystem</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="#" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all">
-                    <span class="material-symbols-outlined text-primary text-5xl mb-4">psychology</span>
-                    <h4 class="font-headline text-xl font-bold">AIMONAX</h4>
-                    <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">AI Lab & Content</p>
-                </a>
-                <a href="#" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all">
-                    <span class="material-symbols-outlined text-primary text-5xl mb-4">pumping_station</span>
-                    <h4 class="font-headline text-xl font-bold">ANDXSOUND</h4>
-                    <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">Neural Music</p>
-                </a>
-                <a href="#" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all">
-                    <span class="material-symbols-outlined text-primary text-5xl mb-4">shield_person</span>
-                    <h4 class="font-headline text-xl font-bold">SFERA STARS</h4>
-                    <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">Ethical Hacking</p>
-                </a>
-                <a href="#" class="glow-card p-8 border border-white/10 rounded-2xl flex flex-col items-center text-center hover:bg-white/5 transition-all">
-                    <span class="material-symbols-outlined text-primary text-5xl mb-4">integration_instructions</span>
-                    <h4 class="font-headline text-xl font-bold">N8N HACK</h4>
-                    <p class="text-white/40 text-xs mt-2 uppercase tracking-widest">Automations</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <script src="script.js"></script>
+  <script type="module" src="./script.js"></script>
 </body>
 </html>

@@ -6,4 +6,4 @@
   PODCUSTLE              → podcustle
   IT                     → it
 
-Файлы .mp4 переносите без переименования. В репозитории пути уже обновлены в index.html и script.js.
+Файлы .mp4 переносите без переименования. В репозитории пути: index.html → catalog-uslug/photo-video, multikif, podcustle, it. Логика сайта: script.js (корень), modules — scripts/features.js.
