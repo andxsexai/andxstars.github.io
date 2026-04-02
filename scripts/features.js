@@ -2,17 +2,29 @@
  * Вкладки (history.replaceState), lazy-video и перезапуск observe при появлении .visible
  */
 
+function readDataSrc(source) {
+  if (!source) return '';
+  return source.getAttribute('data-src') || '';
+}
+
+function hydrateVideoSource(video) {
+  const source = video.querySelector('source');
+  const url = readDataSrc(source);
+  if (!source || !url) return false;
+  if (!source.getAttribute('src')) {
+    source.setAttribute('src', url);
+    source.removeAttribute('data-src');
+    video.load();
+  }
+  return true;
+}
+
 const lazyVideoObserver = new IntersectionObserver(
   (entries, observer) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       const video = entry.target;
-      const source = video.querySelector('source');
-      if (source && source.hasAttribute('data-src')) {
-        const url = source.getAttribute('data-src');
-        source.setAttribute('src', url);
-        source.removeAttribute('data-src');
-        video.load();
+      if (hydrateVideoSource(video)) {
         video.play().catch(() => {});
       }
       observer.unobserve(video);
@@ -226,7 +238,10 @@ export function initAndxFeatures() {
         return /^[a-zA-Z0-9_-]+$/.test(seg) ? seg : encodeURIComponent(seg);
       })
       .filter(Boolean);
-    return './' + segments.join('/') + '/' + encodeURIComponent(file);
+    const pathPart = segments.join('/') + '/' + encodeURIComponent(file);
+    const base = import.meta.env?.BASE_URL ?? './';
+    const prefix = base.endsWith('/') ? base : `${base}/`;
+    return `${prefix}${pathPart}`;
   }
 
   function isVideo(file) {
@@ -359,27 +374,29 @@ export function initAndxFeatures() {
     const lazyVideos = root.querySelectorAll('.lazy-video');
     if (!lazyVideos.length) return;
     const narrow = isNarrowViewport();
-    const toObserve = Array.from(lazyVideos).filter(
-      (v) => !v.classList.contains('lazy-video--defer-mobile') && !narrow
-    );
-    if (!toObserve.length) return;
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        if (isSlowConnection()) {
-          obs.unobserve(entry.target);
+        const video = entry.target;
+        const deferMobile = video.classList.contains('lazy-video--defer-mobile');
+        if (isSlowConnection() && deferMobile) {
+          obs.unobserve(video);
           return;
         }
-        const video = entry.target;
         const source = video.querySelector('source[data-src]');
-        if (source && !source.getAttribute('src')) {
-          source.setAttribute('src', source.dataset.src);
+        const url = readDataSrc(source);
+        if (source && url && !source.getAttribute('src')) {
+          source.setAttribute('src', url);
+          source.removeAttribute('data-src');
           video.load();
         }
         obs.unobserve(video);
       });
     }, { rootMargin: '200px' });
-    toObserve.forEach((v) => obs.observe(v));
+    lazyVideos.forEach((v) => {
+      if (narrow && v.classList.contains('lazy-video--defer-mobile')) return;
+      obs.observe(v);
+    });
   }
 
   function initVideoHoverIn(root) {
@@ -391,8 +408,10 @@ export function initAndxFeatures() {
 
       function ensureSrc() {
         const source = video.querySelector('source');
-        if (source && !source.getAttribute('src') && source.dataset.src) {
-          source.setAttribute('src', source.dataset.src);
+        const url = readDataSrc(source);
+        if (source && !source.getAttribute('src') && url) {
+          source.setAttribute('src', url);
+          source.removeAttribute('data-src');
           video.load();
         }
       }
@@ -422,7 +441,7 @@ export function initAndxFeatures() {
           return;
         }
         const source = video.querySelector('source');
-        const src = source?.getAttribute('src') || source?.dataset.src;
+        const src = source?.getAttribute('src') || readDataSrc(source);
         if (src) window.open(src, '_blank');
       });
     });
@@ -711,68 +730,92 @@ export function initAndxFeatures() {
     });
   }
 
-  /** Каталог услуг: при наведении — ролик из catalog-uslug/<slug> (тот же в панели по клику) */
+  /** Каталог услуг: hover на десктопе; touch / узкий экран — превью по касанию */
   function initServiceCardHoverVideos() {
-    if (isNarrowViewport() || isSlowConnection()) return;
     document.querySelectorAll('.service-card').forEach((card) => {
       const video = card.querySelector('.service-card-hover-video');
-      const source = video?.querySelector('source[data-src]');
+      const source = video?.querySelector('source[data-src], source[src]');
       if (!video || !source) return;
 
-      card.addEventListener('mouseenter', () => {
+      function prime() {
+        const url = readDataSrc(source) || source.getAttribute('src');
+        if (!url) return;
         if (!source.getAttribute('src')) {
-          source.setAttribute('src', source.dataset.src);
+          source.setAttribute('src', url);
+          source.removeAttribute('data-src');
           video.load();
         }
         card.classList.add('service-card--hover-video');
         video.play().catch(() => {});
-      });
-      card.addEventListener('mouseleave', () => {
+      }
+
+      function stopPreview() {
         video.pause();
         video.currentTime = 0;
         card.classList.remove('service-card--hover-video');
-      });
+      }
+
+      if (!isNarrowViewport()) {
+        card.addEventListener('mouseenter', prime);
+        card.addEventListener('mouseleave', stopPreview);
+      }
+      card.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (e.pointerType === 'touch' || isNarrowViewport()) prime();
+        },
+        { passive: true }
+      );
+
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
-          if (!e.isIntersecting) {
-            video.pause();
-            video.currentTime = 0;
-            card.classList.remove('service-card--hover-video');
-          }
+          if (!e.isIntersecting) stopPreview();
         });
       }, { threshold: 0.06 });
       io.observe(card);
     });
   }
 
-  /** Дополнительно: при наведении — ролик из dopoln/<карточка> */
+  /** Дополнительно: hover + touch — ролик из dopoln/… */
   function initSkillHoverVideos() {
-    if (isNarrowViewport() || isSlowConnection()) return;
     document.querySelectorAll('.skill-card').forEach((card) => {
       const video = card.querySelector('.skill-card-hover-video');
-      const source = video?.querySelector('source[data-src]');
+      const source = video?.querySelector('source[data-src], source[src]');
       if (!video || !source) return;
 
-      card.addEventListener('mouseenter', () => {
+      function prime() {
+        const url = readDataSrc(source) || source.getAttribute('src');
+        if (!url) return;
         if (!source.getAttribute('src')) {
-          source.setAttribute('src', source.dataset.src);
+          source.setAttribute('src', url);
+          source.removeAttribute('data-src');
           video.load();
         }
         card.classList.add('skill-card--hover-video');
         video.play().catch(() => {});
-      });
-      card.addEventListener('mouseleave', () => {
+      }
+
+      function stopPreview() {
         video.pause();
         video.currentTime = 0;
         card.classList.remove('skill-card--hover-video');
-      });
+      }
+
+      if (!isNarrowViewport()) {
+        card.addEventListener('mouseenter', prime);
+        card.addEventListener('mouseleave', stopPreview);
+      }
+      card.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (e.pointerType === 'touch' || isNarrowViewport()) prime();
+        },
+        { passive: true }
+      );
+
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
-          if (!e.isIntersecting) {
-            video.pause();
-            video.currentTime = 0;
-            card.classList.remove('skill-card--hover-video');
-          }
+          if (!e.isIntersecting) stopPreview();
         });
       }, { threshold: 0.08 });
       io.observe(card);
@@ -1218,9 +1261,11 @@ export function initAndxFeatures() {
           </div>`;
         const pv = contentEl.querySelector('video.lazy-video--panel');
         if (pv) {
-          const src = pv.querySelector('source[data-src]');
-          if (src) {
-            src.setAttribute('src', src.dataset.src);
+          const srcEl = pv.querySelector('source[data-src]');
+          const url = readDataSrc(srcEl);
+          if (srcEl && url) {
+            srcEl.setAttribute('src', url);
+            srcEl.removeAttribute('data-src');
             pv.load();
           }
           pv.play().catch(() => {});
@@ -1382,8 +1427,10 @@ export function initAndxFeatures() {
     const vid = bodyEl.querySelector('video.lazy-video--arsenal');
     if (vid) {
       const s = vid.querySelector('source[data-src]');
-      if (s) {
-        s.setAttribute('src', s.dataset.src);
+      const url = readDataSrc(s);
+      if (s && url) {
+        s.setAttribute('src', url);
+        s.removeAttribute('data-src');
         vid.load();
       }
       vid.play().catch(() => {});

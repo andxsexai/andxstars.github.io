@@ -1702,3 +1702,23 @@ video.lazy-video--gpu,
 .arsenal-panel.glass-panel {
   background: rgba(8, 4, 18, 0.97);
 }
+
+/* GPU / композитинг для видео-превью (меньше лагов при hover и скролле) */
+video.lazy-video,
+.service-card-hover-video,
+.skill-card-hover-video {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: layout paint;
+}
+
+video.lazy-video--gpu {
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  video.lazy-video--gpu {
+    will-change: auto;
+  }
+}
