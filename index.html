@@ -1,493 +1,131 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html class="dark" lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="ANDXSTARS — эксперт по AI, видео и автоматизации. Нейромультики, подкасты, IT-разработка, консультации от 990 ₽. Скидка 15% на первый заказ.">
-  <meta name="keywords" content="AI автоматизация, нейромультики, видео продакшн, подкасты, IT разработка, n8n, консультация">
-  <meta name="theme-color" content="#0a0618">
-  <title>ANDXSTARS | Бизнес &amp; Cyber-Tech v5.0</title>
-  <link rel="canonical" href="https://andxsexai.github.io/andxstars.github.io/">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://andxsexai.github.io/andxstars.github.io/">
-  <meta property="og:title" content="ANDXSTARS — Бизнес · AI · Видео · Код">
-  <meta property="og:description" content="Архитектор цифровой реальности. Нейромультики, подкасты, IT-автоматизация. Консультация от 990 ₽.">
-  <meta property="og:image" content="https://andxsexai.github.io/andxstars.github.io/photos/og-preview.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ANDXSTARS — Бизнес · AI · Видео · Код">
-  <meta name="twitter:description" content="Архитектор цифровой реальности. AI, видео, автоматизация.">
-  <meta name="twitter:image" content="https://andxsexai.github.io/andxstars.github.io/photos/og-preview.jpg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.gstatic.com/s/orbitron/v35/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nysimBoWgzfDAlp7lk.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459W1hyyTh89ZNpQ.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu173w9aXp-p7K4KLjztg.woff2" as="font" type="font/woff2" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&amp;family=Montserrat:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
-  <style id="critical-css-andx">
-    html,body{overflow-x:hidden;width:100%;max-width:100%;position:relative}
-    *{box-sizing:border-box}
-    :root{--bg-deep:#0a0a0a;--neon-purple:#bf00ff;--neon-glow:0 0 15px #8a2be2,0 0 28px rgba(138,43,226,.35);--glass-bg:rgba(14,8,24,.78);--font-title:'Orbitron',system-ui,sans-serif;--font-body:'Montserrat',system-ui,sans-serif;--premium-ease:cubic-bezier(0.9,0.03,0.26,0.99)}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:var(--font-body);background:var(--bg-deep);color:#e8e0f0;line-height:1.6}
-    body.t-body{overflow:hidden}
-    body.t-body.loaded{overflow-x:hidden;overflow-y:auto}
-    .uc-preload{position:fixed;inset:0;z-index:99999;pointer-events:auto;background:#0a0a0a}
-    .loading-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;text-align:center;width:min(92vw,360px);pointer-events:none}
-    .loading-text{font-family:var(--font-title);font-size:clamp(0.65rem,2.8vw,0.82rem);font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:#b026ff;margin:0 0 1.35rem}
-    .loading-shape{display:block;width:100%;max-width:280px;height:4px;margin:0 auto;background:rgba(176,38,255,.12);border-radius:3px;overflow:hidden}
-    .loading-shape-fill{display:block;height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,#b026ff 0%,#bf00ff 55%,#d946ef 100%)}
-    main{position:relative;z-index:2;width:100%;max-width:100%;overflow-x:hidden}
-    .hero{position:relative;width:100%;max-width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse 90% 70% at 50% 0%,rgba(138,43,226,.28) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 85% 88%,rgba(191,0,255,.2) 0%,transparent 58%),linear-gradient(180deg,rgba(15,8,24,.45) 0%,rgba(8,4,14,.72) 100%)}
-    .hero-content{position:relative;z-index:3;text-align:center;padding:2rem 1.25rem 4rem;max-width:900px;width:100%}
-    .hero-title-brand{display:block;font-family:var(--font-title);font-size:clamp(2rem,6vw,3.2rem);font-weight:900;letter-spacing:0.12em;color:#fff;text-shadow:var(--neon-glow)}
-    .glass-panel{background:var(--glass-bg);border:1px solid rgba(176,38,255,.2);border-radius:14px}
-    .mobile-quick-nav{display:none}
-  </style>
-  <link rel="preload" href="./style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="./style.css"></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ANDXSTARS | Архитектор цифровой реальности</title>
+  <meta name="description" content="ANDXSTARS v6.0 — AI и цифровая архитектура."/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&amp;family=Manrope:wght@300;400;600;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    (function () {
-      var l = document.querySelector('link[href$="style.css"][rel="preload"][as="style"]');
-      if (!l) return;
-      setTimeout(function () {
-        if (l.rel === 'preload') {
-          l.rel = 'stylesheet';
-          l.removeAttribute('as');
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#d394ff',
+            secondary: '#ff68a7',
+            tertiary: '#bf81ff',
+            background: '#0e0e0e',
+            surface: '#1f1f1f',
+            'surface-container-low': '#131313',
+            'on-surface-variant': '#ababab'
+          },
+          fontFamily: {
+            headline: ['Space Grotesk', 'sans-serif'],
+            body: ['Manrope', 'sans-serif']
+          }
         }
-      }, 2800);
-    })();
+      }
+    };
   </script>
+  <link rel="stylesheet" href="./style.css"/>
 </head>
-<body class="t-body">
+<body class="bg-background text-white antialiased">
 
-  <div class="uc-preload" id="ucPreload" aria-busy="true" aria-live="polite" aria-label="Загрузка страницы">
-    <div class="loading-top"></div>
-    <div class="loading-bottom"></div>
-    <div class="loading-content">
-      <p class="loading-text">Инициализация систем...</p>
-      <div class="loading-shape" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <span class="loading-shape-fill"></span>
-      </div>
+  <nav class="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
+    <div class="text-2xl font-black tracking-tighter uppercase font-headline">ANDXSTARS</div>
+    <div class="hidden md:flex gap-10 font-headline text-xs tracking-widest uppercase text-white/50">
+      <a href="#services" class="hover:text-primary transition-colors">Services</a>
+      <a href="#portfolio" class="hover:text-primary transition-colors">Portfolio</a>
+      <a href="#ecosystem" class="hover:text-primary transition-colors">Ecosystem</a>
     </div>
-  </div>
-
-  <nav class="mobile-quick-nav" aria-label="Быстрые контакты">
-    <span class="quick-nav-logo" aria-hidden="true">ANDX</span>
-    <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="quick-nav-link" title="Telegram" aria-label="Написать в Telegram">TG</a>
-    <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer" class="quick-nav-link" title="ВКонтакте" aria-label="ВКонтакте">VK</a>
+    <button type="button" class="bg-primary text-[#39005c] font-black px-6 py-2 rounded-full text-xs uppercase tracking-tighter hover:scale-105 transition-transform">AI AUDIT</button>
   </nav>
 
-  <div class="hud-corners" aria-hidden="true">
-    <div class="hud-corner hud-tl">
-      <div class="hud-type" id="hudTypeTL"></div>
-      <div class="hud-ticker" id="hudTicker">0000</div>
-    </div>
-    <div class="hud-corner hud-tr">
-      <div class="hud-type" id="hudTypeTR"></div>
-      <div class="hud-coords" id="hudCoords">X:0000 Y:0000</div>
-    </div>
-    <div class="hud-corner hud-bl">
-      <div class="hud-type" id="hudTypeBL"></div>
-    </div>
-    <div class="hud-corner hud-br">
-      <div class="hud-type" id="hudTypeBR"></div>
-    </div>
-  </div>
+  <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+    <canvas id="spiralCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
+    <canvas id="matrixCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-20"></canvas>
 
-  <div class="vignette" aria-hidden="true"></div>
-
-  <canvas id="particleCanvas" aria-hidden="true"></canvas>
-  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
-
-  <div class="floating-shapes" aria-hidden="true">
-    <div class="floating-shape shape-circle"></div>
-    <div class="floating-shape shape-circle"></div>
-    <div class="floating-shape shape-circle"></div>
-    <div class="floating-shape shape-circle"></div>
-    <div class="floating-shape shape-diamond"></div>
-    <div class="floating-shape shape-diamond"></div>
-    <div class="floating-shape shape-diamond"></div>
-    <div class="floating-shape shape-diamond"></div>
-  </div>
-
-  <div class="holograms" aria-hidden="true">
-    <div class="hologram hologram-1"></div>
-    <div class="hologram hologram-2"></div>
-    <div class="hologram hologram-3"></div>
-  </div>
-  <div class="noise-layer" aria-hidden="true"></div>
-  <div class="neon-flow-lines" aria-hidden="true"></div>
-
-  <main>
-
-    <section class="hero" id="hero">
-      <div class="hero-discount-badge" aria-label="Акция">−15% на первый заказ</div>
-      <div class="hero-bg"></div>
-      <canvas id="heroCityCanvas" class="hero-city-canvas" aria-hidden="true"></canvas>
-      <div class="hero-content">
-        <div class="hero-eyebrow">AIMONAX · SFERA · ANDXSOUND</div>
-        <h1 class="hero-title">
-          <span class="hero-title-brand">ANDXSTARS</span>
-          <span class="hero-title-tag">Бизнес · AI · Видео · Код</span>
-          <span class="hero-title-line">Архитектор цифровой реальности</span>
-        </h1>
-        <p class="hero-value-line">Кто: эксперт по AI, видео и коду. Что: контент, нейромультики, подкасты, автоматизация. Профит: экономия времени и бюджета + <strong>скидка 15%</strong> при первом заказе.</p>
-        <p class="hero-subtitle-main">Сжимаю 40 лет поиска в 1 час архитектуры.<br>Синхронизация мышления и AI-технологий для квантового скачка.</p>
-        <div class="hero-product glass-panel">
-          <p class="hero-trigger">
-            <span class="hero-trigger-highlight">
-              <span class="hero-consult-line">Консультация по продукту — от 990 ₽.</span>
-              <span class="hero-consult-body">Инвестиция в ясность — это сохранение лет вашей жизни. Мы строим систему, а не просто картинки.</span>
-            </span>
-            Подходит предпринимателям, фрилансерам, танцорам и сотрудникам 5/2.
-          </p>
-          <div class="hero-cta-group">
-            <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-lead" id="ctaBtnAudit">
-              ПОЛУЧИТЬ AI-АУДИТ БРЕНДА (БЕСПЛАТНО)
-            </a>
-            <p class="pay-options-caption">Оплата консультации</p>
-            <div class="payment-split" role="group" aria-label="Способы оплаты консультации">
-              <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-card">
-                КАРТА (СНГ)
-              </a>
-              <a href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-crypto">
-                КРИПТОВАЛЮТА
-              </a>
-            </div>
-          </div>
-        </div>
+    <div class="relative z-10 text-center px-6 max-w-6xl">
+      <div class="inline-block py-2 px-4 mb-6 rounded-full border border-primary/20 bg-surface-container-low/50 backdrop-blur-md">
+        <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Synthetic Entropy v6.0</span>
       </div>
-      <div class="hero-scanline"></div>
-    </section>
-
-    <section class="section sales-engine" id="sales">
-      <div class="discount-banner glass-panel">
-        <span class="discount-banner-glow">−15%</span>
-        <div class="discount-banner-text">
-          <strong>Скидка 15%</strong> на любую услугу при первом заказе. Упомяните акцию в Telegram при оформлении.
-        </div>
-      </div>
-      <div class="pricing-pill glass-panel">
-        <span class="pricing-pill-label">Старт</span>
-        <p class="pricing-pill-price">Консультация по продукту — <strong>от 990 ₽</strong></p>
-        <p class="pricing-pill-note">Итоговая смета по проекту — после брифа.</p>
-      </div>
-    </section>
-
-    <section class="section partners" id="partners">
-      <h2 class="section-title">Технологии в моем арсенале</h2>
-      <div class="partners-track">
-        <div class="partners-strip">
-          <span>OpenAI</span><span>Midjourney</span><span>Runway Gen-2</span><span>ElevenLabs</span><span>Claude</span><span>Stable Diffusion</span><span>n8n</span>
-          <span>OpenAI</span><span>Midjourney</span><span>Runway Gen-2</span><span>ElevenLabs</span><span>Claude</span><span>Stable Diffusion</span><span>n8n</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="section big-three" id="catalog">
-      <h2 class="section-title">Каталог услуг</h2>
-      <div class="big-three-grid big-three-grid--four">
-
-        <div class="service-card glass-panel" data-service="content">
-          <div class="service-card-video-bg" aria-hidden="true">
-            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-              <source data-src="./catalog%20uslug/Photo%20and%20video/Developer_at_desk_202603291823.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="service-card-inner">
-            <div class="service-tag">01</div>
-            <div class="service-icon">▣</div>
-            <h3 class="service-title">ФОТО И ВИДЕО</h3>
-            <p class="service-sub">Контент для бренда</p>
-            <p class="service-trigger">Съёмка, монтаж, упаковка визуала под соцсети и рекламу</p>
-            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
-          </div>
-        </div>
-
-        <div class="service-card glass-panel" data-service="neuro">
-          <div class="service-card-video-bg" aria-hidden="true">
-            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-              <source data-src="./catalog%20uslug/MULTIKI/Flow_delpmaspu_%20(1).mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="service-card-inner">
-            <div class="service-tag">02</div>
-            <div class="service-icon">◈</div>
-            <h3 class="service-title">НЕЙРОМУЛЬТИКИ</h3>
-            <p class="service-sub">AI-Animation</p>
-            <p class="service-trigger">Виральные ролики и анимация за счёт нейросетей и продакшн-пайплайна</p>
-            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
-          </div>
-        </div>
-
-        <div class="service-card glass-panel" data-service="podcast">
-          <div class="service-card-video-bg" aria-hidden="true">
-            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-              <source data-src="./catalog%20uslug/PODCUSTLE/Holograms_purple_sounds_202603291733.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="service-card-inner">
-            <div class="service-tag">03</div>
-            <div class="service-icon">◎</div>
-            <h3 class="service-title">ВЫЕЗДНЫЕ ПОДКАСТЫ</h3>
-            <p class="service-sub">Звук · свет · картинка</p>
-            <p class="service-trigger">Профессиональное оборудование, запись на вашей площадке</p>
-            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
-          </div>
-        </div>
-
-        <div class="service-card glass-panel" data-service="dev">
-          <div class="service-card-video-bg" aria-hidden="true">
-            <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-              <source data-src="./catalog%20uslug/IT/Frame_approximation_moves_202603291824.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="service-card-inner">
-            <div class="service-tag">04</div>
-            <div class="service-icon">⚡</div>
-            <h3 class="service-title">IT-РАЗРАБОТКА</h3>
-            <p class="service-sub">Код · n8n · автоматизация</p>
-            <p class="service-trigger">Сайты, боты, интеграции и бизнес на автопилоте</p>
-            <button type="button" class="service-open-btn">ПОДРОБНЕЕ →</button>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <section class="section portfolio" id="portfolio">
-      <h2 class="section-title">Портфолио</h2>
-      <p class="portfolio-intro">Выберите направление — откроется галерея работ. Наведите на карточку для превью.</p>
-      <div class="portfolio-hub" id="portfolioHub" role="navigation" aria-label="Категории портфолио">
-        <button type="button" class="portfolio-hub-card glass-panel" data-category="neuro" data-preview-kind="video">
-          <span class="hub-code">01</span>
-          <h3 class="hub-title">Нейромультики</h3>
-          <p class="hub-desc">AI-видео и анимация</p>
-        </button>
-        <button type="button" class="portfolio-hub-card glass-panel" data-category="design" data-preview-kind="image">
-          <span class="hub-code">02</span>
-          <h3 class="hub-title">Дизайн</h3>
-          <p class="hub-desc">Карточки, обложки, визуал</p>
-        </button>
-        <button type="button" class="portfolio-hub-card glass-panel" data-category="cases" data-preview-kind="image">
-          <span class="hub-code">03</span>
-          <h3 class="hub-title">Кейсы</h3>
-          <p class="hub-desc">Автор, фото, личный бренд</p>
-        </button>
-        <button type="button" class="portfolio-hub-card glass-panel portfolio-hub-card--all" data-category="all" data-preview-kind="none">
-          <span class="hub-code">∞</span>
-          <h3 class="hub-title">Все проекты</h3>
-          <p class="hub-desc">Полная подборка</p>
+      <h1 class="font-headline font-black text-6xl md:text-9xl leading-none tracking-tighter mb-8">
+        Архитектор <br/> <span class="text-primary italic">цифровой</span> реальности
+      </h1>
+      <p class="font-body text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto mb-12">
+        Мы создаем архитектуру будущего, где ИИ и человеческое творчество сливаются в единую экосистему.
+      </p>
+      <div class="glow-btn-wrap">
+        <button type="button" class="glow-btn-orb uppercase font-headline text-sm md:text-base">
+          ПОЛУЧИТЬ AI-АУДИТ БРЕНДА
+          <span class="material-symbols-outlined fill-icon" aria-hidden="true">bolt</span>
         </button>
       </div>
-    </section>
+    </div>
 
-    <section class="section cases-reviews" id="cases-reviews">
-      <h2 class="section-title">Кейсы и отзывы</h2>
-      <div class="cases-grid">
-        <article class="case-card glass-panel">
-          <span class="case-tag">Кейс</span>
-          <h3 class="case-title">Личный бренд + AI</h3>
-          <p class="case-text">Упаковка эксперта: визуал, контент-план и внедрение нейросетей. Срок окупаемости — 2 месяца.</p>
-        </article>
-        <article class="case-card glass-panel">
-          <span class="case-tag">Кейс</span>
-          <h3 class="case-title">Подкаст на выезде</h3>
-          <p class="case-text">Запись 4 выпусков за день: звук, свет, монтаж тизеров для соцсетей.</p>
-        </article>
-        <article class="case-card glass-panel">
-          <span class="case-tag">Кейс</span>
-          <h3 class="case-title">Автоматизация n8n</h3>
-          <p class="case-text">Связка CRM + Telegram + отчёты: минус 12 ч рутины в неделю у команды из 3 человек.</p>
-        </article>
-      </div>
-      <div class="reviews-grid">
-        <div class="review-card glass-panel">
-          <div class="review-header">
-            <div class="review-avatar">АК</div>
-            <div class="review-meta">
-              <span class="review-name">Алексей К.</span>
-              <span class="review-source">Telegram</span>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">«Думал, что нейросети — это сложно. После консультации с ANDXSTARS пазл реально сложился! Теперь я делаю контент в 10 раз быстрее.»</p>
-        </div>
-        <div class="review-card glass-panel">
-          <div class="review-header">
-            <div class="review-avatar">МС</div>
-            <div class="review-meta">
-              <span class="review-name">Мария С.</span>
-              <span class="review-source">VK</span>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">«Дизайн и музыка просто разрыв. Атмосфера киберпанка и полный профессионализм. Сайт получился именно таким, каким я его представляла.»</p>
-        </div>
-        <div class="review-card glass-panel">
-          <div class="review-header">
-            <div class="review-avatar">ДВ</div>
-            <div class="review-meta">
-              <span class="review-name">Дмитрий В.</span>
-              <span class="review-source">Instagram</span>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">«Цигун в сочетании с технологиями — это взрыв мозга. Появилась дисциплина и четкое понимание, куда двигаться.»</p>
-        </div>
-      </div>
-    </section>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-40" aria-hidden="true">
+      <span class="material-symbols-outlined text-4xl">keyboard_double_arrow_down</span>
+    </div>
+  </section>
 
-    <section class="section cta" id="cta">
-      <div class="cta-content">
-        <p class="pay-options-caption pay-options-caption--center">Оплата — выберите способ</p>
-        <div class="payment-split payment-split--center" role="group" aria-label="Способы оплаты">
-          <a href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-card cta-btn-shine" id="ctaBtnMain">
-            КАРТА (СНГ)
-          </a>
-          <a href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-pay cta-btn-pay-crypto" id="ctaBtnCrypto">
-            КРИПТОВАЛЮТА
-          </a>
-        </div>
+  <!-- Два одинаковых блока в разметке — бесшовный marquee без JS -->
+  <div class="py-10 bg-surface-container-low border-y border-white/5 overflow-hidden">
+    <div class="marquee-container">
+      <div class="marquee-content font-headline text-3xl font-bold opacity-30 tracking-widest text-white flex">
+        <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
+        <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
+        <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
+        <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
+        <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
+        <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
+        <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
+        <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
+        <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
+        <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
       </div>
-    </section>
-
-    <section class="section arsenal arsenal-bottom" id="arsenal">
-      <h2 class="section-title">Дополнительно</h2>
-      <div class="skills-scroll">
-        <div class="skills-grid">
-          <div class="skill-card" data-skill="sites">
-            <div class="skill-card-video-bg" aria-hidden="true">
-              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/%D1%81%D0%B0%D0%B9%D1%82%D1%8B/Sensors_moving%2C_camera_202603291842.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="skill-card-inner">
-              <span class="skill-icon">◈</span>
-              <h3>Сайты</h3>
-            </div>
-          </div>
-          <div class="skill-card" data-skill="music">
-            <div class="skill-card-video-bg" aria-hidden="true">
-              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/%D0%BC%D1%83%D0%B7%D1%8B%D0%BA%D0%B0/Guy_plays_bass_202603291841.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="skill-card-inner">
-              <span class="skill-icon">♪</span>
-              <h3>Музыка</h3>
-            </div>
-          </div>
-          <div class="skill-card" data-skill="ai">
-            <div class="skill-card-video-bg" aria-hidden="true">
-              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/%D0%BD%D0%B5%D0%B9%D1%80%D0%BE%D1%81%D0%B5%D1%82%D0%B8/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="skill-card-inner">
-              <span class="skill-icon">◇</span>
-              <h3>Нейросети</h3>
-            </div>
-          </div>
-          <div class="skill-card" data-skill="automation">
-            <div class="skill-card-video-bg" aria-hidden="true">
-              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8/Superhero_possesses_digital_202603291845.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="skill-card-inner">
-              <span class="skill-icon">⚡</span>
-              <h3>Автоматизация</h3>
-            </div>
-          </div>
-          <div class="skill-card" data-skill="qigong">
-            <div class="skill-card-video-bg" aria-hidden="true">
-              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/%D1%86%D0%B8%D0%B3%D1%83%D0%BD/Moves_technology_engaging_202603291845.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="skill-card-inner">
-              <span class="skill-icon">◎</span>
-              <h3>Цигун</h3>
-            </div>
-          </div>
-          <div class="skill-card" data-skill="photo">
-            <div class="skill-card-video-bg" aria-hidden="true">
-              <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./catalog%20uslug/Photo%20and%20video/Developer_at_desk_202603291823.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="skill-card-inner">
-              <span class="skill-icon">◉</span>
-              <h3>Фотосессии</h3>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer" id="footer">
-      <h2 class="footer-title">Моя экосистема</h2>
-      <div class="footer-grid">
-        <div class="footer-group">
-          <h3>Документы</h3>
-          <a href="legal-privacy.html">Политика персональных данных</a>
-          <a href="legal-offer.html">Пользовательское соглашение (оферта)</a>
-          <a href="legal-requisites.html">Реквизиты</a>
-        </div>
-        <div class="footer-group">
-          <h3>YouTube</h3>
-          <a href="https://www.youtube.com/@andxstars" target="_blank" rel="noopener noreferrer">ANDXSTARS</a>
-          <a href="https://www.youtube.com/@sferastars" target="_blank" rel="noopener noreferrer">SFERA STARS</a>
-          <a href="https://www.youtube.com/@aimonax" target="_blank" rel="noopener noreferrer">AIMONAX</a>
-          <a href="https://www.youtube.com/@andxsound" target="_blank" rel="noopener noreferrer">ANDXSOUND</a>
-        </div>
-        <div class="footer-group">
-          <h3>Instagram</h3>
-          <a href="https://www.instagram.com/andxstars/" target="_blank" rel="noopener noreferrer">@andxstars</a>
-          <a href="https://www.instagram.com/andxsound" target="_blank" rel="noopener noreferrer">@andxsound</a>
-          <a href="https://www.instagram.com/sferastars" target="_blank" rel="noopener noreferrer">@sferastars</a>
-          <a href="https://www.instagram.com/aimonax" target="_blank" rel="noopener noreferrer">@aimonax</a>
-        </div>
-        <div class="footer-group">
-          <h3>ВКонтакте</h3>
-          <a href="https://vk.com/andxstars" target="_blank" rel="noopener noreferrer">Личка</a>
-          <a href="https://vk.com/andxstar" target="_blank" rel="noopener noreferrer">Группа</a>
-        </div>
-        <div class="footer-group">
-          <h3>Telegram</h3>
-          <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer">t.me/andxxstars</a>
-        </div>
-      </div>
-      <p class="footer-copy">© ANDXSTARS · Бизнес &amp; Cyber-Tech · Сайт работает по HTTPS (GitHub Pages)</p>
-    </footer>
-  </main>
-
-  <div class="service-overlay" id="serviceOverlay">
-    <div class="service-slide-panel" id="serviceSlidePanel">
-      <button type="button" class="service-overlay-close" id="serviceOverlayClose" aria-label="Закрыть">×</button>
-      <div class="service-overlay-content" id="serviceOverlayContent"></div>
     </div>
   </div>
 
-  <div class="portfolio-modal" id="portfolioModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="portfolioModalTitle">
-    <div class="portfolio-modal-inner glass-panel">
-      <button type="button" class="portfolio-modal-close" id="portfolioModalClose" aria-label="Закрыть галерею">×</button>
-      <h2 class="portfolio-modal-title" id="portfolioModalTitle"></h2>
-      <div class="portfolio-modal-gallery masonry" id="portfolioModalGallery"></div>
-    </div>
-  </div>
+  <section id="services" class="py-32 px-8 max-w-[1400px] mx-auto">
+    <h2 class="font-headline font-black text-5xl md:text-7xl text-white mb-16 uppercase leading-tight">Системные <br/><span class="text-secondary">Сервисы</span></h2>
 
-  <div class="arsenal-overlay" id="arsenalOverlay">
-    <div class="arsenal-panel glass-panel" id="arsenalPanel">
-      <button type="button" class="arsenal-close" id="arsenalClose" aria-label="Закрыть">×</button>
-      <div id="arsenalPanelBody" class="arsenal-panel-body"></div>
-    </div>
-  </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glow-card p-1 flex flex-col justify-between min-h-[400px] group">
+        <div class="absolute inset-0 z-0">
+          <video class="w-full h-full object-cover opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity duration-700 lazy-video" autoplay loop muted playsinline preload="none">
+            <source data-src="./catalog%20uslug/MULTIKI/Flow_delpmaspu_%20(1).mp4" type="video/mp4">
+          </video>
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 p-10 flex flex-col h-full justify-end">
+          <span class="material-symbols-outlined text-5xl text-primary mb-4" aria-hidden="true">neurology</span>
+          <h3 class="font-headline text-4xl font-bold mb-4">Нейросети &amp; Мультипликация</h3>
+          <p class="text-on-surface-variant text-lg">AI-генерация графики и видео контента.</p>
+        </div>
+      </div>
 
-  <div id="categoryPreviewPop" class="category-preview-pop" aria-hidden="true"></div>
+      <div class="glow-card p-1 flex flex-col justify-between min-h-[400px] group">
+        <div class="absolute inset-0 z-0">
+          <video class="w-full h-full object-cover opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity duration-700 lazy-video" autoplay loop muted playsinline preload="none">
+            <source data-src="./catalog%20uslug/Photo%20and%20video/Developer_at_desk_202603291823.mp4" type="video/mp4">
+          </video>
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 p-10 flex flex-col h-full justify-end">
+          <span class="material-symbols-outlined text-5xl text-secondary mb-4" aria-hidden="true">videocam</span>
+          <h3 class="font-headline text-4xl font-bold mb-4">Видеопродакшн</h3>
+          <p class="text-on-surface-variant text-lg">Съемка и монтаж коммерческого видео.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <script src="./script.js" defer></script>
 </body>
