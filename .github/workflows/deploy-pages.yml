@@ -30,6 +30,8 @@ jobs:
           cache: npm
 
       - name: Install and build
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           npm ci
           npm run build
