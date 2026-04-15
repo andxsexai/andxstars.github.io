@@ -1,11 +1,11 @@
 /**
- * ANDXSTARS v6.0 — Vite entry: Tailwind + legacy CSS, hero canvas; фичи в ./features.js
+ * ANDXSTARS v6.0 — Vite: лёгкий первый кадр, тяжёлый canvas только на мощных десктопах.
  */
 
 import './index.css';
 import '../style.css';
 
-import { initMainTabs, initAndxFeatures, observeLazyVideosIn } from './features.js';
+import { initMainTabs, initAndxFeatures, scheduleObserveLazyVideosIn } from './features.js';
 
 function isLowTierDevice() {
   const cores = navigator.hardwareConcurrency || 4;
@@ -15,26 +15,57 @@ function isLowTierDevice() {
   return cores < 4 || memory < 4 || isMobile || saveData;
 }
 
+/** Матрица / спираль — только там, где не убиваем батарею и FPS */
+function prefersHeavyVisuals() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  if (isLowTierDevice()) return false;
+  if (window.innerWidth < 900) return false;
+  return true;
+}
+
 function scheduleFeaturesBundle() {
-  const run = () => {
-    initAndxFeatures();
-  };
-  if (typeof requestIdleCallback === 'function') {
-    requestIdleCallback(run, { timeout: 2500 });
+  const run = () => initAndxFeatures();
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(() => {
+      setTimeout(run, 0);
+    });
   } else {
-    setTimeout(run, 120);
+    setTimeout(run, 0);
   }
 }
 
+/** Один rAF на кадр: не пересчитываем десятки карточек на каждый mousemove */
 function initGlowCardTracking() {
+  let raf = 0;
+  let cx = 0;
+  let cy = 0;
+  let cards = [];
+
+  function tick() {
+    raf = 0;
+    if (!cards.length) cards = Array.from(document.querySelectorAll('.glow-card'));
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--x', `${cx - rect.left}px`);
+      card.style.setProperty('--y', `${cy - rect.top}px`);
+    }
+  }
+
   document.addEventListener(
     'mousemove',
     (e) => {
-      document.querySelectorAll('.glow-card').forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--x', `${e.clientX - rect.left}px`);
-        card.style.setProperty('--y', `${e.clientY - rect.top}px`);
-      });
+      cx = e.clientX;
+      cy = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
+    },
+    { passive: true }
+  );
+
+  window.addEventListener(
+    'resize',
+    () => {
+      cards = [];
     },
     { passive: true }
   );
@@ -42,10 +73,11 @@ function initGlowCardTracking() {
 
 function initSpiral() {
   const canvas = document.getElementById('spiralCanvas');
-  if (!canvas || isLowTierDevice()) return;
+  if (!canvas || !prefersHeavyVisuals()) return;
+  if (window.innerWidth < 1024) return;
 
   const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let size;
 
   function resize() {
@@ -59,8 +91,8 @@ function initSpiral() {
   const CAMERA_Z = -400;
   const CAMERA_TRAVEL = 3400;
   const VIEW_ZOOM = 100;
-  const NUM_STARS = 3000;
-  const TRAIL_LEN = 60;
+  const NUM_STARS = window.innerWidth >= 1440 ? 2400 : 900;
+  const TRAIL_LEN = 48;
   const START_DOT_Y = 28;
 
   let time = 0;
@@ -199,7 +231,7 @@ function initSpiral() {
     ctx.fillStyle = '#ffffff';
     drawTrail(t1);
 
-    ctx.fillStyle = 'rgba(211, 148, 255, 0.8)';
+    ctx.fillStyle = 'rgba(211, 148, 255, 0.75)';
     for (const star of stars) renderStar(star, t1);
 
     ctx.restore();
@@ -216,49 +248,68 @@ function initSpiral() {
 }
 
 function initMatrix() {
+  if (!prefersHeavyVisuals()) return;
   const canvas = document.getElementById('matrixCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const colW = 24;
   let w = (canvas.width = window.innerWidth);
   let h = (canvas.height = window.innerHeight);
-  let drops = Array(Math.floor(w / 20)).fill(1);
+  let drops = Array(Math.floor(w / colW)).fill(1);
 
   function syncSize() {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
-    const newCols = Math.floor(w / 20);
+    const newCols = Math.floor(w / colW);
     const next = Array(newCols).fill(1);
     for (let i = 0; i < Math.min(drops.length, newCols); i++) next[i] = drops[i];
     drops = next;
   }
 
-  function draw() {
-    if (document.hidden) return;
-    ctx.fillStyle = 'rgba(14, 14, 14, 0.05)';
+  let last = 0;
+  const minStep = 90;
+
+  function draw(ts) {
+    if (document.hidden) {
+      requestAnimationFrame(draw);
+      return;
+    }
+    if (ts - last < minStep) {
+      requestAnimationFrame(draw);
+      return;
+    }
+    last = ts;
+    ctx.fillStyle = 'rgba(14, 14, 14, 0.06)';
     ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#aa30fa';
-    ctx.font = '15px "Space Grotesk", sans-serif';
+    ctx.fillStyle = 'rgba(170, 48, 250, 0.55)';
+    ctx.font = '14px "Space Grotesk", sans-serif';
     for (let i = 0; i < drops.length; i++) {
-      const text = String.fromCharCode(Math.random() * 128);
-      ctx.fillText(text, i * 20, drops[i] * 20);
-      if (drops[i] * 20 > h && Math.random() > 0.975) drops[i] = 0;
+      const text = String.fromCharCode(33 + (Math.random() * 93) | 0);
+      ctx.fillText(text, i * colW, drops[i] * colW);
+      if (drops[i] * colW > h && Math.random() > 0.97) drops[i] = 0;
       drops[i]++;
     }
+    requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', syncSize, { passive: true });
-  setInterval(draw, 33);
+  requestAnimationFrame(draw);
 }
 
 function boot() {
   initGlowCardTracking();
   initMainTabs();
-  observeLazyVideosIn(document);
+  scheduleObserveLazyVideosIn(document);
   initMatrix();
   if (typeof requestIdleCallback === 'function') {
-    requestIdleCallback(() => initSpiral());
+    requestIdleCallback(
+      () => {
+        initSpiral();
+      },
+      { timeout: 800 }
+    );
   } else {
-    setTimeout(initSpiral, 300);
+    setTimeout(initSpiral, 400);
   }
   scheduleFeaturesBundle();
 }

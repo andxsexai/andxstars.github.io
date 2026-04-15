@@ -7,13 +7,27 @@ function readDataSrc(source) {
   return source.getAttribute('data-src') || '';
 }
 
+/** Одинаково для dev (Vite), dist и file:// — путь относительно текущей страницы */
+function resolveMediaHref(href) {
+  if (!href) return '';
+  if (/^https?:\/\//i.test(href)) return href;
+  try {
+    return new URL(href, document.baseURI).href;
+  } catch (e) {
+    return href;
+  }
+}
+
 function hydrateVideoSource(video) {
   const source = video.querySelector('source');
-  const url = readDataSrc(source);
-  if (!source || !url) return false;
+  const raw = readDataSrc(source);
+  if (!source || !raw) return false;
+  const url = resolveMediaHref(raw);
   if (!source.getAttribute('src')) {
     source.setAttribute('src', url);
     source.removeAttribute('data-src');
+    video.muted = true;
+    video.setAttribute('playsinline', '');
     video.load();
   }
   return true;
@@ -24,13 +38,23 @@ const lazyVideoObserver = new IntersectionObserver(
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       const video = entry.target;
+      const srcEl = video.querySelector('source');
+      if (srcEl?.getAttribute('src')) {
+        observer.unobserve(video);
+        return;
+      }
+      const raw = readDataSrc(srcEl);
+      if (!raw || !srcEl) {
+        observer.unobserve(video);
+        return;
+      }
       if (hydrateVideoSource(video)) {
         video.play().catch(() => {});
       }
       observer.unobserve(video);
     });
   },
-  { rootMargin: '0px 0px 200px 0px' }
+  { rootMargin: '0px 0px 480px 0px', threshold: 0.01 }
 );
 
 export function observeLazyVideosIn(root) {
@@ -38,6 +62,14 @@ export function observeLazyVideosIn(root) {
   root.querySelectorAll('.lazy-video').forEach((video) => {
     const source = video.querySelector('source[data-src]');
     if (source) lazyVideoObserver.observe(video);
+  });
+}
+
+/** После снятия hidden браузер отдаёт размеры панели только на следующем кадре — иначе IO даёт 0% видимости */
+export function scheduleObserveLazyVideosIn(root) {
+  if (!root) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => observeLazyVideosIn(root));
   });
 }
 
@@ -57,7 +89,7 @@ function initVisibleClassLazyBridge() {
       if (m.type !== 'attributes' || m.attributeName !== 'class') continue;
       const el = m.target;
       if (!el.classList?.contains('visible')) continue;
-      observeLazyVideosIn(el);
+      scheduleObserveLazyVideosIn(el);
     }
   });
   __visibleLazyMo.observe(document.body, {
@@ -84,7 +116,7 @@ export function initMainTabs() {
       p.hidden = !on;
       if (on) {
         revealAnimatedInPanel(p);
-        observeLazyVideosIn(p);
+        scheduleObserveLazyVideosIn(p);
       }
     });
     try {
@@ -229,7 +261,7 @@ export function initAndxFeatures() {
     '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg'
   ]);
 
-  /** Каждый сегмент пути кодируется отдельно (кириллица в dopoln/… и т.д.) */
+  /** Всегда ./… — резолвится через document.baseURI (GitHub Pages / подпапка / file://). Не смешивать с BASE_URL чанков Vite. */
   function encodePath(folder, file) {
     const segments = String(folder)
       .split('/')
@@ -238,10 +270,7 @@ export function initAndxFeatures() {
         return /^[a-zA-Z0-9_-]+$/.test(seg) ? seg : encodeURIComponent(seg);
       })
       .filter(Boolean);
-    const pathPart = segments.join('/') + '/' + encodeURIComponent(file);
-    const base = import.meta.env?.BASE_URL ?? './';
-    const prefix = base.endsWith('/') ? base : `${base}/`;
-    return `${prefix}${pathPart}`;
+    return './' + segments.join('/') + '/' + encodeURIComponent(file);
   }
 
   function isVideo(file) {
@@ -384,15 +413,15 @@ export function initAndxFeatures() {
           return;
         }
         const source = video.querySelector('source[data-src]');
-        const url = readDataSrc(source);
-        if (source && url && !source.getAttribute('src')) {
-          source.setAttribute('src', url);
+        const raw = readDataSrc(source);
+        if (source && raw && !source.getAttribute('src')) {
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
           video.load();
         }
         obs.unobserve(video);
       });
-    }, { rootMargin: '200px' });
+    }, { rootMargin: '480px', threshold: 0.01 });
     lazyVideos.forEach((v) => {
       if (narrow && v.classList.contains('lazy-video--defer-mobile')) return;
       obs.observe(v);
@@ -408,9 +437,9 @@ export function initAndxFeatures() {
 
       function ensureSrc() {
         const source = video.querySelector('source');
-        const url = readDataSrc(source);
-        if (source && !source.getAttribute('src') && url) {
-          source.setAttribute('src', url);
+        const raw = readDataSrc(source);
+        if (source && !source.getAttribute('src') && raw) {
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
           video.load();
         }
@@ -548,13 +577,13 @@ export function initAndxFeatures() {
             v.playsInline = true;
             v.preload = 'none';
             v.className = 'lazy-video lazy-video--gpu';
-            v.src = data.src;
+            v.src = resolveMediaHref(data.src);
             pop.appendChild(v);
             v.play().catch(() => {});
             previewVideo = v;
           } else {
             const im = document.createElement('img');
-            im.src = data.src;
+            im.src = resolveMediaHref(data.src);
             im.alt = '';
             pop.appendChild(im);
           }
@@ -738,11 +767,12 @@ export function initAndxFeatures() {
       if (!video || !source) return;
 
       function prime() {
-        const url = readDataSrc(source) || source.getAttribute('src');
-        if (!url) return;
+        const raw = readDataSrc(source) || source.getAttribute('src');
+        if (!raw) return;
         if (!source.getAttribute('src')) {
-          source.setAttribute('src', url);
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
+          video.muted = true;
           video.load();
         }
         card.classList.add('service-card--hover-video');
@@ -784,11 +814,12 @@ export function initAndxFeatures() {
       if (!video || !source) return;
 
       function prime() {
-        const url = readDataSrc(source) || source.getAttribute('src');
-        if (!url) return;
+        const raw = readDataSrc(source) || source.getAttribute('src');
+        if (!raw) return;
         if (!source.getAttribute('src')) {
-          source.setAttribute('src', url);
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
+          video.muted = true;
           video.load();
         }
         card.classList.add('skill-card--hover-video');
@@ -1262,10 +1293,11 @@ export function initAndxFeatures() {
         const pv = contentEl.querySelector('video.lazy-video--panel');
         if (pv) {
           const srcEl = pv.querySelector('source[data-src]');
-          const url = readDataSrc(srcEl);
-          if (srcEl && url) {
-            srcEl.setAttribute('src', url);
+          const raw = readDataSrc(srcEl);
+          if (srcEl && raw) {
+            srcEl.setAttribute('src', resolveMediaHref(raw));
             srcEl.removeAttribute('data-src');
+            pv.muted = true;
             pv.load();
           }
           pv.play().catch(() => {});
@@ -1427,10 +1459,11 @@ export function initAndxFeatures() {
     const vid = bodyEl.querySelector('video.lazy-video--arsenal');
     if (vid) {
       const s = vid.querySelector('source[data-src]');
-      const url = readDataSrc(s);
-      if (s && url) {
-        s.setAttribute('src', url);
+      const raw = readDataSrc(s);
+      if (s && raw) {
+        s.setAttribute('src', resolveMediaHref(raw));
         s.removeAttribute('data-src');
+        vid.muted = true;
         vid.load();
       }
       vid.play().catch(() => {});
@@ -1503,6 +1536,6 @@ export function initAndxFeatures() {
 
   document.querySelectorAll('.tab-panel:not([hidden])').forEach((p) => {
     revealAnimatedInPanel(p);
-    observeLazyVideosIn(p);
+    scheduleObserveLazyVideosIn(p);
   });
 }

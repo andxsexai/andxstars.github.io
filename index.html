@@ -21,14 +21,15 @@
 
   <nav class="fixed top-0 md:top-0 max-md:top-[52px] w-full flex justify-between items-center px-6 md:px-8 py-5 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
     <a href="#hero" class="text-xl md:text-2xl font-black tracking-tighter uppercase font-headline text-white no-underline">ANDXSTARS</a>
-    <div class="hidden md:flex gap-10 font-headline text-xs tracking-widest uppercase text-white/50">
-      <a href="#panel-services" class="hover:text-primary transition-colors js-tab-jump" data-tab="services">Услуги</a>
-      <a href="#panel-portfolio" class="hover:text-primary transition-colors js-tab-jump" data-tab="portfolio">Портфолио</a>
-      <a href="#panel-arsenal" class="hover:text-primary transition-colors js-tab-jump" data-tab="arsenal">Арсенал</a>
+    <div class="hidden md:flex gap-8 font-headline text-xs tracking-widest uppercase text-white/55">
+      <a href="#panel-services" class="hover:text-primary transition-colors js-tab-jump no-underline text-inherit" data-tab="services">Услуги</a>
+      <a href="#panel-portfolio" class="hover:text-primary transition-colors js-tab-jump no-underline text-inherit" data-tab="portfolio">Портфолио</a>
+      <a href="#panel-arsenal" class="hover:text-primary transition-colors js-tab-jump no-underline text-inherit" data-tab="arsenal">Арсенал</a>
+      <a href="#panel-contact" class="hover:text-primary transition-colors js-tab-jump no-underline text-inherit" data-tab="contact">Связь</a>
     </div>
     <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
-       class="bg-primary text-[#39005c] font-black px-5 py-2 rounded-full text-[10px] md:text-xs uppercase tracking-tighter hover:scale-105 transition-transform no-underline inline-flex items-center">
-      AI AUDIT
+       class="bg-primary text-black font-black px-5 py-2 rounded-full text-[10px] md:text-xs uppercase tracking-tighter hover:scale-105 transition-transform no-underline inline-flex items-center shadow-[0_0_20px_rgba(211,148,255,0.35)]">
+      AI-Аудит
     </a>
   </nav>
 
@@ -44,13 +45,14 @@
   </div>
 
   <div id="panel-overview" class="tab-panel" role="tabpanel" aria-labelledby="tab-overview">
-    <section id="hero" class="relative min-h-[85vh] flex items-center justify-center pt-6 overflow-hidden">
-      <canvas id="spiralCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
-      <canvas id="matrixCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-20"></canvas>
+    <section id="hero" class="liquid-gradient-hero relative min-h-[85vh] flex items-center justify-center pt-6 overflow-hidden">
+      <canvas id="spiralCanvas" class="hidden md:block absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
+      <canvas id="matrixCanvas" class="hidden md:block absolute inset-0 z-0 pointer-events-none opacity-[0.14]"></canvas>
+      <canvas id="matrixNeonCanvas" class="hidden md:block absolute inset-0 z-[1] pointer-events-none" aria-hidden="true"></canvas>
 
       <div class="relative z-10 text-center px-6 max-w-6xl">
         <div class="inline-block py-2 px-4 mb-6 rounded-full border border-primary/20 bg-surface-container-low/50 backdrop-blur-md">
-          <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Synthetic Entropy v6.0</span>
+          <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Синтетическая энтропия · v6.0</span>
         </div>
         <h1 class="font-headline font-black text-5xl sm:text-6xl md:text-9xl leading-none tracking-tighter mb-8">
           Архитектор <br/> <span class="text-primary italic">цифровой</span> реальности
@@ -74,17 +76,17 @@
 
     <div class="py-10 bg-surface-container-low border-y border-white/5 overflow-hidden">
       <div class="marquee-container">
-        <div class="marquee-content font-headline text-2xl sm:text-3xl font-bold opacity-30 tracking-widest text-white flex">
-          <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
-          <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
-          <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
-          <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
-          <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
-          <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
-          <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
-          <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
-          <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
-          <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
+        <div class="marquee-content font-headline text-xl sm:text-2xl font-bold opacity-35 tracking-[0.2em] text-white/90 flex">
+          <span>НЕЙРОРОЛИКИ</span><span class="text-primary">·</span>
+          <span>ДИЗАЙН И БРЕНД</span><span class="text-secondary">·</span>
+          <span>ПОДКАСТЫ</span><span class="text-primary">·</span>
+          <span>АВТОМАТИЗАЦИЯ</span><span class="text-secondary">·</span>
+          <span>AI И IT</span><span class="text-primary">·</span>
+          <span>НЕЙРОРОЛИКИ</span><span class="text-primary">·</span>
+          <span>ДИЗАЙН И БРЕНД</span><span class="text-secondary">·</span>
+          <span>ПОДКАСТЫ</span><span class="text-primary">·</span>
+          <span>АВТОМАТИЗАЦИЯ</span><span class="text-secondary">·</span>
+          <span>AI И IT</span><span class="text-primary">·</span>
         </div>
       </div>
     </div>
@@ -141,7 +143,7 @@
         <article class="glow-card service-card glass-panel min-h-[380px]" data-service="neuro">
           <div class="service-card-video-bg" aria-hidden="true">
             <video class="service-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-              <source data-src="./catalog-uslug/multikif/Flow_delpmaspu_%20(1).mp4" type="video/mp4"/>
+              <source data-src="./catalog-uslug/multikif/flow-neuro-loop.mp4" type="video/mp4"/>
             </video>
           </div>
           <div class="service-card-inner">
@@ -267,7 +269,7 @@
           <div class="glow-card skill-card glass-panel" data-skill="sites">
             <div class="skill-card-video-bg" aria-hidden="true">
               <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/сайты/Sensors_moving,_camera_202603291842.mp4" type="video/mp4"/>
+                <source data-src="./dopoln/sites/Sensors_moving,_camera_202603291842.mp4" type="video/mp4"/>
               </video>
             </div>
             <div class="skill-card-inner">
@@ -278,7 +280,7 @@
           <div class="glow-card skill-card glass-panel" data-skill="music">
             <div class="skill-card-video-bg" aria-hidden="true">
               <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/музыка/Guy_plays_bass_202603291841.mp4" type="video/mp4"/>
+                <source data-src="./dopoln/music/Guy_plays_bass_202603291841.mp4" type="video/mp4"/>
               </video>
             </div>
             <div class="skill-card-inner">
@@ -289,7 +291,7 @@
           <div class="glow-card skill-card glass-panel" data-skill="ai">
             <div class="skill-card-video-bg" aria-hidden="true">
               <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4" type="video/mp4"/>
+                <source data-src="./dopoln/ai/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4" type="video/mp4"/>
               </video>
             </div>
             <div class="skill-card-inner">
@@ -300,7 +302,7 @@
           <div class="glow-card skill-card glass-panel" data-skill="automation">
             <div class="skill-card-video-bg" aria-hidden="true">
               <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4" type="video/mp4"/>
+                <source data-src="./dopoln/automation/Superhero_possesses_digital_202603291845.mp4" type="video/mp4"/>
               </video>
             </div>
             <div class="skill-card-inner">
@@ -311,7 +313,7 @@
           <div class="glow-card skill-card glass-panel" data-skill="qigong">
             <div class="skill-card-video-bg" aria-hidden="true">
               <video class="skill-card-hover-video lazy-video lazy-video--gpu" muted playsinline loop preload="none">
-                <source data-src="./dopoln/цигун/Moves_technology_engaging_202603291845.mp4" type="video/mp4"/>
+                <source data-src="./dopoln/qigong/Moves_technology_engaging_202603291845.mp4" type="video/mp4"/>
               </video>
             </div>
             <div class="skill-card-inner">

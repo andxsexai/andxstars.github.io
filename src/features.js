@@ -7,13 +7,177 @@ function readDataSrc(source) {
   return source.getAttribute('data-src') || '';
 }
 
+/** Одинаково для dev (Vite), dist и file:// — путь относительно текущей страницы */
+function resolveMediaHref(href) {
+  if (!href) return '';
+  if (/^https?:\/\//i.test(href)) return href;
+  try {
+    return new URL(href, document.baseURI).href;
+  } catch (e) {
+    return href;
+  }
+}
+
+/**
+ * Публичные ассеты (корень сайта / Vite dist). Всегда строка, без `undefined`.
+ * new URL + import.meta.env.BASE_URL — корректно для подпапки и preview.
+ */
+export function getAsset(relPath) {
+  const raw = String(relPath || '').trim();
+  if (!raw) return '';
+  const rel = raw.startsWith('./') ? raw : `./${raw.replace(/^\/+/, '')}`;
+  const viteBase =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL != null
+      ? String(import.meta.env.BASE_URL)
+      : './';
+  let pathForUrl = rel;
+  if (viteBase === '/') {
+    pathForUrl = `/${rel.replace(/^\.\//, '')}`;
+  } else if (viteBase !== './' && viteBase !== '') {
+    const tail = rel.replace(/^\.\//, '');
+    pathForUrl = `${viteBase.endsWith('/') ? viteBase : `${viteBase}/`}${tail}`;
+  }
+  if (typeof document !== 'undefined' && document.baseURI) {
+    try {
+      return new URL(pathForUrl, document.baseURI).href;
+    } catch (e) {
+      try {
+        return new URL(rel, document.baseURI).href;
+      } catch (e2) {
+        return rel;
+      }
+    }
+  }
+  return pathForUrl;
+}
+
+export function encodePath(folder, file) {
+  const segments = String(folder)
+    .split('/')
+    .map((seg) => {
+      if (!seg) return '';
+      return /^[a-zA-Z0-9_-]+$/.test(seg) ? seg : encodeURIComponent(seg);
+    })
+    .filter(Boolean);
+  return getAsset(`./${segments.join('/')}/${encodeURIComponent(file)}`);
+}
+
+function isVideo(file) {
+  return /\.(mp4|webm|ogg|mov)$/i.test(file);
+}
+
+export const CATEGORY_TITLES = {
+  neuro: 'Нейромультики',
+  design: 'Дизайн',
+  cases: 'Кейсы',
+  all: 'Все проекты'
+};
+
+/** Данные портфолио: папки в корне репо → копируются в dist через Vite */
+export const PORTFOLIO_DATA = [
+  {
+    folder: 'author',
+    category: 'cases',
+    label: 'Автор Я Сам',
+    files: [
+      '1767549655237-2026-01-04 20.48.46.jpg',
+      '1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png',
+      '1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png',
+      '1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png',
+      '1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png'
+    ]
+  },
+  {
+    folder: 'video',
+    category: 'neuro',
+    label: 'Нейромультики',
+    files: ['2026-03-02 15.24.56.mp4', '2026-03-02 15.25.24.mp4', '2026-03-02 15.25.38.mp4']
+  },
+  {
+    folder: 'cards',
+    category: 'design',
+    label: 'Карточки ВБ',
+    files: ['2026-03-02 15.50.57.jpg', '2026-03-02 15.51.06.jpg', '2026-03-02 15.51.12.jpg']
+  },
+  {
+    folder: 'covers',
+    category: 'design',
+    label: 'Обложки',
+    files: [
+      '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg',
+      '1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg'
+    ]
+  },
+  {
+    folder: 'clothing',
+    category: 'design',
+    label: 'Одежда',
+    files: [
+      '1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png',
+      '1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png',
+      '1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png'
+    ]
+  },
+  {
+    folder: 'posters',
+    category: 'design',
+    label: 'Постеры',
+    files: [
+      '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg',
+      '2026-03-02 15.32.19.jpg',
+      '2026-03-02 15.45.55.jpg',
+      '2026-03-02 15.46.01.jpg'
+    ]
+  },
+  {
+    folder: 'photos',
+    category: 'cases',
+    label: 'Фотосессии',
+    files: [
+      '1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png',
+      '1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png',
+      '2026-03-02 15.23.13.jpg',
+      '2026-03-02 15.23.18.jpg',
+      'influencer.jpg'
+    ]
+  }
+];
+
+const HEAVY_PORTFOLIO_IMAGES = new Set([
+  '1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png',
+  '1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png',
+  '1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png',
+  '1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png',
+  '1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png',
+  '1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png',
+  '1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png',
+  '1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png',
+  '1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png',
+  '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg',
+  '1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg',
+  '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg'
+]);
+
+function defaultGalleryVideoPoster() {
+  return encodePath('posters', '2026-03-02 15.32.19.jpg');
+}
+
+/** Отложенный observe (модалка / скрытые панели — после layout). */
+export function observeLazyVideosInDeferred(root, delayMs = 320) {
+  const ms = typeof delayMs === 'number' ? delayMs : 320;
+  window.setTimeout(() => observeLazyVideosIn(root), ms);
+}
+
 function hydrateVideoSource(video) {
   const source = video.querySelector('source');
-  const url = readDataSrc(source);
-  if (!source || !url) return false;
+  const raw = readDataSrc(source);
+  if (!source || !raw) return false;
+  const url = resolveMediaHref(raw);
   if (!source.getAttribute('src')) {
     source.setAttribute('src', url);
     source.removeAttribute('data-src');
+    video.muted = true;
+    video.setAttribute('playsinline', '');
     video.load();
   }
   return true;
@@ -24,13 +188,23 @@ const lazyVideoObserver = new IntersectionObserver(
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       const video = entry.target;
+      const srcEl = video.querySelector('source');
+      if (srcEl?.getAttribute('src')) {
+        observer.unobserve(video);
+        return;
+      }
+      const raw = readDataSrc(srcEl);
+      if (!raw || !srcEl) {
+        observer.unobserve(video);
+        return;
+      }
       if (hydrateVideoSource(video)) {
         video.play().catch(() => {});
       }
       observer.unobserve(video);
     });
   },
-  { rootMargin: '0px 0px 200px 0px' }
+  { rootMargin: '0px 0px 480px 0px', threshold: 0.01 }
 );
 
 export function observeLazyVideosIn(root) {
@@ -38,6 +212,14 @@ export function observeLazyVideosIn(root) {
   root.querySelectorAll('.lazy-video').forEach((video) => {
     const source = video.querySelector('source[data-src]');
     if (source) lazyVideoObserver.observe(video);
+  });
+}
+
+/** После снятия hidden браузер отдаёт размеры панели только на следующем кадре — иначе IO даёт 0% видимости */
+export function scheduleObserveLazyVideosIn(root) {
+  if (!root) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => observeLazyVideosIn(root));
   });
 }
 
@@ -57,7 +239,7 @@ function initVisibleClassLazyBridge() {
       if (m.type !== 'attributes' || m.attributeName !== 'class') continue;
       const el = m.target;
       if (!el.classList?.contains('visible')) continue;
-      observeLazyVideosIn(el);
+      scheduleObserveLazyVideosIn(el);
     }
   });
   __visibleLazyMo.observe(document.body, {
@@ -84,7 +266,7 @@ export function initMainTabs() {
       p.hidden = !on;
       if (on) {
         revealAnimatedInPanel(p);
-        observeLazyVideosIn(p);
+        scheduleObserveLazyVideosIn(p);
       }
     });
     try {
@@ -141,111 +323,6 @@ export function initAndxFeatures() {
       (ao && ao.classList.contains('active')) ||
       (pm && pm.classList.contains('is-open'));
     document.body.classList.toggle('overlay-open', !!any);
-  }
-
-  const PORTFOLIO_DATA = [
-    {
-      folder: 'author', category: 'cases', label: 'Автор Я Сам',
-      files: [
-        '1767549655237-2026-01-04 20.48.46.jpg',
-        '1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png',
-        '1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png',
-        '1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png',
-        '1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png'
-      ]
-    },
-    {
-      folder: 'video', category: 'neuro', label: 'Нейромультики',
-      files: [
-        '2026-03-02 15.24.56.mp4',
-        '2026-03-02 15.25.24.mp4',
-        '2026-03-02 15.25.38.mp4'
-      ]
-    },
-    {
-      folder: 'cards', category: 'design', label: 'Карточки ВБ',
-      files: [
-        '2026-03-02 15.50.57.jpg',
-        '2026-03-02 15.51.06.jpg',
-        '2026-03-02 15.51.12.jpg'
-      ]
-    },
-    {
-      folder: 'covers', category: 'design', label: 'Обложки',
-      files: [
-        '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg',
-        '1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg'
-      ]
-    },
-    {
-      folder: 'clothing', category: 'design', label: 'Одежда',
-      files: [
-        '1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png',
-        '1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png',
-        '1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png'
-      ]
-    },
-    {
-      folder: 'posters', category: 'design', label: 'Постеры',
-      files: [
-        '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg',
-        '2026-03-02 15.32.19.jpg',
-        '2026-03-02 15.45.55.jpg',
-        '2026-03-02 15.46.01.jpg'
-      ]
-    },
-    {
-      folder: 'photos', category: 'cases', label: 'Фотосессии',
-      files: [
-        '1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png',
-        '1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png',
-        '2026-03-02 15.23.13.jpg',
-        '2026-03-02 15.23.18.jpg',
-        'influencer.jpg'
-      ]
-    }
-  ];
-
-  const CATEGORY_TITLES = {
-    neuro: 'Нейромультики',
-    design: 'Дизайн',
-    cases: 'Кейсы',
-    all: 'Все проекты'
-  };
-
-  /** Файлы портфолио > ~500 Кб — принудительно lazy + низкий приоритет загрузки */
-  const HEAVY_PORTFOLIO_IMAGES = new Set([
-    '1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png',
-    '1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png',
-    '1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png',
-    '1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png',
-    '1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png',
-    '1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png',
-    '1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png',
-    '1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png',
-    '1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png',
-    '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg',
-    '1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg',
-    '1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg'
-  ]);
-
-  /** Каждый сегмент пути кодируется отдельно (кириллица в dopoln/… и т.д.) */
-  function encodePath(folder, file) {
-    const segments = String(folder)
-      .split('/')
-      .map((seg) => {
-        if (!seg) return '';
-        return /^[a-zA-Z0-9_-]+$/.test(seg) ? seg : encodeURIComponent(seg);
-      })
-      .filter(Boolean);
-    const pathPart = segments.join('/') + '/' + encodeURIComponent(file);
-    const base = import.meta.env?.BASE_URL ?? './';
-    const prefix = base.endsWith('/') ? base : `${base}/`;
-    return `${prefix}${pathPart}`;
-  }
-
-  function isVideo(file) {
-    return /\.(mp4|webm|ogg|mov)$/i.test(file);
   }
 
   function isMobileLite() {
@@ -342,11 +419,12 @@ export function initAndxFeatures() {
       const narrow = isNarrowViewport();
       const slow = isSlowConnection();
       const preload = narrow || slow ? 'none' : 'none';
-      const posterAttr = '';
+      const posterUrl = defaultGalleryVideoPoster();
+      const posterEsc = posterUrl.replace(/"/g, '&quot;');
       const deferCls = narrow ? ' lazy-video--defer-mobile' : '';
       item.innerHTML = `
         <div class="gallery-video-wrap${narrow ? ' gallery-video-wrap--tap' : ''}">
-          <video muted loop playsinline preload="${preload}" class="lazy-video lazy-video--gpu${deferCls}"${posterAttr}>
+          <video muted loop playsinline preload="${preload}" class="lazy-video lazy-video--gpu${deferCls}" poster="${posterEsc}">
             <source data-src="${href}" type="video/mp4">
           </video>
           <div class="gallery-play-icon" aria-hidden="true">▶</div>
@@ -384,15 +462,15 @@ export function initAndxFeatures() {
           return;
         }
         const source = video.querySelector('source[data-src]');
-        const url = readDataSrc(source);
-        if (source && url && !source.getAttribute('src')) {
-          source.setAttribute('src', url);
+        const raw = readDataSrc(source);
+        if (source && raw && !source.getAttribute('src')) {
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
           video.load();
         }
         obs.unobserve(video);
       });
-    }, { rootMargin: '200px' });
+    }, { rootMargin: '480px', threshold: 0.01 });
     lazyVideos.forEach((v) => {
       if (narrow && v.classList.contains('lazy-video--defer-mobile')) return;
       obs.observe(v);
@@ -408,9 +486,9 @@ export function initAndxFeatures() {
 
       function ensureSrc() {
         const source = video.querySelector('source');
-        const url = readDataSrc(source);
-        if (source && !source.getAttribute('src') && url) {
-          source.setAttribute('src', url);
+        const raw = readDataSrc(source);
+        if (source && !source.getAttribute('src') && raw) {
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
           video.load();
         }
@@ -481,12 +559,21 @@ export function initAndxFeatures() {
       group.files.forEach((file) => gallery.appendChild(createGalleryItem(group, file)));
     });
 
-    initLazyVideoIn(gallery);
-    initVideoHoverIn(gallery);
-    attachVideoPauseWhenHidden(gallery);
     gallery.querySelectorAll('.gallery-item').forEach((el, i) => {
       el.style.transitionDelay = `${(i % 10) * 0.03}s`;
     });
+  }
+
+  function hydratePortfolioModalGallery() {
+    const gallery = document.getElementById('portfolioModalGallery');
+    if (!gallery) return;
+    initVideoHoverIn(gallery);
+    attachVideoPauseWhenHidden(gallery);
+    gallery.querySelectorAll('video.lazy-video').forEach((v) => hydrateVideoSource(v));
+    initLazyVideoIn(gallery);
+    observeLazyVideosIn(gallery);
+    const first = gallery.querySelector('video.lazy-video');
+    if (first) first.play().catch(() => {});
   }
 
   function initPortfolioModal() {
@@ -497,16 +584,47 @@ export function initAndxFeatures() {
     if (!modal || !hub) return;
 
     let previewVideo = null;
+    let modalHydrateTimer = null;
+    let onModalTransitionEnd = null;
+
+    function clearModalHydrateSchedule() {
+      if (modalHydrateTimer != null) {
+        window.clearTimeout(modalHydrateTimer);
+        modalHydrateTimer = null;
+      }
+      if (onModalTransitionEnd) {
+        modal.removeEventListener('transitionend', onModalTransitionEnd);
+        onModalTransitionEnd = null;
+      }
+    }
 
     function openModal(cat) {
+      clearModalHydrateSchedule();
       fillPortfolioModal(cat);
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       syncBodyOverlayClass();
+
+      let fired = false;
+      function runHydrate() {
+        if (fired) return;
+        fired = true;
+        clearModalHydrateSchedule();
+        hydratePortfolioModalGallery();
+      }
+
+      onModalTransitionEnd = (e) => {
+        if (e.target !== modal) return;
+        if (e.propertyName !== 'opacity') return;
+        runHydrate();
+      };
+      modal.addEventListener('transitionend', onModalTransitionEnd);
+      modalHydrateTimer = window.setTimeout(runHydrate, 320);
     }
 
     function closeModal() {
+      clearModalHydrateSchedule();
       modal.classList.remove('is-open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
@@ -548,13 +666,13 @@ export function initAndxFeatures() {
             v.playsInline = true;
             v.preload = 'none';
             v.className = 'lazy-video lazy-video--gpu';
-            v.src = data.src;
+            v.src = resolveMediaHref(data.src);
             pop.appendChild(v);
             v.play().catch(() => {});
             previewVideo = v;
           } else {
             const im = document.createElement('img');
-            im.src = data.src;
+            im.src = resolveMediaHref(data.src);
             im.alt = '';
             pop.appendChild(im);
           }
@@ -738,11 +856,12 @@ export function initAndxFeatures() {
       if (!video || !source) return;
 
       function prime() {
-        const url = readDataSrc(source) || source.getAttribute('src');
-        if (!url) return;
+        const raw = readDataSrc(source) || source.getAttribute('src');
+        if (!raw) return;
         if (!source.getAttribute('src')) {
-          source.setAttribute('src', url);
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
+          video.muted = true;
           video.load();
         }
         card.classList.add('service-card--hover-video');
@@ -784,11 +903,12 @@ export function initAndxFeatures() {
       if (!video || !source) return;
 
       function prime() {
-        const url = readDataSrc(source) || source.getAttribute('src');
-        if (!url) return;
+        const raw = readDataSrc(source) || source.getAttribute('src');
+        if (!raw) return;
         if (!source.getAttribute('src')) {
-          source.setAttribute('src', url);
+          source.setAttribute('src', resolveMediaHref(raw));
           source.removeAttribute('data-src');
+          video.muted = true;
           video.load();
         }
         card.classList.add('skill-card--hover-video');
@@ -841,7 +961,7 @@ export function initAndxFeatures() {
   const MATRIX_PURPLE = { r: 176, g: 38, b: 255 };
 
   function initMatrixTrace() {
-    const canvas = document.getElementById('matrixCanvas');
+    const canvas = document.getElementById('matrixNeonCanvas');
     if (!canvas || !allowMatrixEffect()) return;
 
     const ctx = canvas.getContext('2d');
@@ -1114,7 +1234,7 @@ export function initAndxFeatures() {
     neuro: {
       kind: 'video',
       folder: 'catalog-uslug/multikif',
-      file: 'Flow_delpmaspu_ (1).mp4',
+      file: 'flow-neuro-loop.mp4',
       poster: VIDEO_POSTER_URL,
       fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
     },
@@ -1262,10 +1382,11 @@ export function initAndxFeatures() {
         const pv = contentEl.querySelector('video.lazy-video--panel');
         if (pv) {
           const srcEl = pv.querySelector('source[data-src]');
-          const url = readDataSrc(srcEl);
-          if (srcEl && url) {
-            srcEl.setAttribute('src', url);
+          const raw = readDataSrc(srcEl);
+          if (srcEl && raw) {
+            srcEl.setAttribute('src', resolveMediaHref(raw));
             srcEl.removeAttribute('data-src');
+            pv.muted = true;
             pv.load();
           }
           pv.play().catch(() => {});
@@ -1293,9 +1414,9 @@ export function initAndxFeatures() {
   const SKILL_DETAIL = {
     sites: {
       title: 'Сайты',
-      folderLabel: 'dopoln/сайты · портфолио: covers',
+      folderLabel: 'dopoln/sites · портфолио: covers',
       purpose: 'Сайт — основа диджитал-присутствия: на нём принимают решение о доверии, заявке и покупке.',
-      body: 'Проектируем структуру под вашу воронку: чёткий оффер, блоки доверия, заметные CTA, быстрая загрузка и корректный мобильный вид. Ролик на карточке и в этом окне — из папки <strong>dopoln/сайты</strong>. Живые макеты и обложки — в портфолио, раздел <strong>covers</strong>.',
+      body: 'Проектируем структуру под вашу воронку: чёткий оффер, блоки доверия, заметные CTA, быстрая загрузка и корректный мобильный вид. Ролик на карточке и в этом окне — из папки <strong>dopoln/sites</strong>. Живые макеты и обложки — в портфолио, раздел <strong>covers</strong>.',
       list: [
         'Лендинги под запуск, рекламу и вебинары',
         'Многостраничные сайты под услуги и личный бренд',
@@ -1304,16 +1425,16 @@ export function initAndxFeatures() {
       ],
       media: {
         type: 'video',
-        folder: 'dopoln/сайты',
+        folder: 'dopoln/sites',
         file: 'Sensors_moving,_camera_202603291842.mp4',
         fallback: { folder: 'covers', file: '1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg' }
       }
     },
     music: {
       title: 'Музыка (ANDXSOUND)',
-      folderLabel: 'dopoln/музыка · портфолио: posters',
+      folderLabel: 'dopoln/music · портфолио: posters',
       purpose: 'Аудио задаёт эмоцию ролика, подкаста и бренда — от узнаваемости до удержания внимания.',
-      body: 'Авторский саунд, шлифовка под YouTube, подкасты и рекламу: динамика, частотный баланс, громкость под площадку. Превью на карточке и здесь — <strong>dopoln/музыка</strong>. Визуальные референсы обложек — папка <strong>posters</strong> в портфолио.',
+      body: 'Авторский саунд, шлифовка под YouTube, подкасты и рекламу: динамика, частотный баланс, громкость под площадку. Превью на карточке и здесь — <strong>dopoln/music</strong>. Визуальные референсы обложек — папка <strong>posters</strong> в портфолио.',
       list: [
         'Треки и джинглы под видео и подкасты',
         'Сведение и мастеринг «под эфир»',
@@ -1322,16 +1443,16 @@ export function initAndxFeatures() {
       ],
       media: {
         type: 'video',
-        folder: 'dopoln/музыка',
+        folder: 'dopoln/music',
         file: 'Guy_plays_bass_202603291841.mp4',
         fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
       }
     },
     ai: {
       title: 'Нейросети',
-      folderLabel: 'dopoln/нейросети · портфолио: video (нейро)',
+      folderLabel: 'dopoln/ai · портфолио: video (нейро)',
       purpose: 'Нейросети ускоряют идеацию, визуал и черновики — при грамотном пайплайне экономят недели production.',
-      body: 'Подбираем инструменты под задачу: кадры, озвучка, апскейл, ассистенты для текстов и структуры. На карточке и в окне — ролик из <strong>dopoln/нейросети</strong>. Полная подборка AI-видео — в портфолио, категория <strong>Нейромультики</strong> (папка <strong>video</strong>).',
+      body: 'Подбираем инструменты под задачу: кадры, озвучка, апскейл, ассистенты для текстов и структуры. На карточке и в окне — ролик из <strong>dopoln/ai</strong>. Полная подборка AI-видео — в портфолио, категория <strong>Нейромультики</strong> (папка <strong>video</strong>).',
       list: [
         'Генерация и доработка визуала, storyboard',
         'Ускорение препродакшна и итераций',
@@ -1340,16 +1461,16 @@ export function initAndxFeatures() {
       ],
       media: {
         type: 'video',
-        folder: 'dopoln/нейросети',
+        folder: 'dopoln/ai',
         file: 'grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4',
         fallback: { folder: 'posters', file: '2026-03-02 15.32.19.jpg' }
       }
     },
     automation: {
       title: 'Автоматизация',
-      folderLabel: 'dopoln/автоматизации · портфолио: cards',
+      folderLabel: 'dopoln/automation · портфолио: cards',
       purpose: 'Автоматизация убирает ручной ввод и задержки между CRM, чатами и таблицами.',
-      body: 'Сценарии на n8n, webhooks, боты в Telegram: заявки, напоминания, отчёты без «копипаста». Превью — <strong>dopoln/автоматизации</strong>. Примеры визуала цифровых продуктов — <strong>cards</strong> в портфолио.',
+      body: 'Сценарии на n8n, webhooks, боты в Telegram: заявки, напоминания, отчёты без «копипаста». Превью — <strong>dopoln/automation</strong>. Примеры визуала цифровых продуктов — <strong>cards</strong> в портфолио.',
       list: [
         'Цепочки уведомлений и статусов',
         'Связка Telegram, почта, Google Sheets, CRM',
@@ -1358,16 +1479,16 @@ export function initAndxFeatures() {
       ],
       media: {
         type: 'video',
-        folder: 'dopoln/автоматизации',
+        folder: 'dopoln/automation',
         file: 'Superhero_possesses_digital_202603291845.mp4',
         fallback: { folder: 'cards', file: '2026-03-02 15.51.06.jpg' }
       }
     },
     qigong: {
       title: 'Цигун',
-      folderLabel: 'dopoln/цигун · портфолио: author',
+      folderLabel: 'dopoln/qigong · портфолио: author',
       purpose: 'Ресурс и ясность влияют на качество решений и устойчивость в долгих проектах.',
-      body: 'Короткие практики для концентрации, дыхания и опоры перед эфиром, съёмкой или переговорами. Ролик на карточке — <strong>dopoln/цигун</strong>; атмосфера личного бренда в кадре — папка <strong>author</strong> в портфолио.',
+      body: 'Короткие практики для концентрации, дыхания и опоры перед эфиром, съёмкой или переговорами. Ролик на карточке — <strong>dopoln/qigong</strong>; атмосфера личного бренда в кадре — папка <strong>author</strong> в портфолио.',
       list: [
         'Микро-практики 5–15 минут в день',
         'Настрой перед съёмкой, эфиром, выступлением',
@@ -1375,7 +1496,7 @@ export function initAndxFeatures() {
       ],
       media: {
         type: 'video',
-        folder: 'dopoln/цигун',
+        folder: 'dopoln/qigong',
         file: 'Moves_technology_engaging_202603291845.mp4',
         fallback: { folder: 'author', file: '1767549655237-2026-01-04 20.48.46.jpg' }
       }
@@ -1427,10 +1548,11 @@ export function initAndxFeatures() {
     const vid = bodyEl.querySelector('video.lazy-video--arsenal');
     if (vid) {
       const s = vid.querySelector('source[data-src]');
-      const url = readDataSrc(s);
-      if (s && url) {
-        s.setAttribute('src', url);
+      const raw = readDataSrc(s);
+      if (s && raw) {
+        s.setAttribute('src', resolveMediaHref(raw));
         s.removeAttribute('data-src');
+        vid.muted = true;
         vid.load();
       }
       vid.play().catch(() => {});
@@ -1493,6 +1615,7 @@ export function initAndxFeatures() {
     initServiceCardHoverVideos();
     initSkillHoverVideos();
     initCTANeonTouch();
+    initMatrixTrace();
   }
 
   if (document.readyState === 'loading') {
@@ -1503,6 +1626,6 @@ export function initAndxFeatures() {
 
   document.querySelectorAll('.tab-panel:not([hidden])').forEach((p) => {
     revealAnimatedInPanel(p);
-    observeLazyVideosIn(p);
+    scheduleObserveLazyVideosIn(p);
   });
 }

@@ -2,15 +2,26 @@
 
 :root {
   --safe-top: env(safe-area-inset-top, 0px);
-  --bg-deep: #0a0a0a;
-  --neon-purple: #bf00ff;
-  --neon-purple-alt: #8a2be2;
-  --neon-purple-dim: rgba(191, 0, 255, 0.45);
-  --neon-glow: 0 0 15px #8a2be2, 0 0 28px rgba(138, 43, 226, 0.35);
-  --glass-bg: rgba(14, 8, 24, 0.78);
-  --glass-border: 1px solid rgba(138, 43, 226, 0.45);
+  --bg-deep: #0e0e0e;
+  --neon-purple: #d394ff;
+  --neon-purple-alt: #aa30fa;
+  --neon-pink: #ff68a7;
+  --neon-purple-dim: rgba(211, 148, 255, 0.45);
+  --neon-glow: 0 0 24px rgba(211, 148, 255, 0.25), 0 0 48px rgba(255, 104, 167, 0.12);
+  --glass-bg: rgba(19, 13, 28, 0.72);
+  --glass-border: 1px solid rgba(211, 148, 255, 0.18);
   --font-title: "Space Grotesk", system-ui, sans-serif;
   --font-body: "Manrope", system-ui, sans-serif;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Stitch: «жидкий» фон героя без лишней нагрузки на GPU */
+.liquid-gradient-hero {
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(211, 148, 255, 0.14), transparent 55%),
+    radial-gradient(ellipse 90% 60% at 80% 60%, rgba(255, 104, 167, 0.06), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 10% 70%, rgba(38, 0, 73, 0.35), transparent 45%),
+    var(--bg-deep);
 }
 
 .material-symbols-outlined.fill-icon {
@@ -28,13 +39,16 @@ body.overlay-open .mobile-quick-nav {
   transform: translateY(20px);
 }
 
-/* Glow cards: координаты курсора задаёт script.js → --x, --y */
+/* Glow cards: координаты курсора задаёт main.js → --x, --y */
 .glow-card {
   position: relative;
-  background: #1f1f1f;
+  background: rgba(31, 31, 31, 0.72);
   border-radius: 1rem;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--neon-purple);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 0 30px rgba(211, 148, 255, 0.1);
 }
 
 .glow-card::before {
@@ -136,15 +150,15 @@ video.lazy-video--gpu,
 /* ========== Glass Panel (2.0) ========== */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
-  border: 1px solid rgba(176, 38, 255, 0.2);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(211, 148, 255, 0.12);
   border-radius: 14px;
   box-shadow:
-    inset 0 0 60px rgba(176,38,255,0.04),
-    0 4px 32px rgba(0,0,0,0.4),
-    0 0 0 0.5px rgba(176,38,255,0.08);
-  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+    inset 0 0 50px rgba(211, 148, 255, 0.03),
+    0 8px 48px rgba(0, 0, 0, 0.35),
+    0 0 60px rgba(211, 148, 255, 0.05);
+  transition: border-color 0.35s var(--ease-out-expo), box-shadow 0.35s var(--ease-out-expo);
 }
 
 .glass-panel:hover {
@@ -175,6 +189,14 @@ video.lazy-video--gpu,
 .portfolio-hub-card,
 .case-card {
   animation: neonBreathe 4.2s ease-in-out infinite;
+}
+
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  .service-card.glass-panel,
+  .portfolio-hub-card,
+  .case-card {
+    animation: none;
+  }
 }
 
 .service-card.glass-panel:nth-child(2),
@@ -1671,11 +1693,14 @@ video.lazy-video--gpu,
   text-transform: uppercase;
   padding: 0.55rem 1rem;
   border-radius: 9999px;
-  border: 1px solid rgba(176, 38, 255, 0.25);
-  background: rgba(10, 5, 20, 0.6);
-  color: rgba(232, 224, 240, 0.72);
+  border: 1px solid rgba(211, 148, 255, 0.2);
+  background: rgba(10, 5, 20, 0.55);
+  color: rgba(232, 224, 240, 0.78);
   cursor: pointer;
-  transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    border-color 0.3s var(--ease-out-expo),
+    color 0.3s var(--ease-out-expo),
+    box-shadow 0.3s var(--ease-out-expo);
 }
 
 .main-tab-bar [role="tab"][aria-selected="true"] {
@@ -1710,7 +1735,6 @@ video.lazy-video,
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  contain: layout paint;
 }
 
 video.lazy-video--gpu {
