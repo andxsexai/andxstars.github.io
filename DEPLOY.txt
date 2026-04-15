@@ -7,6 +7,9 @@ ANDXSTARS — деплой на GitHub Pages (репозиторий andxstars.g
 Настройки GitHub (один раз):
   Settings → Pages → Build: GitHub Actions
 
+Workflow использует Node 24 и actions/checkout@v6, setup-node@v6,
+upload-pages-artifact@v4, deploy-pages@v5 — без предупреждений про Node 20.
+
 Команды на Mac (из папки проекта):
 ----------------------------------------------------------------
   npm run dev                    # локальная разработка
