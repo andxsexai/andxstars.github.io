@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ANDXSTARS | Архитектор цифровой реальности</title>
   <meta name="description" content="ANDXSTARS v6.0 — AI, нейромультики, продакшн, IT и цифровая архитектура."/>
+  <!-- Если ./assets/*.css не загрузился (не выложили папку dist целиком, неверный путь), страница не останется «белой»: -->
+  <style>
+    html.dark { color-scheme: dark; }
+    html.dark,
+    html.dark body {
+      background-color: #0e0e0e;
+      color: #f2ecf8;
+    }
+    body {
+      margin: 0;
+    }
+    .tab-panel[hidden] {
+      display: none !important;
+    }
+  </style>
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
