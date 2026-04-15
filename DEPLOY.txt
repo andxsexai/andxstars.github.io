@@ -1,0 +1,25 @@
+ANDXSTARS — деплой на GitHub Pages (репозиторий andxstars.github.io)
+================================================================
+
+Адрес сайта (user page):  https://andxsexai.github.io/
+Не открывайте /ANDXSTARS — стили и скрипты будут с 404.
+
+Настройки GitHub (один раз):
+  Settings → Pages → Build: GitHub Actions
+
+Команды на Mac (из папки проекта):
+----------------------------------------------------------------
+  npm run dev                    # локальная разработка
+  npm run build                  # сборка dist/ (относительные пути ./)
+  npm run build:pages            # как на CI: base=/ для *.github.io
+  npm run preview                # проверить dist локально
+
+  git add -A
+  git commit -m "описание"
+  git pull origin main --rebase
+  git push origin main
+
+После push GitHub Actions сам соберёт и опубликует dist.
+Не используйте git push --force без необходимости.
+
+Подпапка (редко):  VITE_BASE=/имя-репо/ npm run build

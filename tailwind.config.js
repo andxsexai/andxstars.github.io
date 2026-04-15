@@ -5,22 +5,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        /* Stitch v6.0 — Synthetic Entropy */
         background: '#0e0e0e',
-        primary: '#d394ff',
-        'primary-dim': '#aa30fa',
-        secondary: '#ff68a7',
-        tertiary: '#bf81ff',
+        primary: '#bf00ff',
+        secondary: '#d394ff',
         surface: {
-          DEFAULT: '#131313',
+          DEFAULT: '#161616',
           container: {
-            low: '#131313',
-            high: '#1f1f1f'
+            low: '#121018'
           }
         },
         on: {
           surface: {
-            variant: '#ababab'
+            variant: 'rgba(232, 224, 240, 0.65)'
           }
         }
       },

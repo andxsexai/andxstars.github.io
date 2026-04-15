@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ANDXSTARS | Архитектор цифровой реальности</title>
   <meta name="description" content="ANDXSTARS v6.0 — AI, нейромультики, продакшн, IT и цифровая архитектура."/>
-  <!-- Репозиторий andxstars.github.io: открывайте сайт ТОЛЬКО как https://ВАШ-ЛОГИН.github.io/ (без /ANDXSTARS). Иначе CSS/JS уйдут в 404. -->
-  <!-- Если сайт должен жить в подпапке: соберите с VITE_BASE=/имя-папки/ npm run build -->
-  <!-- Если ./assets/*.css не загрузился (не выложили папку dist целиком, неверный путь), страница не останется «белой»: -->
+  <!-- Деплой: см. DEPLOY.txt. Критический фон, если основной CSS не подгрузился: -->
   <style>
     html.dark { color-scheme: dark; }
     html.dark,
@@ -45,7 +43,7 @@
       <a href="#panel-contact" class="hover:text-primary transition-colors js-tab-jump no-underline text-inherit" data-tab="contact">Связь</a>
     </div>
     <a href="https://t.me/andxxstars" target="_blank" rel="noopener noreferrer"
-       class="bg-primary text-black font-black px-5 py-2 rounded-full text-[10px] md:text-xs uppercase tracking-tighter hover:scale-105 transition-transform no-underline inline-flex items-center shadow-[0_0_20px_rgba(211,148,255,0.35)]">
+       class="bg-primary text-[#39005c] font-black px-5 py-2 rounded-full text-[10px] md:text-xs uppercase tracking-tighter hover:scale-105 transition-transform no-underline inline-flex items-center">
       AI-Аудит
     </a>
   </nav>
@@ -63,13 +61,13 @@
 
   <div id="panel-overview" class="tab-panel" role="tabpanel" aria-labelledby="tab-overview">
     <section id="hero" class="liquid-gradient-hero relative min-h-[85vh] flex items-center justify-center pt-6 overflow-hidden">
-      <canvas id="spiralCanvas" class="hidden md:block absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
-      <canvas id="matrixCanvas" class="hidden md:block absolute inset-0 z-0 pointer-events-none opacity-[0.14]"></canvas>
-      <canvas id="matrixNeonCanvas" class="hidden md:block absolute inset-0 z-[1] pointer-events-none" aria-hidden="true"></canvas>
+      <canvas id="spiralCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-0 transition-opacity duration-1000"></canvas>
+      <canvas id="matrixCanvas" class="absolute inset-0 z-0 pointer-events-none opacity-20"></canvas>
+      <canvas id="matrixNeonCanvas" class="absolute inset-0 z-[1] pointer-events-none" aria-hidden="true"></canvas>
 
       <div class="relative z-10 text-center px-6 max-w-6xl">
         <div class="inline-block py-2 px-4 mb-6 rounded-full border border-primary/20 bg-surface-container-low/50 backdrop-blur-md">
-          <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Синтетическая энтропия · v6.0</span>
+          <span class="text-secondary font-headline font-bold text-[10px] tracking-[0.3em] uppercase">Synthetic Entropy v6.0</span>
         </div>
         <h1 class="font-headline font-black text-5xl sm:text-6xl md:text-9xl leading-none tracking-tighter mb-8">
           Архитектор <br/> <span class="text-primary italic">цифровой</span> реальности
@@ -93,17 +91,17 @@
 
     <div class="py-10 bg-surface-container-low border-y border-white/5 overflow-hidden">
       <div class="marquee-container">
-        <div class="marquee-content font-headline text-xl sm:text-2xl font-bold opacity-35 tracking-[0.2em] text-white/90 flex">
-          <span>НЕЙРОРОЛИКИ</span><span class="text-primary">·</span>
-          <span>ДИЗАЙН И БРЕНД</span><span class="text-secondary">·</span>
-          <span>ПОДКАСТЫ</span><span class="text-primary">·</span>
-          <span>АВТОМАТИЗАЦИЯ</span><span class="text-secondary">·</span>
-          <span>AI И IT</span><span class="text-primary">·</span>
-          <span>НЕЙРОРОЛИКИ</span><span class="text-primary">·</span>
-          <span>ДИЗАЙН И БРЕНД</span><span class="text-secondary">·</span>
-          <span>ПОДКАСТЫ</span><span class="text-primary">·</span>
-          <span>АВТОМАТИЗАЦИЯ</span><span class="text-secondary">·</span>
-          <span>AI И IT</span><span class="text-primary">·</span>
+        <div class="marquee-content font-headline text-2xl sm:text-3xl font-bold opacity-30 tracking-widest text-white flex">
+          <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
+          <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
+          <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
+          <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
+          <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
+          <span>NEURAL NETWORKS</span><span class="text-primary">•</span>
+          <span>DATA ARCHITECTURE</span><span class="text-secondary">•</span>
+          <span>WEB3 ECOSYSTEMS</span><span class="text-primary">•</span>
+          <span>CYBERNETIC DESIGN</span><span class="text-secondary">•</span>
+          <span>AI INTEGRATIONS</span><span class="text-primary">•</span>
         </div>
       </div>
     </div>
