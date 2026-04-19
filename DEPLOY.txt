@@ -1,28 +1,43 @@
-ANDXSTARS — деплой на GitHub Pages (репозиторий andxstars.github.io)
+ANDXSTARS — деплой на GitHub Pages
 ================================================================
 
-Адрес сайта (user page):  https://andxsexai.github.io/
-Не открывайте /ANDXSTARS — стили и скрипты будут с 404.
+Сайт живёт здесь:   https://andxsexai.github.io/
+Репозиторий:        https://github.com/andxsexai/andxstars.github.io
 
-Настройки GitHub (один раз):
-  Settings → Pages → Build: GitHub Actions
+Сайт — ПЛОСКИЙ СТАТИЧНЫЙ. Никакой сборки не нужно.
+GitHub Pages просто отдаёт файлы из корня ветки main.
 
-Workflow использует Node 24 и actions/checkout@v6, setup-node@v6,
-upload-pages-artifact@v4, deploy-pages@v5 — без предупреждений про Node 20.
+Структура:
+  index.html                    — главная
+  style.css                     — все стили
+  main.js                       — поведение (табы, портфолио, lightbox)
+  fonts/                        — кастомные шрифты (display.ttf, pepsi.ttf)
+  author/ cards/ carousel/      — изображения
+  catalog-uslug/ dopoln/        — видео и доп. ассеты
+  clothing/ covers/ landings/
+  photos/ posters/ video/
+  legal-offer.html              — оферта
+  legal-privacy.html            — политика
+  legal-requisites.html         — реквизиты
 
-Команды на Mac (из папки проекта):
-----------------------------------------------------------------
-  npm run dev                    # локальная разработка
-  npm run build                  # сборка dist/ (относительные пути ./)
-  npm run build:pages            # как на CI: base=/ для *.github.io
-  npm run preview                # проверить dist локально
+--- Проверить локально ------------------------------------------
+Mac:
+  cd "АВТОР ЖИЗНИ"
+  python3 -m http.server 8080
+Откройте в браузере:   http://127.0.0.1:8080/
 
+--- Деплой ------------------------------------------------------
   git add -A
   git commit -m "описание"
-  git pull origin main --rebase
   git push origin main
 
-После push GitHub Actions сам соберёт и опубликует dist.
-Не используйте git push --force без необходимости.
+После push GitHub Pages сам поднимет обновлённую версию за 1-2 минуты.
 
-Подпапка (редко):  VITE_BASE=/имя-репо/ npm run build
+--- Настройки Pages (один раз) ----------------------------------
+В репозитории:  Settings → Pages
+  Source:  "Deploy from a branch"
+  Branch:  main  /  (root)
+  Save.
+
+Если раньше стояло "GitHub Actions", переключите на "Deploy from a branch"
+— воркфлоу больше не используется.
