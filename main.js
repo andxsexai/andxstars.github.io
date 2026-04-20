@@ -85,6 +85,20 @@ const PORTFOLIO = [
 
 const CATEGORY_LABEL = { all: 'Все', neuro: 'Нейро-видео', design: 'Дизайн', cases: 'Кейсы' };
 
+// Carousel slides — from /carousel folder
+const CAROUSEL_SLIDES = [
+  { path: 'carousel/2026-03-02 15.28.51.jpg', alt: 'Карусель · слайд 1' },
+  { path: 'carousel/2026-03-02 15.29.10.jpg', alt: 'Карусель · слайд 2' },
+  { path: 'carousel/2026-03-02 15.29.13.jpg', alt: 'Карусель · слайд 3' },
+  { path: 'carousel/2026-03-02 15.29.20.jpg', alt: 'Карусель · слайд 4' },
+  { path: 'carousel/2026-03-02 15.29.24.jpg', alt: 'Карусель · слайд 5' },
+  { path: 'carousel/2026-03-02 15.29.27.jpg', alt: 'Карусель · слайд 6' },
+  { path: 'carousel/2026-03-02 15.32.48.jpg', alt: 'Карусель · слайд 7' },
+  { path: 'carousel/2026-03-02 15.32.57.jpg', alt: 'Карусель · слайд 8' },
+  { path: 'carousel/2026-03-02 15.33.02.jpg', alt: 'Карусель · слайд 9' },
+  { path: 'carousel/2026-03-02 15.33.10.jpg', alt: 'Карусель · слайд 10' },
+];
+
 // ----------------------------------------------------------------------------
 // Gallery rendering + filters
 // ----------------------------------------------------------------------------
@@ -337,6 +351,164 @@ function initLightbox() {
 }
 
 // ----------------------------------------------------------------------------
+// Carousel (Instagram-style)
+// ----------------------------------------------------------------------------
+
+let carouselIndex = 0;
+let carouselTimer = null;
+const CAROUSEL_AUTOPLAY_MS = 4500;
+
+function renderCarousel() {
+  const stage = document.getElementById('carouselStage');
+  const dotsWrap = document.getElementById('carouselDots');
+  if (!stage || !dotsWrap) return;
+
+  const frag = document.createDocumentFragment();
+  const dotFrag = document.createDocumentFragment();
+
+  CAROUSEL_SLIDES.forEach((slide, i) => {
+    const el = document.createElement('div');
+    el.className = 'carousel-slide' + (i === 0 ? ' is-active' : '');
+    el.dataset.index = String(i);
+    el.setAttribute('role', 'group');
+    el.setAttribute('aria-label', `Слайд ${i + 1} из ${CAROUSEL_SLIDES.length}`);
+
+    const img = document.createElement('img');
+    img.loading = i === 0 ? 'eager' : 'lazy';
+    img.decoding = 'async';
+    img.alt = slide.alt;
+    img.src = buildAsset(slide.path);
+    el.appendChild(img);
+    frag.appendChild(el);
+
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'carousel-dot' + (i === 0 ? ' is-active' : '');
+    dot.setAttribute('aria-label', `Перейти к слайду ${i + 1}`);
+    dot.setAttribute('role', 'tab');
+    dot.dataset.index = String(i);
+    dot.addEventListener('click', () => setCarouselIndex(i));
+    dotFrag.appendChild(dot);
+  });
+
+  stage.innerHTML = '';
+  stage.appendChild(frag);
+  dotsWrap.innerHTML = '';
+  dotsWrap.appendChild(dotFrag);
+}
+
+function setCarouselIndex(i) {
+  const total = CAROUSEL_SLIDES.length;
+  if (!total) return;
+  carouselIndex = ((i % total) + total) % total;
+  document.querySelectorAll('.carousel-slide').forEach((s) => {
+    s.classList.toggle('is-active', Number(s.dataset.index) === carouselIndex);
+  });
+  document.querySelectorAll('.carousel-dot').forEach((d) => {
+    d.classList.toggle('is-active', Number(d.dataset.index) === carouselIndex);
+  });
+}
+
+function startCarouselAutoplay() {
+  stopCarouselAutoplay();
+  carouselTimer = window.setInterval(() => {
+    setCarouselIndex(carouselIndex + 1);
+  }, CAROUSEL_AUTOPLAY_MS);
+}
+
+function stopCarouselAutoplay() {
+  if (carouselTimer) {
+    window.clearInterval(carouselTimer);
+    carouselTimer = null;
+  }
+}
+
+function initCarousel() {
+  const stage = document.getElementById('carouselStage');
+  if (!stage) return;
+  renderCarousel();
+
+  document.getElementById('carouselPrev')?.addEventListener('click', () => {
+    setCarouselIndex(carouselIndex - 1);
+    startCarouselAutoplay();
+  });
+  document.getElementById('carouselNext')?.addEventListener('click', () => {
+    setCarouselIndex(carouselIndex + 1);
+    startCarouselAutoplay();
+  });
+
+  // swipe
+  let startX = null;
+  let startY = null;
+  stage.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  stage.addEventListener('touchend', (e) => {
+    if (startX == null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    startX = null; startY = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      setCarouselIndex(carouselIndex + (dx < 0 ? 1 : -1));
+      startCarouselAutoplay();
+    }
+  });
+
+  // pause on hover, resume on leave
+  const wrap = stage.closest('.carousel-wrap');
+  if (wrap) {
+    wrap.addEventListener('mouseenter', stopCarouselAutoplay);
+    wrap.addEventListener('mouseleave', startCarouselAutoplay);
+  }
+
+  // only autoplay when in viewport
+  if (typeof IntersectionObserver === 'function') {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) startCarouselAutoplay();
+        else stopCarouselAutoplay();
+      });
+    }, { threshold: 0.3 });
+    io.observe(stage);
+  } else {
+    startCarouselAutoplay();
+  }
+
+  // respect reduced-motion
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    stopCarouselAutoplay();
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Scroll reveal
+// ----------------------------------------------------------------------------
+
+function initScrollReveal() {
+  const targets = document.querySelectorAll('.reveal');
+  if (!targets.length) return;
+
+  if (typeof IntersectionObserver !== 'function') {
+    targets.forEach((el) => el.classList.add('is-visible'));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      });
+    },
+    { rootMargin: '0px 0px -10% 0px', threshold: 0.1 }
+  );
+
+  targets.forEach((el) => io.observe(el));
+}
+
+// ----------------------------------------------------------------------------
 // Nav burger + anchor scroll
 // ----------------------------------------------------------------------------
 
@@ -372,6 +544,8 @@ function boot() {
   initHoverVideos();
   initHeroVideo();
   initLightbox();
+  initCarousel();
+  initScrollReveal();
   observeLazyVideos(document);
 }
 
