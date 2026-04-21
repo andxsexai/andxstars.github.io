@@ -16,6 +16,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 from config import Config
 from bot import handlers
 from database import storage
+from parsers import telethon_client, youtube as youtube_monitor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -31,6 +32,21 @@ async def _post_init(app) -> None:
     me = await app.bot.get_me()
     log.info("Bot started: @%s", me.username)
 
+    task = await telethon_client.start_listener(app, cfg.parser_channels)
+    app.bot_data["parser_task"] = task
+
+    yt_task = youtube_monitor.start_monitor(
+        app, cfg.youtube_channels, cfg.admin_ids, cfg.youtube_poll_minutes
+    )
+    app.bot_data["youtube_task"] = yt_task
+
+
+async def _post_shutdown(app) -> None:
+    for key in ("parser_task", "youtube_task"):
+        task = app.bot_data.get(key)
+        if task and not task.done():
+            task.cancel()
+
 
 def build_app() -> "Application":
     cfg = Config.from_env()
@@ -39,6 +55,7 @@ def build_app() -> "Application":
         ApplicationBuilder()
         .token(cfg.bot_token)
         .post_init(_post_init)
+        .post_shutdown(_post_shutdown)
         .build()
     )
 

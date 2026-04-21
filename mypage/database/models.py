@@ -29,6 +29,32 @@ CREATE TABLE IF NOT EXISTS payments (
     created_at   INTEGER NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_gen_user ON generations(user_id);
-CREATE INDEX IF NOT EXISTS idx_pay_user ON payments(user_id);
+CREATE TABLE IF NOT EXISTS subscriptions (
+    user_id    INTEGER NOT NULL,
+    niche      TEXT    NOT NULL,
+    created_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, niche)
+);
+
+CREATE TABLE IF NOT EXISTS orders_seen (
+    dedup_key   TEXT    PRIMARY KEY,
+    created_at  INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS youtube_seen (
+    video_id   TEXT    PRIMARY KEY,
+    channel    TEXT    NOT NULL DEFAULT '',
+    created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS youtube_channels (
+    handle     TEXT    PRIMARY KEY,
+    channel_id TEXT    NOT NULL DEFAULT '',
+    title      TEXT    NOT NULL DEFAULT '',
+    updated_at INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_gen_user  ON generations(user_id);
+CREATE INDEX IF NOT EXISTS idx_pay_user  ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_sub_niche ON subscriptions(niche);
 """

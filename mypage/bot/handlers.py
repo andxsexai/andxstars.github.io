@@ -172,7 +172,41 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
+    if data == "parser:menu":
+        await _show_parser_menu(update)
+        return
+
+    if data.startswith("parser:toggle:"):
+        niche_key = data.split(":", 2)[2]
+        user_id = update.effective_user.id
+        current = set(await storage.user_niches(user_id))
+        if niche_key in current:
+            await storage.unsubscribe(user_id, niche_key)
+        else:
+            await storage.subscribe(user_id, niche_key)
+        await _show_parser_menu(update)
+        return
+
+    if data == "parser:off":
+        await storage.unsubscribe_all(update.effective_user.id)
+        await _show_parser_menu(update)
+        return
+
     log.warning("unhandled callback: %s", data)
+
+
+async def _show_parser_menu(update: Update) -> None:
+    user_id = update.effective_user.id
+    active = set(await storage.user_niches(user_id))
+    header = (
+        "<b>🎯 Парсер заказов</b>\n\n"
+        "Я слежу за публичными каналами с заказами и присылаю сюда посты, "
+        "где есть совпадение по твоим нишам и указан способ связи.\n\n"
+        "Выбери ниши — можно несколько. Снять выбор — тапнуть повторно."
+    )
+    if not active:
+        header += "\n\n<i>Сейчас ни одна ниша не активна.</i>"
+    await safe_edit(update, header, reply_markup=keyboards.parser_menu(active))
 
 
 # --------------------------------------------------------------------------- #

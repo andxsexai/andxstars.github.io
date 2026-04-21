@@ -102,6 +102,113 @@ async def mark_payment_paid(invoice_id: str) -> Optional[int]:
         return int(row[0])
 
 
+async def subscribe(user_id: int, niche: str) -> None:
+    async with aiosqlite.connect(_db_path) as db:
+        await db.execute(
+            """
+            INSERT OR IGNORE INTO subscriptions (user_id, niche, created_at)
+            VALUES (?, ?, ?)
+            """,
+            (user_id, niche, _now()),
+        )
+        await db.commit()
+
+
+async def unsubscribe(user_id: int, niche: str) -> None:
+    async with aiosqlite.connect(_db_path) as db:
+        await db.execute(
+            "DELETE FROM subscriptions WHERE user_id = ? AND niche = ?",
+            (user_id, niche),
+        )
+        await db.commit()
+
+
+async def unsubscribe_all(user_id: int) -> None:
+    async with aiosqlite.connect(_db_path) as db:
+        await db.execute("DELETE FROM subscriptions WHERE user_id = ?", (user_id,))
+        await db.commit()
+
+
+async def user_niches(user_id: int) -> list[str]:
+    async with aiosqlite.connect(_db_path) as db:
+        cur = await db.execute(
+            "SELECT niche FROM subscriptions WHERE user_id = ? ORDER BY niche",
+            (user_id,),
+        )
+        rows = await cur.fetchall()
+    return [r[0] for r in rows]
+
+
+async def subscribers_for(niches: list[str]) -> list[int]:
+    if not niches:
+        return []
+    placeholders = ",".join(["?"] * len(niches))
+    async with aiosqlite.connect(_db_path) as db:
+        cur = await db.execute(
+            f"SELECT DISTINCT user_id FROM subscriptions WHERE niche IN ({placeholders})",
+            niches,
+        )
+        rows = await cur.fetchall()
+    return [int(r[0]) for r in rows]
+
+
+async def remember_order(dedup_key: str) -> bool:
+    """Store dedup key. Returns True if this is the first time we see it."""
+    async with aiosqlite.connect(_db_path) as db:
+        try:
+            await db.execute(
+                "INSERT INTO orders_seen (dedup_key, created_at) VALUES (?, ?)",
+                (dedup_key, _now()),
+            )
+            await db.commit()
+            return True
+        except aiosqlite.IntegrityError:
+            return False
+
+
+async def remember_youtube_video(video_id: str, channel: str) -> bool:
+    """Returns True the first time we see a video id."""
+    async with aiosqlite.connect(_db_path) as db:
+        try:
+            await db.execute(
+                "INSERT INTO youtube_seen (video_id, channel, created_at) VALUES (?, ?, ?)",
+                (video_id, channel, _now()),
+            )
+            await db.commit()
+            return True
+        except aiosqlite.IntegrityError:
+            return False
+
+
+async def get_youtube_channel(handle: str) -> Optional[tuple[str, str]]:
+    """Returns (channel_id, title) or None."""
+    async with aiosqlite.connect(_db_path) as db:
+        cur = await db.execute(
+            "SELECT channel_id, title FROM youtube_channels WHERE handle = ?",
+            (handle,),
+        )
+        row = await cur.fetchone()
+    if not row or not row[0]:
+        return None
+    return str(row[0]), str(row[1] or "")
+
+
+async def save_youtube_channel(handle: str, channel_id: str, title: str) -> None:
+    async with aiosqlite.connect(_db_path) as db:
+        await db.execute(
+            """
+            INSERT INTO youtube_channels (handle, channel_id, title, updated_at)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(handle) DO UPDATE SET
+                channel_id = excluded.channel_id,
+                title      = excluded.title,
+                updated_at = excluded.updated_at
+            """,
+            (handle, channel_id, title, _now()),
+        )
+        await db.commit()
+
+
 async def stats() -> dict:
     async with aiosqlite.connect(_db_path) as db:
         users = (await (await db.execute("SELECT COUNT(*) FROM users")).fetchone())[0]

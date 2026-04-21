@@ -38,8 +38,14 @@ mypage/
 ├── payments/
 │   ├── lava.py              — Lava.top invoice + webhook verify
 │   └── crypto.py            — CryptoCloud invoice + callback
+├── parsers/
+│   ├── niches.py            — ниши + ключевые слова + order-intent фильтр
+│   ├── matcher.py           — вытаскивает @username/телефон/бюджет
+│   ├── telethon_client.py   — MTProto-слушатель публичных каналов
+│   ├── dispatcher.py        — матч → дедуп → пуш подписчикам
+│   └── login.py             — разовый скрипт получения SESSION_STRING
 └── database/
-    ├── models.py            — SQLite схема (users, orders, generations)
+    ├── models.py            — SQLite схема (users, orders, subscriptions)
     └── storage.py           — CRUD, async-safe через aiosqlite
 ```
 
@@ -56,6 +62,12 @@ mypage/
 | `CRYPTOCLOUD_SHOP_ID` | опц. | id магазина |
 | `DB_PATH` | нет | `./mypage.db` по умолчанию |
 | `ADMIN_IDS` | нет | через запятую, получают /stats |
+| `TELEGRAM_API_ID` | парсер | получить на https://my.telegram.org |
+| `TELEGRAM_API_HASH` | парсер | там же |
+| `TELEGRAM_SESSION` | парсер | `python -m parsers.login` → скопировать в .env |
+| `PARSER_CHANNELS` | парсер | `@freelance_ru,@kworkfeed,…` — публичные каналы через запятую |
+| `YOUTUBE_CHANNELS` | нет | `@andxstars,@andxsound,@aimonax,@sferastars` по умолчанию |
+| `YOUTUBE_POLL_MINUTES` | нет | Периодичность опроса YouTube RSS, мин. по умолчанию 30 |
 
 ## Команды бота
 
@@ -68,3 +80,34 @@ mypage/
 ## Что бот умеет без AI
 
 Если Ollama/ComfyUI недоступны — `fallback.py` отдаёт готовые шаблоны из `ai_services/templates/` плюс случайные картинки-заглушки. Пользователь получит результат, а не ошибку.
+
+## Парсер заказов
+
+В меню бота есть кнопка **🎯 Парсер заказов**. Выбираешь ниши (AI / цигун / музыка / контент) — бот начинает пересылать тебе посты из публичных каналов в `PARSER_CHANNELS`, где совпало хотя бы одно ключевое слово ниши + слово-маркер заказа (ищу, нужен, бюджет и т.д.) + есть способ связи (@username / t.me / телефон / email).
+
+Что важно:
+
+- Парсер читает **только публичные каналы**, которые ты сам впишешь в `PARSER_CHANNELS`.
+- Требуется пользовательская Telegram-сессия через Telethon — бот-токен для этого не подходит.
+- Дубли не приходят: таблица `orders_seen` дедупает по `(channel, message_id)`.
+- Бот никому автоматически не пишет. Ты получаешь лид → пишешь сам.
+
+## YouTube-монитор
+
+Отдельный воркер фоново опрашивает публичный RSS четырёх твоих брендовых каналов (`@andxstars`, `@andxsound`, `@aimonax`, `@sferastars`) раз в `YOUTUBE_POLL_MINUTES` минут (30 по умолчанию). Когда появляется новое видео — приходит карточка в личку каждому `ADMIN_IDS`.
+
+- Без API-ключа — работает на обычных `feeds/videos.xml` YouTube.
+- При первом запуске бот «прошивает» уже опубликованные видео как виденные и ничего не шлёт — чтобы не спамить бэк-каталогом.
+- Дедуп через `youtube_seen` в SQLite (`video_id` — первичный ключ).
+
+Переопределить список каналов можно через `YOUTUBE_CHANNELS=@ch1,@ch2,...` в `.env`.
+
+## Первый запуск (парсер)
+
+```bash
+# 1. Получи API_ID / API_HASH на https://my.telegram.org
+# 2. Один раз сгенерируй SESSION
+python -m parsers.login
+# 3. Впиши всё в .env, перезапусти бота
+python -m bot.main
+```

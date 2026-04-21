@@ -121,6 +121,8 @@ function renderGallery() {
     badge.textContent = CATEGORY_LABEL[item.category] || item.category;
     tile.appendChild(badge);
 
+    tile.dataset.label = item.label || CATEGORY_LABEL[item.category] || '';
+
     if (isVideo(item.path)) {
       const v = document.createElement('video');
       v.muted = true;
@@ -129,6 +131,7 @@ function renderGallery() {
       v.preload = 'metadata';
       if (item.poster) v.poster = buildAsset(item.poster);
       v.dataset.src = buildAsset(item.path);
+      v.addEventListener('error', () => { tile.dataset.broken = '1'; }, { once: true });
       tile.appendChild(v);
     } else {
       const img = document.createElement('img');
@@ -136,6 +139,7 @@ function renderGallery() {
       img.decoding = 'async';
       img.alt = item.label;
       img.src = buildAsset(item.path);
+      img.addEventListener('error', () => { tile.dataset.broken = '1'; }, { once: true });
       tile.appendChild(img);
     }
 
@@ -227,6 +231,30 @@ function initHoverVideos() {
     card.addEventListener('focusin', start);
     card.addEventListener('focusout', stop);
   });
+
+  // Auto-play service/skill videos while the card is in view — so mobile
+  // and touch users see the animation immediately without hovering.
+  if (typeof IntersectionObserver === 'function') {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const v = entry.target.querySelector('video.hover-video');
+        if (!v) return;
+        const media = entry.target.querySelector('.service-media') || entry.target;
+        if (entry.isIntersecting) {
+          hydrateVideo(v);
+          const p = v.play();
+          if (p && p.catch) p.catch(() => {});
+          media.classList.add('is-playing');
+          entry.target.classList.add('is-playing');
+        } else {
+          try { v.pause(); } catch (_) {}
+          media.classList.remove('is-playing');
+          entry.target.classList.remove('is-playing');
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.service, .skill').forEach((card) => io.observe(card));
+  }
 
   // tiles: preview on hover (desktop)
   document.querySelectorAll('#gallery .video-tile video').forEach((v) => {
@@ -378,7 +406,16 @@ function renderCarousel() {
     img.decoding = 'async';
     img.alt = slide.alt;
     img.src = buildAsset(slide.path);
+    img.addEventListener('error', () => {
+      el.dataset.broken = '1';
+    }, { once: true });
     el.appendChild(img);
+
+    const caption = document.createElement('div');
+    caption.className = 'slide-caption';
+    caption.textContent = `${String(i + 1).padStart(2, '0')} / ${String(CAROUSEL_SLIDES.length).padStart(2, '0')} · ${slide.alt}`;
+    el.appendChild(caption);
+
     frag.appendChild(el);
 
     const dot = document.createElement('button');
