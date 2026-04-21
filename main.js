@@ -513,19 +513,50 @@ function initScrollReveal() {
 // ----------------------------------------------------------------------------
 
 function initNav() {
+  const nav = document.getElementById('nav');
   const burger = document.getElementById('navBurger');
   const links = document.querySelector('.nav-links');
+  const overlay = document.getElementById('menuOverlay');
+
+  const closeMenu = () => {
+    if (!links) return;
+    links.classList.remove('open');
+    if (overlay) overlay.classList.remove('is-open');
+    if (burger) burger.setAttribute('aria-expanded', 'false');
+    document.documentElement.style.overflow = '';
+  };
+
+  const openMenu = () => {
+    if (!links) return;
+    links.classList.add('open');
+    if (overlay) overlay.classList.add('is-open');
+    if (burger) burger.setAttribute('aria-expanded', 'true');
+    document.documentElement.style.overflow = 'hidden';
+  };
+
   if (burger && links) {
     burger.addEventListener('click', () => {
-      const open = links.classList.toggle('open');
-      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (links.classList.contains('open')) closeMenu();
+      else openMenu();
     });
     links.querySelectorAll('a').forEach((a) => {
-      a.addEventListener('click', () => {
-        links.classList.remove('open');
-        burger.setAttribute('aria-expanded', 'false');
-      });
+      a.addEventListener('click', closeMenu);
     });
+  }
+
+  if (overlay) overlay.addEventListener('click', closeMenu);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && links && links.classList.contains('open')) closeMenu();
+  });
+
+  // Shrink/elevate nav on scroll
+  if (nav) {
+    const onScroll = () => {
+      nav.classList.toggle('is-scrolled', window.scrollY > 24);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }
 
   // Year in the footer
