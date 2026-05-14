@@ -45,38 +45,81 @@ const isVideo = (f) => /\.(mp4|webm|ogv|mov)$/i.test(f);
 // ----------------------------------------------------------------------------
 
 const PORTFOLIO = [
-  // Нейро-видео
+  // Нейро-видео — весь каталожный и демонстрационный роликовый материал
   { category: 'neuro', label: 'Нейроролик · 1', path: 'video/2026-03-02 15.24.56.mp4', poster: 'posters/2026-03-02 15.32.19.jpg' },
   { category: 'neuro', label: 'Нейроролик · 2', path: 'video/2026-03-02 15.25.24.mp4', poster: 'posters/2026-03-02 15.32.48.jpg' },
   { category: 'neuro', label: 'Нейроролик · 3', path: 'video/2026-03-02 15.25.38.mp4', poster: 'posters/2026-03-02 15.32.57.jpg' },
-  { category: 'neuro', label: 'AI Нейросеть', path: 'dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4', poster: 'posters/service-neuro.jpg' },
-  { category: 'neuro', label: 'Автоматизация', path: 'dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4', poster: 'posters/2026-03-02 15.32.48.jpg' },
-  { category: 'neuro', label: 'Подкасты', path: 'catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4', poster: 'posters/service-podcast.jpg' },
+  { category: 'neuro', label: 'AI · генерация', path: 'dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4', poster: 'posters/service-neuro.jpg' },
+  { category: 'neuro', label: 'Автоматизация', path: 'dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4', poster: 'posters/dopoln-auto.jpg' },
+  { category: 'neuro', label: 'Подкасты · неон', path: 'catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4', poster: 'posters/service-podcast.jpg' },
+  { category: 'neuro', label: 'Мульт · loop', path: 'catalog-uslug/multikif/flow-neuro-loop.mp4', poster: 'posters/service-neuro.jpg' },
+  { category: 'neuro', label: 'Мульт · Delpmaspu', path: 'catalog-uslug/multikif/Flow_delpmaspu_ (1).mp4', poster: 'posters/service-neuro.jpg' },
+  { category: 'neuro', label: 'IT · motion', path: 'catalog-uslug/it/Frame_approximation_moves_202603291824.mp4', poster: 'posters/service-dev.jpg' },
+  { category: 'neuro', label: 'Фото/видео · студия', path: 'catalog-uslug/photo-video/Developer_at_desk_202603291823.mp4', poster: 'posters/service-content.jpg' },
+  { category: 'neuro', label: 'Сайты · кино', path: 'dopoln/сайты/Sensors_moving,_camera_202603291842.mp4', poster: 'posters/dopoln-sites.jpg' },
+  { category: 'neuro', label: 'Музыка · бас', path: 'dopoln/музыка/Guy_plays_bass_202603291841.mp4', poster: 'posters/dopoln-music.jpg' },
+  { category: 'neuro', label: 'Цигун · motion', path: 'dopoln/цигун/Moves_technology_engaging_202603291845.mp4', poster: 'posters/dopoln-qigong.jpg' },
 
-  // Дизайн — только реально лежащие в репозитории файлы (остальные убраны)
-  { category: 'design', label: 'Визуал · AI', path: 'posters/dopoln-ai.jpg' },
-  { category: 'design', label: 'Визуал · сайты', path: 'posters/dopoln-sites.jpg' },
-  { category: 'design', label: 'Визуал · звук', path: 'posters/dopoln-music.jpg' },
-  { category: 'design', label: 'Визуал · фото', path: 'posters/dopoln-photo.jpg' },
-  { category: 'design', label: 'Визуал · процессы', path: 'posters/dopoln-auto.jpg' },
-  { category: 'design', label: 'Визуал · практика', path: 'posters/dopoln-qigong.jpg' },
+  // Дизайн — вся папка posters (статичные обложки и макеты)
+  { category: 'design', label: 'Постер', path: 'posters/1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg' },
+  { category: 'design', label: 'Карусель · 01', path: 'posters/2026-03-02 15.28.51.jpg' },
+  { category: 'design', label: 'Карусель · 02', path: 'posters/2026-03-02 15.29.10.jpg' },
+  { category: 'design', label: 'Карусель · 03', path: 'posters/2026-03-02 15.29.13.jpg' },
+  { category: 'design', label: 'Карусель · 04', path: 'posters/2026-03-02 15.29.20.jpg' },
+  { category: 'design', label: 'Карусель · 05', path: 'posters/2026-03-02 15.29.24.jpg' },
+  { category: 'design', label: 'Карусель · 06', path: 'posters/2026-03-02 15.29.27.jpg' },
+  { category: 'design', label: 'Кадр · нейро', path: 'posters/2026-03-02 15.32.19.jpg' },
+  { category: 'design', label: 'Кадр · glow', path: 'posters/2026-03-02 15.32.48.jpg' },
+  { category: 'design', label: 'Кадр · фиолет', path: 'posters/2026-03-02 15.32.57.jpg' },
+  { category: 'design', label: 'Кадр · портрет', path: 'posters/2026-03-02 15.33.02.jpg' },
+  { category: 'design', label: 'Кадр · композиция', path: 'posters/2026-03-02 15.33.10.jpg' },
+  { category: 'design', label: 'Серия · 01', path: 'posters/2026-03-02 15.45.55.jpg' },
+  { category: 'design', label: 'Серия · 02', path: 'posters/2026-03-02 15.46.01.jpg' },
+  { category: 'design', label: 'Обложка · AI', path: 'posters/dopoln-ai.jpg' },
+  { category: 'design', label: 'Обложка · сайты', path: 'posters/dopoln-sites.jpg' },
+  { category: 'design', label: 'Обложка · звук', path: 'posters/dopoln-music.jpg' },
+  { category: 'design', label: 'Обложка · фото', path: 'posters/dopoln-photo.jpg' },
+  { category: 'design', label: 'Обложка · процессы', path: 'posters/dopoln-auto.jpg' },
+  { category: 'design', label: 'Обложка · практика', path: 'posters/dopoln-qigong.jpg' },
   { category: 'design', label: 'Сервис · нейро', path: 'posters/service-neuro.jpg' },
   { category: 'design', label: 'Сервис · подкасты', path: 'posters/service-podcast.jpg' },
   { category: 'design', label: 'Сервис · контент', path: 'posters/service-content.jpg' },
   { category: 'design', label: 'Сервис · IT', path: 'posters/service-dev.jpg' },
 
-  // Кейсы
+  // Лендинги — папка landings
+  { category: 'landing', label: 'Лендинг · экран 1', path: 'landings/2026-03-02 15.30.42.jpg' },
+  { category: 'landing', label: 'Лендинг · экран 2', path: 'landings/2026-03-02 15.31.16.jpg' },
+  { category: 'landing', label: 'Лендинг · экран 3', path: 'landings/2026-03-02 15.31.25.jpg' },
+
+  // Кейсы — фото, авторский визуал, обложки, одежда, карточки (без видео — видео в нейро)
   { category: 'cases', label: 'Фото · 1', path: 'photos/1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png' },
   { category: 'cases', label: 'Фото · 2', path: 'photos/1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png' },
   { category: 'cases', label: 'Фото · 3', path: 'photos/2026-03-02 15.23.13.jpg' },
   { category: 'cases', label: 'Фото · 4', path: 'photos/2026-03-02 15.23.18.jpg' },
   { category: 'cases', label: 'Инфлюенс', path: 'photos/influencer.jpg' },
-  { category: 'cases', label: 'Видео · сайты', path: 'dopoln/сайты/Sensors_moving,_camera_202603291842.mp4', poster: 'posters/2026-03-02 15.33.10.jpg' },
-  { category: 'cases', label: 'Видео · музыка', path: 'dopoln/музыка/Guy_plays_bass_202603291841.mp4', poster: 'posters/2026-03-02 15.33.02.jpg' },
-  { category: 'cases', label: 'Видео · цигун', path: 'dopoln/цигун/Moves_technology_engaging_202603291845.mp4', poster: 'posters/2026-03-02 15.32.19.jpg' },
+  { category: 'cases', label: 'Превью · автор', path: 'photos/og-preview.jpg' },
+  { category: 'cases', label: 'Автор · визуал 1', path: 'author/1772207846385-019c9fd1-f8c8-7c64-a7d9-0cf4f9d29031.png' },
+  { category: 'cases', label: 'Автор · визуал 2', path: 'author/1772200039565-019c9f58-b3e8-78d4-98ba-451ed4facf48.png' },
+  { category: 'cases', label: 'Автор · визуал 3', path: 'author/1767549700407-019b8a2c-6557-7198-9d38-e2b5826b189c.png' },
+  { category: 'cases', label: 'Автор · фото', path: 'author/1767549655237-2026-01-04 20.48.46.jpg' },
+  { category: 'cases', label: 'Автор · визуал 4', path: 'author/1772207528813-019c9fcd-2e32-7f16-ba16-5e1627d46b78.png' },
+  { category: 'cases', label: 'Обложка · кейс A', path: 'covers/1772225274266-019ca0dc-beab-79e9-aaae-964277c95901.jpeg' },
+  { category: 'cases', label: 'Обложка · кейс B', path: 'covers/1772225599649-019ca0e1-8f02-7410-aad4-3789bdcbf4c2.jpeg' },
+  { category: 'cases', label: 'Текстиль · 1', path: 'clothing/1766007426835-019b2e3e-05bb-730c-9b93-a770754964d3.png' },
+  { category: 'cases', label: 'Текстиль · 2', path: 'clothing/1766010039377-019b2e66-1c63-71c1-b9be-cbf081e0ba21.png' },
+  { category: 'cases', label: 'Текстиль · 3', path: 'clothing/1766011052051-019b2e75-9545-7e94-b9cb-8e0a645fc52b.png' },
+  { category: 'cases', label: 'Карточка · 1', path: 'cards/2026-03-02 15.50.57.jpg' },
+  { category: 'cases', label: 'Карточка · 2', path: 'cards/2026-03-02 15.51.06.jpg' },
+  { category: 'cases', label: 'Карточка · 3', path: 'cards/2026-03-02 15.51.12.jpg' },
 ];
 
-const CATEGORY_LABEL = { all: 'Все', neuro: 'Нейро-видео', design: 'Дизайн', cases: 'Кейсы' };
+const CATEGORY_LABEL = {
+  all: 'Все',
+  neuro: 'Нейро-видео',
+  design: 'Дизайн',
+  landing: 'Лендинги',
+  cases: 'Кейсы',
+};
 
 // Carousel slides — из /posters (как до смены на стоковые слайды)
 const CAROUSEL_SLIDES = [
@@ -120,11 +163,14 @@ function renderGallery() {
       const v = document.createElement('video');
       v.muted = true;
       v.playsInline = true;
+      v.setAttribute('playsinline', '');
+      v.setAttribute('webkit-playsinline', '');
       v.loop = true;
       v.preload = 'metadata';
       if (item.poster) v.poster = buildAsset(item.poster);
       v.dataset.src = buildAsset(item.path);
       v.addEventListener('error', () => { tile.dataset.broken = '1'; }, { once: true });
+      v.addEventListener('loadeddata', () => { tile.removeAttribute('data-broken'); }, { once: true });
       tile.appendChild(v);
     } else {
       const img = document.createElement('img');
@@ -215,6 +261,42 @@ function isPerfLite() {
   return document.documentElement.classList.contains('perf-lite');
 }
 
+/** Превью в сетке: пока плитка в зоне видимости — крутим ролик (в т.ч. на мобильных и в perf-lite). */
+function initGalleryTilePlayback() {
+  const tiles = document.querySelectorAll('#gallery .video-tile');
+  if (!tiles.length) return;
+
+  const playInTile = (v) => {
+    hydrateVideo(v);
+    const p = v.play();
+    if (p && typeof p.catch === 'function') p.catch(() => {});
+  };
+  const pauseInTile = (v) => {
+    try { v.pause(); } catch (_) {}
+  };
+
+  if (typeof IntersectionObserver !== 'function') {
+    tiles.forEach((tile) => {
+      const v = tile.querySelector('video');
+      if (v) playInTile(v);
+    });
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const v = entry.target.querySelector('video');
+        if (!v) return;
+        if (entry.isIntersecting) playInTile(v);
+        else pauseInTile(v);
+      });
+    },
+    { threshold: 0.22, rootMargin: '60px 0px' }
+  );
+  tiles.forEach((tile) => io.observe(tile));
+}
+
 function initHoverVideos() {
   if (!isPerfLite()) {
     // hover-to-play inside service and skill cards
@@ -261,21 +343,6 @@ function initHoverVideos() {
       }, { threshold: 0.4 });
       document.querySelectorAll('.service, .skill').forEach((card) => io.observe(card));
     }
-  }
-
-  // tiles: preview on hover (desktop) — gallery videos still lazy-load; skip hover autoplay in perf-lite
-  if (!isPerfLite()) {
-    document.querySelectorAll('#gallery .video-tile video').forEach((v) => {
-      const tile = v.closest('.tile');
-      if (!tile) return;
-      tile.addEventListener('mouseenter', () => {
-        hydrateVideo(v);
-        const p = v.play(); if (p && p.catch) p.catch(() => {});
-      });
-      tile.addEventListener('mouseleave', () => {
-        try { v.pause(); } catch (_) {}
-      });
-    });
   }
 }
 
@@ -326,12 +393,32 @@ function renderLightbox(index) {
   if (!item) return;
   if (isVideo(item.path)) {
     const v = document.createElement('video');
+    v.className = 'lb-media-video';
     v.src = buildAsset(item.path);
     v.controls = true;
     v.autoplay = true;
     v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
     v.loop = true;
+    v.preload = 'metadata';
     if (item.poster) v.poster = buildAsset(item.poster);
+    v.addEventListener(
+      'error',
+      () => {
+        v.replaceWith(Object.assign(document.createElement('p'), {
+          className: 'lb-media-fallback',
+          textContent: 'Не удалось загрузить видео. Откройте файл по прямой ссылке или попробуйте позже.',
+        }));
+      },
+      { once: true }
+    );
+    const tryPlay = () => {
+      const p = v.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    };
+    if (v.readyState >= 2) tryPlay();
+    else v.addEventListener('loadeddata', tryPlay, { once: true });
     stage.appendChild(v);
   } else {
     const img = document.createElement('img');
@@ -674,6 +761,7 @@ function boot() {
     renderGallery();
     initFilters();
     initHoverVideos();
+    initGalleryTilePlayback();
     initLightbox();
     initCarousel();
     initScrollReveal();
