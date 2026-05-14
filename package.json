@@ -1,0 +1,10 @@
+{
+  "name": "andxstars-site",
+  "private": true,
+  "description": "Статический лендинг ANDXSTARS (GitHub Pages). Сборка не требуется.",
+  "scripts": {
+    "dev": "node dev-server.cjs",
+    "start": "node dev-server.cjs",
+    "preview": "python3 -m http.server 8080 --bind 127.0.0.1"
+  }
+}

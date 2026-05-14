@@ -4,14 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#05070f" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="author" content="ANDXSTARS" />
   <title>ANDXSTARS — Автор жизни. Нейромультики, видео, сайты, автоматизация</title>
   <meta name="description" content="ANDXSTARS — профессиональная студия: нейромультики, видео и фото, выездные подкасты, сайты, автоматизации n8n, музыка и дизайн. Запуск образа и цифровой системы под ключ." />
+  <link rel="canonical" href="https://andxsexai.github.io/" />
   <meta property="og:title" content="ANDXSTARS — Автор жизни" />
   <meta property="og:description" content="Нейромультики, видео, сайты и автоматизации в едином визуальном коде." />
-  <meta property="og:image" content="./posters/service-neuro.jpg" />
+  <meta property="og:url" content="https://andxsexai.github.io/" />
+  <meta property="og:site_name" content="ANDXSTARS" />
+  <meta property="og:image" content="https://andxsexai.github.io/posters/service-neuro.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ru_RU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ANDXSTARS — Автор жизни" />
+  <meta name="twitter:description" content="Нейромультики, видео, сайты и автоматизации в едином визуальном коде." />
+  <meta name="twitter:image" content="https://andxsexai.github.io/posters/service-neuro.jpg" />
   <link rel="icon" type="image/png" href="./posters/service-neuro.jpg" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"WebSite","name":"ANDXSTARS","url":"https://andxsexai.github.io/","inLanguage":"ru-RU",
+     "description":"Студия полного цикла: нейровидео, дизайн, звук, сайты и автоматизация."},
+    {"@type":"Organization","name":"ANDXSTARS","url":"https://andxsexai.github.io/",
+     "logo":{"@type":"ImageObject","url":"https://andxsexai.github.io/posters/service-neuro.jpg"},
+     "sameAs":["https://t.me/andxxstars"],"email":"mailto:andxsex@gmail.com"}
+  ]}
+  </script>
 
   <!-- Inline safety: guarantees dark bg + hides unstyled content until CSS loads -->
   <style>
@@ -24,6 +44,22 @@
   <script>window.addEventListener('load', function(){document.body.classList.add('css-ready');});</script>
 </head>
 <body>
+  <script>
+    (function () {
+      try {
+        var lite = false;
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) lite = true;
+        var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn) {
+          if (conn.saveData) lite = true;
+          if (/^(slow-2g|2g)$/i.test(conn.effectiveType || "")) lite = true;
+        }
+        if (typeof navigator.deviceMemory === "number" && navigator.deviceMemory > 0 && navigator.deviceMemory <= 4) lite = true;
+        if (typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2) lite = true;
+        if (lite) document.documentElement.classList.add("perf-lite");
+      } catch (e) { /* noop */ }
+    })();
+  </script>
 
   <!-- ===== NAV ===== -->
   <header class="nav" id="nav">
@@ -41,8 +77,9 @@
       <a href="#contact">Связь</a>
       <a class="nav-links-cta" href="https://t.me/andxxstars" target="_blank" rel="noopener">Написать в&nbsp;Telegram</a>
     </nav>
-    <a class="nav-cta" href="https://t.me/andxxstars" target="_blank" rel="noopener">
-      Telegram
+    <a class="nav-cta btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener" title="Быстрый старт в Telegram: бриф, сроки, оплата">
+      <span class="btn-line">Telegram</span>
+      <span class="btn-sublink">Бриф и ответ за день</span>
     </a>
     <button class="nav-burger" id="navBurger" aria-label="Открыть меню" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -54,10 +91,9 @@
   <!-- ===== HERO ===== -->
   <section class="hero" id="hero">
     <div class="hero-bg" aria-hidden="true">
-      <video class="hero-video" autoplay muted loop playsinline preload="metadata"
-             poster="./posters/2026-03-02 15.32.19.jpg">
-        <source src="./dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4" type="video/mp4" />
-      </video>
+      <video class="hero-video" muted loop playsinline preload="none"
+             poster="./posters/2026-03-02 15.32.19.jpg"
+             data-hero-src="./dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4"></video>
       <div class="hero-veil"></div>
     </div>
 
@@ -71,11 +107,13 @@
         в&nbsp;едином профессиональном коде бренда.
       </p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="https://t.me/andxxstars" target="_blank" rel="noopener">
-          Запустить проект
+        <a class="btn btn-primary btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">Запустить проект</span>
+          <span class="btn-hint">Соберём ТЗ, референсы и план сдачи. Даст ясный старт без бесконечных созвонов.</span>
         </a>
-        <a class="btn btn-ghost" href="#services">
-          Посмотреть услуги
+        <a class="btn btn-ghost btn-rich btn-tilt" href="#services">
+          <span class="btn-line">Посмотреть услуги</span>
+          <span class="btn-hint">Нейро-видео, съёмка, сайты и n8n — что входит и чем полезно именно вам.</span>
         </a>
       </div>
       <ul class="hero-chips" aria-label="Направления">
@@ -258,8 +296,14 @@
           <li>Отмена в&nbsp;любой момент</li>
         </ul>
         <div class="pkg-pay">
-          <a class="btn btn-primary pkg-btn" href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener">Оплатить картой</a>
-          <a class="btn btn-pay pkg-btn" href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener">Криптой</a>
+          <a class="btn btn-primary pkg-btn btn-rich btn-tilt" href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener">
+            <span class="btn-line">Оплатить картой</span>
+            <span class="btn-hint btn-hint-sm">Lava: мгновенный доступ к клубу — практики, шаблоны Reels, треки и чат без ожидания.</span>
+          </a>
+          <a class="btn btn-pay pkg-btn btn-rich btn-tilt" href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener">
+            <span class="btn-line">Криптой</span>
+            <span class="btn-hint btn-hint-sm">BTC/ETH/USDT: то же членство, если удобнее кошелёк и международные расчёты.</span>
+          </a>
         </div>
       </article>
 
@@ -279,7 +323,10 @@
           <li>Ретушь и&nbsp;цветокор</li>
           <li>Исходники в&nbsp;подарок</li>
         </ul>
-        <a class="btn btn-ghost pkg-btn" href="https://t.me/andxxstars" target="_blank" rel="noopener">Заказать</a>
+        <a class="btn btn-ghost pkg-btn btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">Заказать</span>
+          <span class="btn-hint btn-hint-sm">30 кадров в трёх визуальных стилях: усилит экспертный образ и сохранит время на студии.</span>
+        </a>
       </article>
 
       <article class="pkg pkg-feature reveal">
@@ -299,7 +346,10 @@
           <li>Обложки и&nbsp;описания</li>
           <li>Публикация по&nbsp;графику</li>
         </ul>
-        <a class="btn btn-primary pkg-btn" href="https://t.me/andxxstars" target="_blank" rel="noopener">Забронировать</a>
+        <a class="btn btn-primary pkg-btn btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">Забронировать</span>
+          <span class="btn-hint btn-hint-sm">10 Reels в месяц со сценарием и публикацией: стабильный охват без хаоса в контент-плане.</span>
+        </a>
       </article>
 
       <article class="pkg reveal">
@@ -319,7 +369,10 @@
           <li>Сценарии автоматизации</li>
           <li>Аналитика и&nbsp;UTM</li>
         </ul>
-        <a class="btn btn-ghost pkg-btn" href="https://t.me/andxxstars" target="_blank" rel="noopener">Обсудить</a>
+        <a class="btn btn-ghost pkg-btn btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">Обсудить</span>
+          <span class="btn-hint btn-hint-sm">Лендинг, бот и n8n: заявки падают в Telegram/CRM, меньше ручной переписки и потерь лидов.</span>
+        </a>
       </article>
 
       <article class="pkg reveal">
@@ -338,7 +391,10 @@
           <li>Комплекс под&nbsp;задачу</li>
           <li>Запись для&nbsp;самостоятельной практики</li>
         </ul>
-        <a class="btn btn-ghost pkg-btn" href="https://t.me/andxxstars" target="_blank" rel="noopener">Записаться</a>
+        <a class="btn btn-ghost pkg-btn btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">Записаться</span>
+          <span class="btn-hint btn-hint-sm">60 минут онлайн + разбор состояния: снимает перегруз и даёт понятный комплекс практики.</span>
+        </a>
       </article>
     </div>
 
@@ -354,10 +410,10 @@
     </div>
 
     <div class="filters" role="tablist" aria-label="Фильтр портфолио">
-      <button class="filter active" data-filter="all" role="tab" aria-selected="true">Все</button>
-      <button class="filter" data-filter="neuro" role="tab" aria-selected="false">Нейро-видео</button>
-      <button class="filter" data-filter="design" role="tab" aria-selected="false">Дизайн</button>
-      <button class="filter" data-filter="cases" role="tab" aria-selected="false">Кейсы</button>
+      <button class="filter active btn-tilt" type="button" data-filter="all" role="tab" aria-selected="true" title="Показать весь каталог: нейро-видео, дизайн и кейсы">Все</button>
+      <button class="filter btn-tilt" type="button" data-filter="neuro" role="tab" aria-selected="false" title="AI-ролики и моушн: виральные форматы под Reels и рекламу">Нейро-видео</button>
+      <button class="filter btn-tilt" type="button" data-filter="design" role="tab" aria-selected="false" title="Постеры, визуал для карточек и баннеров в едином стиле">Дизайн</button>
+      <button class="filter btn-tilt" type="button" data-filter="cases" role="tab" aria-selected="false" title="Реальные портреты, съёмка и смешанные проекты">Кейсы</button>
     </div>
 
     <div class="gallery" id="gallery"></div>
@@ -393,7 +449,10 @@
     </div>
 
     <div class="carousel-cta reveal">
-      <a class="btn btn-primary" href="https://t.me/andxxstars" target="_blank" rel="noopener">Заказать карусель</a>
+      <a class="btn btn-primary btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+        <span class="btn-line">Заказать карусель</span>
+        <span class="btn-hint btn-hint-sm">7–10 слайдов за 2 дня: упаковка смысла под ленту — больше удержания и явный оффер в конце.</span>
+      </a>
       <span class="carousel-cta-note">от&nbsp;2&nbsp;500&nbsp;₽ · 7–10 слайдов · 2 дня</span>
     </div>
   </section>
@@ -518,24 +577,28 @@
       <p class="section-lead">Напишите в&nbsp;Telegram — обсудим задачу, сроки и&nbsp;формат. Оплата картой&nbsp;(СНГ) или криптой.</p>
 
       <div class="contact-cta">
-        <a class="btn btn-primary btn-lg" href="https://t.me/andxxstars" target="_blank" rel="noopener">
-          Написать в&nbsp;Telegram
+        <a class="btn btn-primary btn-lg btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">Написать в&nbsp;Telegram</span>
+          <span class="btn-hint">Прямой канал: сроки, вилка бюджета и следующий шаг — без лишних отделов согласования.</span>
         </a>
-        <a class="btn btn-ghost btn-lg" href="https://t.me/andxxstars" target="_blank" rel="noopener">
-          AI-аудит бесплатно
+        <a class="btn btn-ghost btn-lg btn-rich btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">
+          <span class="btn-line">AI-аудит бесплатно</span>
+          <span class="btn-hint">Короткий разбор воронки и контента: что усилить первым, чтобы не сжигать бюджет.</span>
         </a>
       </div>
 
       <div class="pay">
         <span class="pay-label">Способы оплаты</span>
         <div class="pay-row">
-          <a class="btn btn-pay pay-card" href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener">
+          <a class="btn btn-pay pay-card btn-rich btn-tilt" href="https://app.lava.top/products/0889191c-4e8c-4978-b545-41dafe762377" target="_blank" rel="noopener">
             <span class="pay-method">Lava</span>
             <span class="pay-desc">Карта РФ/СНГ</span>
+            <span class="btn-hint pay-hint">Подписка и сервисы: привычная оплата картой, подтверждение в пару кликов.</span>
           </a>
-          <a class="btn btn-pay pay-card" href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener">
+          <a class="btn btn-pay pay-card btn-rich btn-tilt" href="https://pay.cryptocloud.plus/pos/s47OYqsRvYUPfGts" target="_blank" rel="noopener">
             <span class="pay-method">CryptoCloud</span>
             <span class="pay-desc">BTC · ETH · USDT</span>
+            <span class="btn-hint pay-hint">Если важна крипта: тот же продукт, гибко по валюте и стране.</span>
           </a>
         </div>
         <p class="pay-note">Нужны реквизиты для&nbsp;ИП/юрлица? <a href="https://t.me/andxxstars" target="_blank" rel="noopener">Напишите в Telegram</a></p>

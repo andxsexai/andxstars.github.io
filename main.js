@@ -186,7 +186,11 @@ function hydrateVideo(v) {
 
 function observeLazyVideos(root) {
   const scope = root || document;
-  const videos = scope.querySelectorAll('video[data-src]');
+  const perfLite = document.documentElement.classList.contains('perf-lite');
+  const videos = Array.from(scope.querySelectorAll('video[data-src]')).filter((v) => {
+    if (!perfLite) return true;
+    return !v.classList.contains('hover-video');
+  });
   if (!videos.length) return;
 
   if (typeof IntersectionObserver !== 'function') {
@@ -207,72 +211,90 @@ function observeLazyVideos(root) {
   videos.forEach((v) => io.observe(v));
 }
 
-function initHoverVideos() {
-  // hover-to-play inside service and skill cards
-  document.querySelectorAll('.hover-video').forEach((v) => {
-    const card = v.closest('.service, .skill');
-    if (!card) return;
-    const start = () => {
-      hydrateVideo(v);
-      const p = v.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-    };
-    const stop = () => {
-      try { v.pause(); v.currentTime = 0; } catch (_) {}
-    };
-    card.addEventListener('mouseenter', start);
-    card.addEventListener('mouseleave', stop);
-    card.addEventListener('focusin', start);
-    card.addEventListener('focusout', stop);
-  });
-
-  // Auto-play service/skill videos while the card is in view — so mobile
-  // and touch users see the animation immediately without hovering.
-  if (typeof IntersectionObserver === 'function') {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const v = entry.target.querySelector('video.hover-video');
-        if (!v) return;
-        const media = entry.target.querySelector('.service-media') || entry.target;
-        if (entry.isIntersecting) {
-          hydrateVideo(v);
-          // Only mark is-playing once the video actually begins — avoids fading
-          // the fallback image while video is still buffering / blocked.
-          v.addEventListener('playing', function onPlay() {
-            media.classList.add('is-playing');
-            entry.target.classList.add('is-playing');
-            v.removeEventListener('playing', onPlay);
-          }, { once: true });
-          const p = v.play();
-          if (p && p.catch) p.catch(() => {});
-        } else {
-          try { v.pause(); } catch (_) {}
-          media.classList.remove('is-playing');
-          entry.target.classList.remove('is-playing');
-        }
-      });
-    }, { threshold: 0.4 });
-    document.querySelectorAll('.service, .skill').forEach((card) => io.observe(card));
-  }
-
-  // tiles: preview on hover (desktop)
-  document.querySelectorAll('#gallery .video-tile video').forEach((v) => {
-    const tile = v.closest('.tile');
-    if (!tile) return;
-    tile.addEventListener('mouseenter', () => {
-      hydrateVideo(v);
-      const p = v.play(); if (p && p.catch) p.catch(() => {});
-    });
-    tile.addEventListener('mouseleave', () => {
-      try { v.pause(); } catch (_) {}
-    });
-  });
+/** Skip heavy card/hero hover videos on low-tier devices (see perf-lite in index.html). */
+function isPerfLite() {
+  return document.documentElement.classList.contains('perf-lite');
 }
 
-// Play the hero video proactively (it's visible on load)
+function initHoverVideos() {
+  if (!isPerfLite()) {
+    // hover-to-play inside service and skill cards
+    document.querySelectorAll('.hover-video').forEach((v) => {
+      const card = v.closest('.service, .skill');
+      if (!card) return;
+      const start = () => {
+        hydrateVideo(v);
+        const p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      };
+      const stop = () => {
+        try { v.pause(); v.currentTime = 0; } catch (_) {}
+      };
+      card.addEventListener('mouseenter', start);
+      card.addEventListener('mouseleave', stop);
+      card.addEventListener('focusin', start);
+      card.addEventListener('focusout', stop);
+    });
+
+    // Auto-play service/skill videos while the card is in view — so mobile
+    // and touch users see the animation immediately without hovering.
+    if (typeof IntersectionObserver === 'function') {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const v = entry.target.querySelector('video.hover-video');
+          if (!v) return;
+          const media = entry.target.querySelector('.service-media') || entry.target;
+          if (entry.isIntersecting) {
+            hydrateVideo(v);
+            v.addEventListener('playing', function onPlay() {
+              media.classList.add('is-playing');
+              entry.target.classList.add('is-playing');
+              v.removeEventListener('playing', onPlay);
+            }, { once: true });
+            const p = v.play();
+            if (p && p.catch) p.catch(() => {});
+          } else {
+            try { v.pause(); } catch (_) {}
+            media.classList.remove('is-playing');
+            entry.target.classList.remove('is-playing');
+          }
+        });
+      }, { threshold: 0.4 });
+      document.querySelectorAll('.service, .skill').forEach((card) => io.observe(card));
+    }
+  }
+
+  // tiles: preview on hover (desktop) — gallery videos still lazy-load; skip hover autoplay in perf-lite
+  if (!isPerfLite()) {
+    document.querySelectorAll('#gallery .video-tile video').forEach((v) => {
+      const tile = v.closest('.tile');
+      if (!tile) return;
+      tile.addEventListener('mouseenter', () => {
+        hydrateVideo(v);
+        const p = v.play(); if (p && p.catch) p.catch(() => {});
+      });
+      tile.addEventListener('mouseleave', () => {
+        try { v.pause(); } catch (_) {}
+      });
+    });
+  }
+}
+
+// Hero video: only mount source after we've ruled out perf-lite (saves bandwidth on weak devices).
 function initHeroVideo() {
   const v = document.querySelector('.hero-video');
   if (!v) return;
+  if (isPerfLite()) return;
+  const rel = v.getAttribute('data-hero-src');
+  if (!rel) return;
+  const src = buildAsset(rel);
+  const source = document.createElement('source');
+  source.src = src;
+  source.type = 'video/mp4';
+  v.appendChild(source);
+  v.setAttribute('autoplay', '');
+  v.setAttribute('preload', 'metadata');
+  try { v.load(); } catch (_) {}
   const tryPlay = () => {
     const p = v.play();
     if (p && typeof p.catch === 'function') p.catch(() => {});
@@ -447,6 +469,7 @@ function setCarouselIndex(i) {
 
 function startCarouselAutoplay() {
   stopCarouselAutoplay();
+  if (isPerfLite()) return;
   carouselTimer = window.setInterval(() => {
     setCarouselIndex(carouselIndex + 1);
   }, CAROUSEL_AUTOPLAY_MS);
@@ -511,10 +534,11 @@ function initCarousel() {
     startCarouselAutoplay();
   }
 
-  // respect reduced-motion
+  // respect reduced-motion and perf-lite
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     stopCarouselAutoplay();
   }
+  if (isPerfLite()) stopCarouselAutoplay();
 }
 
 // ----------------------------------------------------------------------------
@@ -608,6 +632,11 @@ function initCounters() {
   var counters = document.querySelectorAll('.stat-num[data-target]');
   if (!counters.length) return;
 
+  if (isPerfLite()) {
+    counters.forEach(function (el) { el.textContent = el.getAttribute('data-target'); });
+    return;
+  }
+
   if (typeof IntersectionObserver !== 'function') {
     counters.forEach(function(el) { el.textContent = el.getAttribute('data-target'); });
     return;
@@ -640,17 +669,28 @@ function initCounters() {
 // ----------------------------------------------------------------------------
 
 function boot() {
-  initNav();
-  renderGallery();
-  initFilters();
-  initHoverVideos();
-  initHeroVideo();
-  initLightbox();
-  initCarousel();
-  initScrollReveal();
-  initCounters();
-  observeLazyVideos(document);
+  try {
+    initNav();
+    initHeroVideo();
+    renderGallery();
+    initFilters();
+    initHoverVideos();
+    initLightbox();
+    initCarousel();
+    initScrollReveal();
+    initCounters();
+    observeLazyVideos(document);
+  } catch (err) {
+    console.error('[ANDXSTARS] boot:', err);
+  }
 }
+
+window.addEventListener('error', function (ev) {
+  console.warn('[ANDXSTARS] window error:', ev.error || ev.message || ev);
+});
+window.addEventListener('unhandledrejection', function (ev) {
+  console.warn('[ANDXSTARS] unhandled rejection:', ev.reason);
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
