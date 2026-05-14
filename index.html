@@ -92,7 +92,7 @@
   <section class="hero" id="hero">
     <div class="hero-bg" aria-hidden="true">
       <video class="hero-video" muted loop playsinline preload="none"
-             poster="./posters/2026-03-02 15.32.19.jpg"
+             poster="./posters/dopoln-ai.jpg"
              data-hero-src="./dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4"></video>
       <div class="hero-veil"></div>
     </div>
@@ -406,25 +406,66 @@
     <div class="section-head reveal">
       <span class="eyebrow">03 · Портфолио</span>
       <h2 class="section-title">Избранные работы</h2>
-      <p class="section-lead">Нажмите на&nbsp;любое изображение — откроется на&nbsp;весь экран.</p>
+      <p class="section-lead">Откройте витрину — затем выберите каталог: нейро-видео, дизайн или&nbsp;кейсы. Клик по работе — просмотр на&nbsp;весь экран.</p>
     </div>
 
-    <div class="filters" role="tablist" aria-label="Фильтр портфолио">
-      <button class="filter active btn-tilt" type="button" data-filter="all" role="tab" aria-selected="true" title="Показать весь каталог: нейро-видео, дизайн и кейсы">Все</button>
-      <button class="filter btn-tilt" type="button" data-filter="neuro" role="tab" aria-selected="false" title="AI-ролики и моушн: виральные форматы под Reels и рекламу">Нейро-видео</button>
-      <button class="filter btn-tilt" type="button" data-filter="design" role="tab" aria-selected="false" title="Постеры, визуал для карточек и баннеров в едином стиле">Дизайн</button>
-      <button class="filter btn-tilt" type="button" data-filter="cases" role="tab" aria-selected="false" title="Реальные портреты, съёмка и смешанные проекты">Кейсы</button>
+    <div class="portfolio-flow reveal" id="portfolioFlow">
+      <div class="portfolio-cover" id="portfolioCover">
+        <img
+          class="portfolio-cover-img"
+          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&amp;fit=crop&amp;w=2000&amp;q=85"
+          width="1600"
+          height="900"
+          alt=""
+          decoding="async"
+          fetchpriority="low"
+        />
+        <div class="portfolio-cover-veil" aria-hidden="true"></div>
+        <div class="portfolio-cover-inner">
+          <p class="portfolio-cover-kicker">ANDXSTARS · портфолио</p>
+          <h3 class="portfolio-cover-title">Три каталога — без хаоса «всё сразу»</h3>
+          <p class="portfolio-cover-note">Нейро-видео, графика и кейсы открываются отдельно: так страница грузится спокойнее, а вам проще ориентироваться.</p>
+          <button type="button" class="btn btn-primary btn-lg btn-tilt" id="portfolioRevealBtn">
+            Смотреть портфолио
+          </button>
+        </div>
+      </div>
+
+      <div class="portfolio-chooser is-hidden" id="portfolioChooser" aria-hidden="true">
+        <p class="portfolio-chooser-lead">Выберите каталог</p>
+        <div class="portfolio-chooser-grid" role="group" aria-label="Каталоги портфолио">
+          <button type="button" class="portfolio-cat btn-tilt" data-cat="neuro">
+            <span class="portfolio-cat-tag">Каталог</span>
+            <span class="portfolio-cat-title">Нейро-видео</span>
+            <span class="portfolio-cat-hint">AI-ролики, моушн, рекламные форматы</span>
+          </button>
+          <button type="button" class="portfolio-cat btn-tilt" data-cat="design">
+            <span class="portfolio-cat-tag">Каталог</span>
+            <span class="portfolio-cat-title">Дизайн</span>
+            <span class="portfolio-cat-hint">Постеры, обложки, визуал под бренд</span>
+          </button>
+          <button type="button" class="portfolio-cat btn-tilt" data-cat="cases">
+            <span class="portfolio-cat-tag">Каталог</span>
+            <span class="portfolio-cat-title">Кейсы</span>
+            <span class="portfolio-cat-hint">Сводные работы и сильные единицы</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="portfolio-active is-hidden" id="portfolioActive" aria-hidden="true">
+        <div class="portfolio-active-bar">
+          <span class="portfolio-active-label" id="portfolioActiveLabel"></span>
+          <button type="button" class="btn btn-ghost btn-sm btn-tilt" id="portfolioPickAnother">Другой каталог</button>
+        </div>
+        <div class="gallery" id="gallery"></div>
+      </div>
     </div>
 
-    <div class="gallery" id="gallery"></div>
-
-    <!-- Fallback: if JS blocked, show a curated static grid so the section isn't empty. -->
     <noscript>
       <div class="gallery">
-        <a class="tile" href="./posters/2026-03-02 15.45.55.jpg"><img src="./posters/2026-03-02 15.45.55.jpg" alt="Постер"/></a>
-        <a class="tile" href="./posters/2026-03-02 15.46.01.jpg"><img src="./posters/2026-03-02 15.46.01.jpg" alt="Постер"/></a>
         <a class="tile" href="./posters/service-content.jpg"><img src="./posters/service-content.jpg" alt="Контент"/></a>
         <a class="tile" href="./posters/service-neuro.jpg"><img src="./posters/service-neuro.jpg" alt="Нейросети"/></a>
+        <a class="tile" href="./photos/og-preview.jpg"><img src="./photos/og-preview.jpg" alt="Превью"/></a>
       </div>
     </noscript>
   </section>
@@ -462,52 +503,52 @@
     <div class="section-head reveal">
       <span class="eyebrow">05 · Арсенал</span>
       <h2 class="section-title">Навыки и&nbsp;технологии</h2>
-      <p class="section-lead">Шесть направлений, которые&nbsp;я объединяю в&nbsp;проекте.</p>
+      <p class="section-lead">Шесть направлений в одном проекте. <strong>Нажмите карточку</strong> — откроется краткая панель: преимущества, ответы на возражения и отличие от типичных конкурентов.</p>
     </div>
 
     <div class="skills-grid">
-      <a class="skill" href="#contact">
+      <button type="button" class="skill skill-tile" data-skill="sites" aria-expanded="false" aria-haspopup="dialog">
         <video class="hover-video" muted loop playsinline preload="none"
-               poster="./posters/2026-03-02 15.33.10.jpg"
+               poster="./posters/dopoln-sites.jpg"
                data-src="./dopoln/сайты/Sensors_moving,_camera_202603291842.mp4"></video>
-        <img class="fallback-img" src="./posters/2026-03-02 15.33.10.jpg" alt="Сайты" loading="lazy" />
+        <img class="fallback-img" src="./posters/dopoln-sites.jpg" alt="" loading="lazy" />
         <div class="skill-body"><span>01</span><h3>Сайты</h3></div>
-      </a>
-      <a class="skill" href="#contact">
+      </button>
+      <button type="button" class="skill skill-tile" data-skill="music" aria-expanded="false" aria-haspopup="dialog">
         <video class="hover-video" muted loop playsinline preload="none"
-               poster="./posters/2026-03-02 15.33.02.jpg"
+               poster="./posters/dopoln-music.jpg"
                data-src="./dopoln/музыка/Guy_plays_bass_202603291841.mp4"></video>
-        <img class="fallback-img" src="./posters/2026-03-02 15.33.02.jpg" alt="Музыка" loading="lazy" />
+        <img class="fallback-img" src="./posters/dopoln-music.jpg" alt="" loading="lazy" />
         <div class="skill-body"><span>02</span><h3>Музыка</h3></div>
-      </a>
-      <a class="skill" href="#contact">
+      </button>
+      <button type="button" class="skill skill-tile" data-skill="neuro" aria-expanded="false" aria-haspopup="dialog">
         <video class="hover-video" muted loop playsinline preload="none"
-               poster="./posters/2026-03-02 15.32.57.jpg"
+               poster="./posters/dopoln-ai.jpg"
                data-src="./dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4"></video>
-        <img class="fallback-img" src="./posters/2026-03-02 15.32.57.jpg" alt="Нейросети" loading="lazy" />
+        <img class="fallback-img" src="./posters/dopoln-ai.jpg" alt="" loading="lazy" />
         <div class="skill-body"><span>03</span><h3>Нейросети</h3></div>
-      </a>
-      <a class="skill" href="#contact">
+      </button>
+      <button type="button" class="skill skill-tile" data-skill="auto" aria-expanded="false" aria-haspopup="dialog">
         <video class="hover-video" muted loop playsinline preload="none"
-               poster="./posters/2026-03-02 15.32.48.jpg"
+               poster="./posters/dopoln-auto.jpg"
                data-src="./dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4"></video>
-        <img class="fallback-img" src="./posters/2026-03-02 15.32.48.jpg" alt="Автоматизация" loading="lazy" />
+        <img class="fallback-img" src="./posters/dopoln-auto.jpg" alt="" loading="lazy" />
         <div class="skill-body"><span>04</span><h3>Автоматизация</h3></div>
-      </a>
-      <a class="skill" href="#contact">
+      </button>
+      <button type="button" class="skill skill-tile" data-skill="qigong" aria-expanded="false" aria-haspopup="dialog">
         <video class="hover-video" muted loop playsinline preload="none"
-               poster="./posters/2026-03-02 15.32.19.jpg"
+               poster="./posters/dopoln-qigong.jpg"
                data-src="./dopoln/цигун/Moves_technology_engaging_202603291845.mp4"></video>
-        <img class="fallback-img" src="./posters/2026-03-02 15.32.19.jpg" alt="Цигун" loading="lazy" />
+        <img class="fallback-img" src="./posters/dopoln-qigong.jpg" alt="" loading="lazy" />
         <div class="skill-body"><span>05</span><h3>Цигун</h3></div>
-      </a>
-      <a class="skill" href="#contact">
+      </button>
+      <button type="button" class="skill skill-tile" data-skill="photo" aria-expanded="false" aria-haspopup="dialog">
         <video class="hover-video" muted loop playsinline preload="none"
-               poster="./photos/2026-03-02 15.23.13.jpg"
+               poster="./posters/dopoln-photo.jpg"
                data-src="./catalog-uslug/photo-video/Developer_at_desk_202603291823.mp4"></video>
-        <img class="fallback-img" src="./photos/2026-03-02 15.23.13.jpg" alt="Фотосессии" loading="lazy" />
+        <img class="fallback-img" src="./posters/dopoln-photo.jpg" alt="" loading="lazy" />
         <div class="skill-body"><span>06</span><h3>Фотосессии</h3></div>
-      </a>
+      </button>
     </div>
   </section>
 
@@ -547,7 +588,7 @@
   <section class="section" id="about">
     <div class="about-wrap reveal">
       <div class="about-photo">
-        <img src="./photos/1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png" alt="ANDXSTARS — автор" loading="lazy" />
+        <img src="./photos/og-preview.jpg" alt="ANDXSTARS — автор" loading="lazy" />
       </div>
       <div class="about-text">
         <span class="eyebrow">07 · О&nbsp;проекте</span>
@@ -555,10 +596,30 @@
         <p>ANDXSTARS — это синтез визуального кода, звука и&nbsp;технологий. Собираю проекты, в&nbsp;которых бренд, контент и&nbsp;система продаж работают одним организмом.</p>
         <p>AI, n8n, монтаж, дизайн, звук — всё внутри одной производственной воронки. Результат: быстро, чисто, дорого&nbsp;на&nbsp;вид.</p>
         <ul class="about-perks">
-          <li><span class="perk-icon">⚡</span> Запуск за&nbsp;1–3 дня после оплаты</li>
-          <li><span class="perk-icon">🎯</span> Каждый проект — под задачу клиента</li>
-          <li><span class="perk-icon">🤖</span> AI-инструменты + живое мастерство</li>
-          <li><span class="perk-icon">🔒</span> Две правки входят в&nbsp;любой тариф</li>
+          <li>
+            <span class="perk-icon perk-icon--ink" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 22c2-8 10-18 18-20-2 8-12 16-20 18z" stroke="url(#inkBolt)" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 25l4-10 8-8" stroke="url(#inkBolt2)" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="inkBolt" x1="6" y1="6" x2="26" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#b28bff"/><stop offset="1" stop-color="#7cf5e5"/></linearGradient><linearGradient id="inkBolt2" x1="9" y1="10" x2="24" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#e8dcff"/><stop offset="1" stop-color="#b28bff"/></linearGradient></defs></svg>
+            </span>
+            Запуск за&nbsp;1–3 дня после оплаты
+          </li>
+          <li>
+            <span class="perk-icon perk-icon--ink" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 16h6l4-9 4 18 4-9h6" stroke="url(#inkWave)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="3" fill="#b28bff" opacity=".85"/><defs><linearGradient id="inkWave" x1="6" y1="8" x2="26" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#7cf5e5"/><stop offset="1" stop-color="#b28bff"/></linearGradient></defs></svg>
+            </span>
+            Каждый проект — под задачу клиента
+          </li>
+          <li>
+            <span class="perk-icon perk-icon--ink" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="7" width="22" height="18" rx="3" stroke="url(#inkBox)" stroke-width="2"/><path d="M9 21h6M9 17h14M9 13h10" stroke="#b28bff" stroke-width="1.8" stroke-linecap="round"/><circle cx="23" cy="12" r="2" fill="#7cf5e5"/><defs><linearGradient id="inkBox" x1="5" y1="7" x2="27" y2="25" gradientUnits="userSpaceOnUse"><stop stop-color="#b28bff"/><stop offset="1" stop-color="#5a3fcf"/></linearGradient></defs></svg>
+            </span>
+            AI-инструменты + живое мастерство
+          </li>
+          <li>
+            <span class="perk-icon perk-icon--ink" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14c0-4 3-7 8-7s8 3 8 7v5l2 3H6l2-3v-5z" stroke="url(#inkLock)" stroke-width="2" stroke-linejoin="round"/><path d="M13 22v3a3 3 0 006 0v-3" stroke="#7cf5e5" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="inkLock" x1="8" y1="8" x2="24" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#b28bff"/><stop offset="1" stop-color="#7cf5e5"/></linearGradient></defs></svg>
+            </span>
+            Две правки входят в&nbsp;любой тариф
+          </li>
         </ul>
         <div class="stats">
           <div><strong>50+</strong><span>проектов</span></div>
@@ -629,6 +690,17 @@
       <span>Сделано с&nbsp;кодом и&nbsp;звуком</span>
     </div>
   </footer>
+
+  <!-- ===== SKILL SHEET (модалка «Навыки») ===== -->
+  <div class="skill-sheet" id="skillSheet" hidden>
+    <div class="skill-sheet-backdrop" id="skillSheetBackdrop" tabindex="-1"></div>
+    <div class="skill-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="skillSheetTitle">
+      <button type="button" class="skill-sheet-close" id="skillSheetClose" aria-label="Закрыть">×</button>
+      <h3 class="skill-sheet-title" id="skillSheetTitle"></h3>
+      <div class="skill-sheet-body" id="skillSheetBody"></div>
+      <a class="btn btn-primary skill-sheet-cta btn-tilt" href="https://t.me/andxxstars" target="_blank" rel="noopener">Обсудить в Telegram</a>
+    </div>
+  </div>
 
   <!-- ===== LIGHTBOX ===== -->
   <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog">
