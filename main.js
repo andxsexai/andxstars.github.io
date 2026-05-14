@@ -45,53 +45,51 @@ const isVideo = (f) => /\.(mp4|webm|ogv|mov)$/i.test(f);
 // ----------------------------------------------------------------------------
 
 const PORTFOLIO = [
-  // Нейро-видео (только файлы из репозитория — без «битых» путей)
-  { category: 'neuro', label: 'AI · нейроролик', path: 'dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4', poster: 'posters/service-neuro.jpg' },
-  { category: 'neuro', label: 'Автоматизация · образ', path: 'dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4', poster: 'posters/dopoln-auto.jpg' },
-  { category: 'neuro', label: 'Подкасты · неон', path: 'catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4', poster: 'posters/service-podcast.jpg' },
-  { category: 'neuro', label: 'Нейро-петля', path: 'catalog-uslug/multikif/flow-neuro-loop.mp4', poster: 'posters/dopoln-ai.jpg' },
-  { category: 'neuro', label: 'Моушн · IT', path: 'catalog-uslug/it/Frame_approximation_moves_202603291824.mp4', poster: 'posters/service-dev.jpg' },
-  { category: 'neuro', label: 'Сайты · динамика', path: 'dopoln/сайты/Sensors_moving,_camera_202603291842.mp4', poster: 'posters/dopoln-sites.jpg' },
-  { category: 'neuro', label: 'Музыка · бас', path: 'dopoln/музыка/Guy_plays_bass_202603291841.mp4', poster: 'posters/dopoln-music.jpg' },
-  { category: 'neuro', label: 'Цигун · tech', path: 'dopoln/цигун/Moves_technology_engaging_202603291845.mp4', poster: 'posters/dopoln-qigong.jpg' },
-  { category: 'neuro', label: 'Контент · студия', path: 'catalog-uslug/photo-video/Developer_at_desk_202603291823.mp4', poster: 'posters/dopoln-photo.jpg' },
-  { category: 'neuro', label: 'Мультик · сцена', path: 'catalog-uslug/multikif/Flow_delpmaspu_ (1).mp4', poster: 'posters/service-content.jpg' },
+  // Нейро-видео
+  { category: 'neuro', label: 'Нейроролик · 1', path: 'video/2026-03-02 15.24.56.mp4', poster: 'posters/2026-03-02 15.32.19.jpg' },
+  { category: 'neuro', label: 'Нейроролик · 2', path: 'video/2026-03-02 15.25.24.mp4', poster: 'posters/2026-03-02 15.32.48.jpg' },
+  { category: 'neuro', label: 'Нейроролик · 3', path: 'video/2026-03-02 15.25.38.mp4', poster: 'posters/2026-03-02 15.32.57.jpg' },
+  { category: 'neuro', label: 'AI Нейросеть', path: 'dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4', poster: 'posters/service-neuro.jpg' },
+  { category: 'neuro', label: 'Автоматизация', path: 'dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4', poster: 'posters/2026-03-02 15.32.48.jpg' },
+  { category: 'neuro', label: 'Подкасты', path: 'catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4', poster: 'posters/service-podcast.jpg' },
 
-  // Дизайн — постеры из /posters (всегда открываются)
-  { category: 'design', label: 'Ключ · AI', path: 'posters/dopoln-ai.jpg' },
-  { category: 'design', label: 'Ключ · сайты', path: 'posters/dopoln-sites.jpg' },
-  { category: 'design', label: 'Ключ · звук', path: 'posters/dopoln-music.jpg' },
-  { category: 'design', label: 'Ключ · фото', path: 'posters/dopoln-photo.jpg' },
-  { category: 'design', label: 'Ключ · автоматизация', path: 'posters/dopoln-auto.jpg' },
-  { category: 'design', label: 'Ключ · практика', path: 'posters/dopoln-qigong.jpg' },
+  // Дизайн — только реально лежащие в репозитории файлы (остальные убраны)
+  { category: 'design', label: 'Визуал · AI', path: 'posters/dopoln-ai.jpg' },
+  { category: 'design', label: 'Визуал · сайты', path: 'posters/dopoln-sites.jpg' },
+  { category: 'design', label: 'Визуал · звук', path: 'posters/dopoln-music.jpg' },
+  { category: 'design', label: 'Визуал · фото', path: 'posters/dopoln-photo.jpg' },
+  { category: 'design', label: 'Визуал · процессы', path: 'posters/dopoln-auto.jpg' },
+  { category: 'design', label: 'Визуал · практика', path: 'posters/dopoln-qigong.jpg' },
   { category: 'design', label: 'Сервис · нейро', path: 'posters/service-neuro.jpg' },
+  { category: 'design', label: 'Сервис · подкасты', path: 'posters/service-podcast.jpg' },
   { category: 'design', label: 'Сервис · контент', path: 'posters/service-content.jpg' },
   { category: 'design', label: 'Сервис · IT', path: 'posters/service-dev.jpg' },
-  { category: 'design', label: 'Сервис · подкасты', path: 'posters/service-podcast.jpg' },
 
-  // Кейсы — сильные единичные работы
-  { category: 'cases', label: 'Кейс · превью бренда', path: 'photos/og-preview.jpg' },
-  { category: 'cases', label: 'Кейс · нейровизуал', path: 'posters/dopoln-ai.jpg' },
-  { category: 'cases', label: 'Кейс · за кадром', path: 'catalog-uslug/photo-video/Developer_at_desk_202603291823.mp4', poster: 'posters/dopoln-photo.jpg' },
-  { category: 'cases', label: 'Кейс · нейропетля', path: 'catalog-uslug/multikif/flow-neuro-loop.mp4', poster: 'posters/dopoln-ai.jpg' },
-  { category: 'cases', label: 'Кейс · подкаст', path: 'catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4', poster: 'posters/service-podcast.jpg' },
-  { category: 'cases', label: 'Кейс · движение IT', path: 'catalog-uslug/it/Frame_approximation_moves_202603291824.mp4', poster: 'posters/service-dev.jpg' },
+  // Кейсы
+  { category: 'cases', label: 'Фото · 1', path: 'photos/1767209604674-019b75e6-da37-72c1-98c6-71abd70c240f.png' },
+  { category: 'cases', label: 'Фото · 2', path: 'photos/1767712598517-019b93e1-67d9-79c5-a85e-9a644665fde8.png' },
+  { category: 'cases', label: 'Фото · 3', path: 'photos/2026-03-02 15.23.13.jpg' },
+  { category: 'cases', label: 'Фото · 4', path: 'photos/2026-03-02 15.23.18.jpg' },
+  { category: 'cases', label: 'Инфлюенс', path: 'photos/influencer.jpg' },
+  { category: 'cases', label: 'Видео · сайты', path: 'dopoln/сайты/Sensors_moving,_camera_202603291842.mp4', poster: 'posters/2026-03-02 15.33.10.jpg' },
+  { category: 'cases', label: 'Видео · музыка', path: 'dopoln/музыка/Guy_plays_bass_202603291841.mp4', poster: 'posters/2026-03-02 15.33.02.jpg' },
+  { category: 'cases', label: 'Видео · цигун', path: 'dopoln/цигун/Moves_technology_engaging_202603291845.mp4', poster: 'posters/2026-03-02 15.32.19.jpg' },
 ];
 
-const CATEGORY_LABEL = { neuro: 'Нейро-видео', design: 'Дизайн', cases: 'Кейсы' };
+const CATEGORY_LABEL = { all: 'Все', neuro: 'Нейро-видео', design: 'Дизайн', cases: 'Кейсы' };
 
-// Carousel slides — from /carousel folder
+// Carousel slides — из /posters (как до смены на стоковые слайды)
 const CAROUSEL_SLIDES = [
-  { path: 'posters/dopoln-ai.jpg', alt: 'Карусель · AI' },
-  { path: 'posters/dopoln-sites.jpg', alt: 'Карусель · сайты' },
-  { path: 'posters/dopoln-music.jpg', alt: 'Карусель · звук' },
-  { path: 'posters/dopoln-photo.jpg', alt: 'Карусель · фото' },
-  { path: 'posters/dopoln-auto.jpg', alt: 'Карусель · авто-процессы' },
-  { path: 'posters/dopoln-qigong.jpg', alt: 'Карусель · практика' },
-  { path: 'posters/service-neuro.jpg', alt: 'Карусель · нейро' },
-  { path: 'posters/service-content.jpg', alt: 'Карусель · контент' },
-  { path: 'posters/service-dev.jpg', alt: 'Карусель · dev' },
-  { path: 'posters/service-podcast.jpg', alt: 'Карусель · подкасты' },
+  { path: 'posters/2026-03-02 15.28.51.jpg', alt: 'Карусель · слайд 1' },
+  { path: 'posters/2026-03-02 15.29.10.jpg', alt: 'Карусель · слайд 2' },
+  { path: 'posters/2026-03-02 15.29.13.jpg', alt: 'Карусель · слайд 3' },
+  { path: 'posters/2026-03-02 15.29.20.jpg', alt: 'Карусель · слайд 4' },
+  { path: 'posters/2026-03-02 15.29.24.jpg', alt: 'Карусель · слайд 5' },
+  { path: 'posters/2026-03-02 15.29.27.jpg', alt: 'Карусель · слайд 6' },
+  { path: 'posters/2026-03-02 15.32.48.jpg', alt: 'Карусель · слайд 7' },
+  { path: 'posters/2026-03-02 15.32.57.jpg', alt: 'Карусель · слайд 8' },
+  { path: 'posters/2026-03-02 15.33.02.jpg', alt: 'Карусель · слайд 9' },
+  { path: 'posters/2026-03-02 15.33.10.jpg', alt: 'Карусель · слайд 10' },
 ];
 
 // ----------------------------------------------------------------------------
@@ -139,13 +137,31 @@ function renderGallery() {
     }
 
     tile.addEventListener('click', () => openLightbox(index));
-    tile.classList.add('is-hidden');
     frag.appendChild(tile);
   });
 
   root.innerHTML = '';
   root.appendChild(frag);
   observeLazyVideos(root);
+}
+
+function initFilters() {
+  const buttons = document.querySelectorAll('.filter');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      const target = btn.dataset.filter || 'all';
+      document.querySelectorAll('#gallery .tile').forEach((tile) => {
+        const ok = target === 'all' || tile.dataset.cat === target;
+        tile.classList.toggle('is-hidden', !ok);
+      });
+    });
+  });
 }
 
 // ----------------------------------------------------------------------------
@@ -292,62 +308,14 @@ function initHeroVideo() {
 
 let lbCurrent = 0;
 let lbVisibleIndexes = [];
-/** Активный каталог портфолио (после выбора на витрине). */
-let portfolioCategory = null;
-
-function applyPortfolioFilter() {
-  document.querySelectorAll('#gallery .tile').forEach((tile) => {
-    const ok = portfolioCategory && tile.dataset.cat === portfolioCategory;
-    tile.classList.toggle('is-hidden', !ok);
-  });
-}
-
-function initPortfolioFlow() {
-  const cover = document.getElementById('portfolioCover');
-  const chooser = document.getElementById('portfolioChooser');
-  const active = document.getElementById('portfolioActive');
-  const labelEl = document.getElementById('portfolioActiveLabel');
-  if (!cover || !chooser || !active) return;
-
-  document.getElementById('portfolioRevealBtn')?.addEventListener('click', () => {
-    cover.classList.add('is-hidden');
-    chooser.classList.remove('is-hidden');
-    chooser.setAttribute('aria-hidden', 'false');
-  });
-
-  document.querySelectorAll('.portfolio-cat').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      portfolioCategory = btn.dataset.cat || null;
-      chooser.classList.add('is-hidden');
-      chooser.setAttribute('aria-hidden', 'true');
-      active.classList.remove('is-hidden');
-      active.setAttribute('aria-hidden', 'false');
-      if (labelEl && portfolioCategory) labelEl.textContent = CATEGORY_LABEL[portfolioCategory] || '';
-      applyPortfolioFilter();
-      const gal = document.getElementById('gallery');
-      if (gal) observeLazyVideos(gal);
-      active.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-  });
-
-  document.getElementById('portfolioPickAnother')?.addEventListener('click', () => {
-    portfolioCategory = null;
-    active.classList.add('is-hidden');
-    active.setAttribute('aria-hidden', 'true');
-    chooser.classList.remove('is-hidden');
-    chooser.setAttribute('aria-hidden', 'false');
-    document.querySelectorAll('#gallery .tile').forEach((t) => t.classList.add('is-hidden'));
-  });
-}
 
 function getVisibleIndexes() {
-  if (!portfolioCategory) {
-    return PORTFOLIO.map(function (_, i) { return i; });
-  }
+  const active = document.querySelector('.filter.active');
+  const target = (active && active.dataset.filter) || 'all';
   return PORTFOLIO
-    .map(function (item, i) { return { item: item, i: i }; })
-    .filter(function (x) { return x.item.category === portfolioCategory; })
-    .map(function (x) { return x.i; });
+    .map((item, i) => ({ item, i }))
+    .filter(({ item }) => target === 'all' || item.category === target)
+    .map(({ i }) => i);
 }
 
 function renderLightbox(index) {
@@ -696,107 +664,6 @@ function initCounters() {
 }
 
 // ----------------------------------------------------------------------------
-// Панель «Навыки»: возражения, преимущества, мультизадачность
-// ----------------------------------------------------------------------------
-
-const SKILL_MULTITASK =
-  '<p class="skill-multi"><strong>Почему мультизадачность — база ANDXSTARS.</strong> Сейчас бренд держится на одновременном качестве визуала, звука, AI и автоматизаций. Я прохожу весь конвейер сам — от идеи и сценария до публикации и интеграций (n8n, боты, CRM). Это не «делаю всё сразу хуже», а переключение режимов продакшена без потери качества: я быстрее закрываю возражения и закрываю дыры на стыке дисциплин, пока три узких специалиста ещё согласуют ТЗ.</p>';
-
-const SKILL_SHEET_CONTENT = {
-  sites: {
-    title: 'Сайты и воронки',
-    html:
-      '<h4>Что даёт направление</h4><p>Лендинг и воронка как единый интерфейс продаж: понятный путь к заявке, события аналитики, связка с Telegram/ботом и оплатой.</p>' +
-      '<h4>Возражения → как работаю</h4><ul><li><strong>«Соберу в конструкторе»</strong> — на нестандартной воронке шаблоны ломаются; кастом держит сценарий и правки без костылей.</li><li><strong>«Дорого»</strong> — вы платите за меньше итераций и за то, что копирайт, визуал и техника смотрят в одну цель.</li></ul>' +
-      '<h4>Среди конкурентов</h4><p>Классическая веб-студия часто отдаёт «красивую оболочку»; я довожу до работающей связки с ботом, оплатой и событиями — чтобы лиды не терялись между страницами.</p>' +
-      SKILL_MULTITASK,
-  },
-  music: {
-    title: 'Музыка и саунд-дизайн',
-    html:
-      '<h4>Что даёт направление</h4><p>Фирменный тембр, аранжировки под Reels/Shorts, чистый микс — звук перестаёт «отличаться дорогой от дешёвого контента».</p>' +
-      '<h4>Возражения → как работаю</h4><ul><li><strong>«Куплю бит на стоке»</strong> — риск одинакового звука у конкурентов; я собираю узнаваемый слой под ваш визуальный код.</li><li><strong>«Нет времени на согласование»</strong> — короткие демо, понятные версии, финал без бесконечных кругов.</li></ul>' +
-      '<h4>Среди конкурентов</h4><p>Битмейкер без монтажа не видит ритм кадра; я стыкую музыку с видеорядом, чтобы удержание не убивало «не тот дроп».</p>' +
-      SKILL_MULTITASK,
-  },
-  neuro: {
-    title: 'Нейросети и AI-видео',
-    html:
-      '<h4>Что даёт направление</h4><p>Сценарий, генерация, ретушь кадра, голос и монтаж — AI как ускоритель, а не замена вкуса.</p>' +
-      '<h4>Возражения → как работаю</h4><ul><li><strong>«Нейросеть выглядит дёшево»</strong> — закрывается режиссурой, цветом и пост-обработкой; «сырой» результат не уходит в эфир.</li><li><strong>«Боюсь авторских рисков»</strong> — проговариваем источники и пайплайн до съёмки/публикации.</li></ul>' +
-      '<h4>Среди конкурентов</h4><p>Сервисы «нажал кнопку» не держат бренд-голос; я собираю AI под вашу подачу и под платформу (Reels/реклама/лендинг).</p>' +
-      SKILL_MULTITASK,
-  },
-  auto: {
-    title: 'Автоматизация и интеграции',
-    html:
-      '<h4>Что даёт направление</h4><p>Заявки, уведомления, напоминания, перенос в CRM, отчёты — сценарии в n8n и ботах, чтобы вы не жили в таблицах.</p>' +
-      '<h4>Возражения → как работаю</h4><ul><li><strong>«Хватит Google-форм»</strong> — форма — только вход; дальше данные должны жить там, где вы продаёте.</li><li><strong>«Боюсь сломать процесс»</strong> — поэтапное включение, тест и откат без простоя в лидогенерации.</li></ul>' +
-      '<h4>Среди конкурентов</h4><p>Интегратор без понимания маркетинга строит «красивые стрелочки»; я ставлю автоматизацию под реальные касания клиента.</p>' +
-      SKILL_MULTITASK,
-  },
-  qigong: {
-    title: 'Цигун и устойчивое состояние',
-    html:
-      '<h4>Что даёт направление</h4><p>Онлайн-практика для перегруженных расписаний: фокус, дыхание, работа с телом — чтобы не выгорать на длинной дистанции проектов.</p>' +
-      '<h4>Возражения → как работаю</h4><ul><li><strong>«Это не про бизнес»</strong> — ресурс внимания напрямую влияет на качество решений и скорость согласований.</li><li><strong>«Нет времени»</strong> — короткие ясные комплексы с записью для самостоятельной работы.</li></ul>' +
-      '<h4>Среди конкурентов</h4><p>Массовые курсы без разбора состояния дают шаблон; я подбираю комплекс под вашу нагрузку и задачу.</p>' +
-      SKILL_MULTITASK,
-  },
-  photo: {
-    title: 'Фото и визуальные сессии',
-    html:
-      '<h4>Что даёт направление</h4><p>Портрет и контент под карточки, обложки и кампании — свет, цвет и кадр, которые продолжают бренд, а не «случайный кадр с телефона».</p>' +
-      '<h4>Возражения → как работаю</h4><ul><li><strong>«Сниму на смартфон»</strong> — для экспертного позиционирования не хватает глубины и единого цвета; это видно в ленте.</li><li><strong>«Неловко в кадре»</strong> — спокойная постановка, референсы и понятные позы без театра.</li></ul>' +
-      '<h4>Среди конкурентов</h4><p>Фотограф без монтажа/дизайна теряет связку с носителями; я понимаю, куда уйдёт кадр: сайт, соцсети, наружка.</p>' +
-      SKILL_MULTITASK,
-  },
-};
-
-function openSkillSheet(key) {
-  const sheet = document.getElementById('skillSheet');
-  const data = SKILL_SHEET_CONTENT[key];
-  const titleEl = document.getElementById('skillSheetTitle');
-  const bodyEl = document.getElementById('skillSheetBody');
-  if (!sheet || !data || !titleEl || !bodyEl) return;
-  titleEl.textContent = data.title;
-  bodyEl.innerHTML = data.html;
-  sheet.hidden = false;
-  sheet.setAttribute('aria-hidden', 'false');
-  document.documentElement.style.overflow = 'hidden';
-  document.querySelectorAll('.skill-tile').forEach(function (b) {
-    b.setAttribute('aria-expanded', b.dataset.skill === key ? 'true' : 'false');
-  });
-  document.getElementById('skillSheetClose')?.focus();
-}
-
-function closeSkillSheet() {
-  const sheet = document.getElementById('skillSheet');
-  if (!sheet) return;
-  sheet.hidden = true;
-  sheet.setAttribute('aria-hidden', 'true');
-  document.documentElement.style.overflow = '';
-  document.querySelectorAll('.skill-tile').forEach(function (b) {
-    b.setAttribute('aria-expanded', 'false');
-  });
-}
-
-function initSkillSheet() {
-  document.querySelectorAll('.skill-tile').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      openSkillSheet(btn.dataset.skill);
-    });
-  });
-  document.getElementById('skillSheetClose')?.addEventListener('click', closeSkillSheet);
-  document.getElementById('skillSheetBackdrop')?.addEventListener('click', closeSkillSheet);
-  document.addEventListener('keydown', function (e) {
-    const sheet = document.getElementById('skillSheet');
-    if (e.key === 'Escape' && sheet && !sheet.hidden) closeSkillSheet();
-  });
-}
-
-// ----------------------------------------------------------------------------
 // Boot
 // ----------------------------------------------------------------------------
 
@@ -805,13 +672,12 @@ function boot() {
     initNav();
     initHeroVideo();
     renderGallery();
-    initPortfolioFlow();
+    initFilters();
     initHoverVideos();
     initLightbox();
     initCarousel();
     initScrollReveal();
     initCounters();
-    initSkillSheet();
     observeLazyVideos(document);
   } catch (err) {
     console.error('[ANDXSTARS] boot:', err);
