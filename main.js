@@ -49,9 +49,9 @@ const PORTFOLIO = [
   { category: 'neuro', label: 'Нейроролик · 1', path: 'video/2026-03-02 15.24.56.mp4', poster: 'posters/2026-03-02 15.32.19.jpg' },
   { category: 'neuro', label: 'Нейроролик · 2', path: 'video/2026-03-02 15.25.24.mp4', poster: 'posters/2026-03-02 15.32.48.jpg' },
   { category: 'neuro', label: 'Нейроролик · 3', path: 'video/2026-03-02 15.25.38.mp4', poster: 'posters/2026-03-02 15.32.57.jpg' },
-  { category: 'neuro', label: 'AI Нейросеть', path: 'catalog/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4', poster: 'posters/service-neuro.jpg' },
-  { category: 'neuro', label: 'Автоматизация', path: 'catalog/автоматизации/Superhero_possesses_digital_202603291845.mp4', poster: 'posters/dopoln-auto.jpg' },
-  { category: 'neuro', label: 'Подкасты', path: 'catalog/Подкасты/Purple_neon_jumps_202604191751.mp4', poster: 'posters/service-podcast.jpg' },
+  { category: 'neuro', label: 'AI Нейросеть', path: 'dopoln/нейросети/grok-video-2313d3aa-125b-451e-b040-0c0c6a6cc037.mp4', poster: 'posters/service-neuro.jpg' },
+  { category: 'neuro', label: 'Автоматизация', path: 'dopoln/автоматизации/Superhero_possesses_digital_202603291845.mp4', poster: 'posters/2026-03-02 15.32.48.jpg' },
+  { category: 'neuro', label: 'Подкасты', path: 'catalog-uslug/podcustle/Holograms_purple_sounds_202603291733.mp4', poster: 'posters/service-podcast.jpg' },
 
   // Дизайн
   { category: 'design', label: 'Постер · 1', path: 'posters/1771433468513-019c71aa-04fd-7451-a818-b28757ca62de.jpeg' },
@@ -72,9 +72,9 @@ const PORTFOLIO = [
   { category: 'cases', label: 'Фото · 3', path: 'photos/2026-03-02 15.23.13.jpg' },
   { category: 'cases', label: 'Фото · 4', path: 'photos/2026-03-02 15.23.18.jpg' },
   { category: 'cases', label: 'Инфлюенс', path: 'photos/influencer.jpg' },
-  { category: 'cases', label: 'Видео · сайты', path: 'catalog/сайты/Sensors_moving,_camera_202603291842.mp4', poster: 'posters/dopoln-sites.jpg' },
-  { category: 'cases', label: 'Видео · музыка', path: 'catalog/музыка/Guy_plays_bass_202603291841.mp4', poster: 'posters/dopoln-music.jpg' },
-  { category: 'cases', label: 'Видео · цигун', path: 'catalog/цигун/Moves_technology_engaging_202603291845.mp4', poster: 'posters/dopoln-qigong.jpg' },
+  { category: 'cases', label: 'Видео · сайты', path: 'dopoln/сайты/Sensors_moving,_camera_202603291842.mp4', poster: 'posters/2026-03-02 15.33.10.jpg' },
+  { category: 'cases', label: 'Видео · музыка', path: 'dopoln/музыка/Guy_plays_bass_202603291841.mp4', poster: 'posters/2026-03-02 15.33.02.jpg' },
+  { category: 'cases', label: 'Видео · цигун', path: 'dopoln/цигун/Moves_technology_engaging_202603291845.mp4', poster: 'posters/2026-03-02 15.32.19.jpg' },
 ];
 
 const CATEGORY_LABEL = { all: 'Все', neuro: 'Нейро-видео', design: 'Дизайн', cases: 'Кейсы' };
@@ -236,10 +236,15 @@ function initHoverVideos() {
         const media = entry.target.querySelector('.service-media') || entry.target;
         if (entry.isIntersecting) {
           hydrateVideo(v);
+          // Only mark is-playing once the video actually begins — avoids fading
+          // the fallback image while video is still buffering / blocked.
+          v.addEventListener('playing', function onPlay() {
+            media.classList.add('is-playing');
+            entry.target.classList.add('is-playing');
+            v.removeEventListener('playing', onPlay);
+          }, { once: true });
           const p = v.play();
           if (p && p.catch) p.catch(() => {});
-          media.classList.add('is-playing');
-          entry.target.classList.add('is-playing');
         } else {
           try { v.pause(); } catch (_) {}
           media.classList.remove('is-playing');
@@ -596,6 +601,41 @@ function initNav() {
 }
 
 // ----------------------------------------------------------------------------
+// Animated counters
+// ----------------------------------------------------------------------------
+
+function initCounters() {
+  var counters = document.querySelectorAll('.stat-num[data-target]');
+  if (!counters.length) return;
+
+  if (typeof IntersectionObserver !== 'function') {
+    counters.forEach(function(el) { el.textContent = el.getAttribute('data-target'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function(entries, obs) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var target = parseInt(el.getAttribute('data-target'), 10);
+      var duration = 1400;
+      var start = performance.now();
+      var step = function(now) {
+        var elapsed = Math.min(1, (now - start) / duration);
+        var ease = 1 - Math.pow(1 - elapsed, 3);
+        el.textContent = Math.round(target * ease);
+        if (elapsed < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      };
+      requestAnimationFrame(step);
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+
+  counters.forEach(function(el) { io.observe(el); });
+}
+
+// ----------------------------------------------------------------------------
 // Boot
 // ----------------------------------------------------------------------------
 
@@ -608,6 +648,7 @@ function boot() {
   initLightbox();
   initCarousel();
   initScrollReveal();
+  initCounters();
   observeLazyVideos(document);
 }
 
